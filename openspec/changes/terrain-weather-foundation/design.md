@@ -130,6 +130,20 @@ The integration endpoint adds temporal dimension (hourly forecasts over a horizo
 
 **[Mass-conservation constraint may conflict with station observations]** Station observations have measurement errors and represent point measurements, not grid-cell averages. Enforcing divergence-free wind on a grid trained against point observations may create tension. → Mitigation: Weight the divergence loss low initially (lambda_div=0.01), increase after reconstruction loss converges. At inference, the hard Helmholtz projection is optional — evaluate both constrained and unconstrained predictions against held-out stations.
 
+**[Domain shift on cross-range transfer]** Zero-shot transfer between mountain ranges (e.g., Alps to Rockies without fine-tuning) can expect 30-40% accuracy degradation. Few-shot fine-tuning (LoRA adaptation with local station data) recovers performance to ~80-85% of in-domain skill. → Mitigation: The 3-phase training pipeline with quantile mapping is designed for this. Budget sufficient local station data for fine-tuning when deploying to a new range.
+
+**[Pre-trained model licensing constraints]**
+
+| Model | License | Commercial OK? |
+|-------|---------|----------------|
+| StormCast | NVIDIA Open Model | Yes |
+| FourCastNet3 | Apache 2.0 | Yes |
+| ECMWF AIFS | CC BY 4.0 | Yes |
+| ClimaX | MIT | Yes |
+| Aurora | "Other" — requires Microsoft contact | No (without agreement) |
+| GraphCast/GenCast | CC BY-NC-SA 4.0 | No |
+| DEVINE | Open (Zenodo) | Check specific license |
+
 **[Safety-critical tail events]** Avalanche-triggering weather involves extreme wind loading, rapid temperature changes, and intense precipitation — exactly the distribution tails where ML models perform worst. → Mitigation: Evaluation framework includes explicit tail-event metrics (99th percentile wind errors, cold-pool detection rate, heavy precipitation bias). If tail performance is unacceptable, apply tail-aware loss weighting (emphasize high-magnitude events during training).
 
 ## Module Interfaces
@@ -139,7 +153,7 @@ The integration endpoint adds temporal dimension (hourly forecasts over a horizo
 ```python
 # Terrain tensor: precomputed, static per geographic region
 terrain_features: Tensor  # shape (B, C_terrain, H_fine, W_fine)
-# C_terrain = 7: elevation, slope, aspect_sin, aspect_cos, curvature, svf, sx
+# C_terrain = 17: elevation, slope, aspect_sin, aspect_cos, plan_curvature, profile_curvature, svf, 8×sx, tpi, roughness
 # H_fine, W_fine = sub-km output grid (e.g., 256x256 at 250m)
 ```
 
@@ -194,3 +208,8 @@ class HourlyForecast:
 - **Reynolds Creek data volume:** The full 21TB archive at hourly/10m resolution may be impractical to download and process. Need to determine the minimum subset (temporal range, spatial extent) required for meaningful validation. This can be decided after initial model training — it's a validation dataset, not a training dependency.
 - **StormCast inference mode:** StormCast is a diffusion model that can run multi-step denoising for higher quality or single-step for speed. The quality/speed tradeoff for our use case (input conditioning, not standalone forecasting) needs empirical testing. Deferrable — single-step is the default, multi-step is an optimization.
 - **Orographic precipitation loss weighting:** The L_oro term's contribution to training stability and final skill is uncertain. It may help or hurt depending on the Alpine→Colorado precipitation transfer quality. Can be tuned empirically during training without changing the architecture.
+
+## Future Directions
+
+- **Prithvi-EO satellite terrain encoder:** The IBM/NASA Prithvi-EO foundation model (pre-trained on HLS satellite imagery) could serve as an alternative terrain encoder — using learned satellite features instead of hand-crafted DEM derivatives. Cross-domain transfer from satellite imagery to terrain representation is a creative approach that may capture vegetation, land-use, and surface texture features not available from DEM alone.
+- **FourCastNet3 SFNO backbone:** If StormCast proves unsuitable (memory constraints, weight incompatibility, or insufficient surface-variable quality), FourCastNet3's Spherical Fourier Neural Operator blocks are a fallback backbone architecture with Apache 2.0 licensing and proven global weather skill.

@@ -75,9 +75,9 @@ The system SHALL support initializing wind output channels from pre-trained DEVI
 
 ### Requirement: Loss function
 
-The training loss SHALL be: `L = MSE(predicted, target) + lambda * conservation_penalty`, where the conservation penalty is the mean squared divergence of the wind field before projection. Lambda SHALL be configurable (default: 0.1). The MSE term SHALL be computed per-variable with configurable per-variable weights (default: equal weighting).
+The training loss SHALL be: `L = MSE(predicted, target) + lambda_div * conservation_penalty + lambda_oro * orographic_penalty`, where the conservation penalty is the mean squared divergence of the wind field before projection, and the orographic penalty (optional) enforces that predicted precipitation increases on windward slopes and decreases on leeward slopes relative to terrain gradient and wind direction (formulated as a correlation penalty). Lambda_div SHALL be configurable (default: 0.1). Lambda_oro SHALL be configurable (default: 0.0, disabled until empirically validated). The MSE term SHALL be computed per-variable with configurable per-variable weights (default: equal weighting).
 
 #### Scenario: Loss computation
 
 - **WHEN** a training step completes
-- **THEN** the loss includes both the per-variable MSE and the divergence penalty, with the penalty computed on the pre-projection wind field
+- **THEN** the loss includes the per-variable MSE, the divergence penalty (computed on the pre-projection wind field), and optionally the orographic precipitation penalty when lambda_oro > 0

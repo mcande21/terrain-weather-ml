@@ -35,7 +35,7 @@ The system SHALL compute the following terrain features from the DEM, matching t
 #### Scenario: Compute full feature set for a DEM patch
 
 - **WHEN** a DEM patch and corresponding NLCD raster are provided
-- **THEN** the system returns a tensor of shape `(C, H, W)` where C=14 (elevation, slope, aspect, plan curvature, profile curvature, SVF, 8 Sx directions, TPI) plus a roughness channel, and H/W match the DEM grid dimensions
+- **THEN** the system returns a tensor of shape `(C, H, W)` where C=17 (elevation, slope, aspect_sin, aspect_cos, plan curvature, profile curvature, SVF, 8 Sx directions, TPI, roughness), and H/W match the DEM grid dimensions
 
 #### Scenario: Missing NLCD coverage
 

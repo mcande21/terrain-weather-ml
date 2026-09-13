@@ -14,7 +14,7 @@ Spec: `terrain/feature-encoder`. No upstream dependencies. Produces the static t
 
 - [ ] 1.5 TPI and surface roughness — TPI at 500m radius (elevation minus mean within radius, meters), NLCD land-cover to aerodynamic roughness z0 lookup table, configurable default roughness when NLCD unavailable (log warning on fallback). Verify: test TPI on synthetic peak/valley DEM, test NLCD mapping produces valid z0 values, test missing-NLCD fallback triggers warning and uses default.
 
-- [ ] 1.6 Tensor assembly and caching — assemble all features into a single PyTorch tensor of shape (C, H, W) where C=15 (elevation, slope, aspect_sin, aspect_cos, plan_curv, profile_curv, SVF, 8×Sx, TPI, roughness), support CPU/CUDA/MPS devices, cache computed tensors to disk keyed by (DEM path, target resolution, CRS), return cached tensor on repeat requests without recomputation. Verify: test full pipeline on a small DEM produces shape (15, H, W), second call returns identical tensor from cache without recomputation (assert no DEM read on cache hit).
+- [ ] 1.6 Tensor assembly and caching — assemble all features into a single PyTorch tensor of shape (C, H, W) where C=17 (elevation, slope, aspect_sin, aspect_cos, plan_curv, profile_curv, SVF, 8×Sx, TPI, roughness), support CPU/CUDA/MPS devices, cache computed tensors to disk keyed by (DEM path, target resolution, CRS), return cached tensor on repeat requests without recomputation. Verify: test full pipeline on a small DEM produces shape (17, H, W), second call returns identical tensor from cache without recomputation (assert no DEM read on cache hit).
 
 - [ ] 1.7 Normalization — z-score normalization using per-channel mean and std computed from training regions, save/load normalization parameters alongside model checkpoints. Verify: round-trip test — compute stats, save, load from checkpoint, apply to same data, verify output matches original normalized values exactly.
 
@@ -70,7 +70,7 @@ Spec: `terrain/downscaling-head`. Depends on: terrain/feature-encoder (tensor fo
 
 - [ ] 5.1 U-Net encoder-decoder architecture — encoder with 4+ downsampling stages, decoder with matching upsampling stages, skip connections concatenating encoder features at each resolution level. Verify: test forward pass with input (C, H, W) produces output with same (H, W) spatial dimensions; test skip connections are active (ablation: removing one changes output).
 
-- [ ] 5.2 Dual-branch input processing — upsample coarse weather tensor (C_weather, H_coarse, W_coarse) to match fine terrain tensor (C_terrain, H_fine, W_fine) via bilinear interpolation, concatenate along channel dimension before U-Net encoder. Verify: test with 3km weather (6 channels) and 100m terrain (15 channels) produces concatenated input of 21 channels at fine resolution; test terrain resolution mismatch with output raises error.
+- [ ] 5.2 Dual-branch input processing — upsample coarse weather tensor (C_weather, H_coarse, W_coarse) to match fine terrain tensor (C_terrain, H_fine, W_fine) via bilinear interpolation, concatenate along channel dimension before U-Net encoder. Verify: test with 3km weather (6 channels) and 100m terrain (17 channels) produces concatenated input of 23 channels at fine resolution; test terrain resolution mismatch with output raises error.
 
 - [ ] 5.3 Multi-variable output head — 4 output channels: u-wind, v-wind, temperature, precipitation. Provide u/v to speed/direction conversion utility at the output interface. Verify: test output shape is (4, H_fine, W_fine); test speed/direction conversion on known (u, v) vectors produces correct values.
 
@@ -78,7 +78,7 @@ Spec: `terrain/downscaling-head`. Depends on: terrain/feature-encoder (tensor fo
 
 - [ ] 5.5 DEVINE weight initialization — load wind-related encoder/decoder weights from louisletoumelin/wind_downscaling_cnn checkpoint. Temperature and precipitation channels randomly initialized. Support freezing DEVINE-loaded wind parameters (requires_grad=False) during warmup. Verify: test DEVINE weights load without error; test freeze flag disables gradients on wind channels while temp/precip remain trainable; test with no DEVINE path uses random init for all channels.
 
-- [ ] 5.6 Loss function — per-variable weighted MSE (configurable weights, default equal) + mean squared divergence penalty on pre-projection wind field (configurable lambda, default 0.1). Verify: test loss computation includes both MSE and divergence terms with correct weighting; test lambda=0 produces MSE-only loss; test gradient flows through both terms.
+- [ ] 5.6 Loss function — per-variable weighted MSE (configurable weights, default equal) + mean squared divergence penalty on pre-projection wind field (configurable lambda_div, default 0.1) + optional orographic precipitation penalty (configurable lambda_oro, default 0.0). Verify: test loss computation includes MSE, divergence, and orographic terms with correct weighting; test lambda_div=0 and lambda_oro=0 produces MSE-only loss; test lambda_oro>0 adds orographic correlation penalty; test gradient flows through all active terms.
 
 ## 6. Transfer Training Pipeline
 

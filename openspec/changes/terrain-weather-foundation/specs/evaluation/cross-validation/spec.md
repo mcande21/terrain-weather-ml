@@ -83,3 +83,9 @@ The system SHALL separately evaluate performance on tail events relevant to aval
 
 - **WHEN** evaluation completes
 - **THEN** the results include a tail-event section with metrics computed only on timesteps where the observed value exceeds the specified percentile thresholds
+
+### Note: Optional evaluation baselines
+
+**SNOWstorm model (Zenodo):** Wind-driven snow redistribution U-Nets — directly relevant to avalanche wind-slab loading prediction. Can serve as an optional evaluation baseline for wind-terrain interaction skill, particularly for snow transport and deposition patterns driven by terrain-modified wind fields.
+
+**WFIP2 Columbia Gorge dataset:** 184 sonic anemometers deployed during a 6-week intensive observation period in complex terrain. Provides an optional physics-validation dataset with extremely dense spatial coverage for evaluating wind field accuracy in channeled flow through complex topography.
