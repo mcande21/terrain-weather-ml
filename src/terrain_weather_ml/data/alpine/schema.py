@@ -31,7 +31,8 @@ class QualityFlag(int, Enum):
 class StationMetadata:
     """Unified station metadata across PeakWeather and IMIS networks.
 
-    All fields are required -- no field may be None.
+    Core fields (station_id through terrain_ref_lon) are required.
+    Optional fields have defaults.
     """
 
     station_id: str
@@ -41,6 +42,8 @@ class StationMetadata:
     elevation: float  # meters above sea level
     terrain_ref_lat: float  # latitude for terrain encoder linkage
     terrain_ref_lon: float  # longitude for terrain encoder linkage
+    station_name: str | None = None
+    terrain_features: tuple[tuple[str, float], ...] = ()  # immutable terrain feature pairs
 
     def __post_init__(self) -> None:
         if not self.station_id:
@@ -64,7 +67,9 @@ class WeatherRecord:
     - precipitation: mm/interval
     - pressure: hPa
     - humidity: fraction (0-1)
-    - global_radiation: W/m^2 (PeakWeather only, NaN for IMIS)
+    - global_radiation: W/m^2 (NaN when not available)
+    - sunshine: minutes of sunshine per interval (PeakWeather sre000z0)
+    - wind_gust: m/s peak gust (PeakWeather fkl010z1, optional)
     - snow_surface_temp: Kelvin (IMIS only, NaN for PeakWeather)
     - snow_depth: meters (IMIS only, NaN for PeakWeather)
     """
@@ -81,6 +86,8 @@ class WeatherRecord:
     pressure: float = float("nan")
     humidity: float = float("nan")
     global_radiation: float = float("nan")
+    sunshine: float = float("nan")
+    wind_gust: float = float("nan")
     snow_surface_temp: float = float("nan")
     snow_depth: float = float("nan")
 
@@ -92,6 +99,8 @@ class WeatherRecord:
     pressure_qc: QualityFlag = QualityFlag.MISSING
     humidity_qc: QualityFlag = QualityFlag.MISSING
     global_radiation_qc: QualityFlag = QualityFlag.MISSING
+    sunshine_qc: QualityFlag = QualityFlag.MISSING
+    wind_gust_qc: QualityFlag = QualityFlag.MISSING
     snow_surface_temp_qc: QualityFlag = QualityFlag.MISSING
     snow_depth_qc: QualityFlag = QualityFlag.MISSING
 
