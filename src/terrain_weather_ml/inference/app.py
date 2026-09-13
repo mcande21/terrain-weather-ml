@@ -101,7 +101,11 @@ def _build_router():
                 status_code=503,
                 detail="Model is loading or failed to load",
             )
-        return HealthResponse(status="healthy")
+        return HealthResponse(
+            status="healthy",
+            backbone=svc.backbone_name,
+            data_source=svc.data_source,
+        )
 
     @router.get("/metadata", response_model=MetadataResponse)
     async def metadata():

@@ -81,7 +81,7 @@ def create_adapter(
         ValueError: If backbone name is not recognized.
     """
     if backbone == "passthrough":
-        return _NWPPassthroughStub()
+        return NWPPassthroughAdapter()
 
     if backbone == "stormcast":
         config = StormCastConfig(**kwargs)

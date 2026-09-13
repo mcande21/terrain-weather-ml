@@ -132,6 +132,8 @@ class HealthResponse(BaseModel):
     """Health check response."""
 
     status: str
+    backbone: str = Field(..., description="Active backbone adapter (nwp or stormcast)")
+    data_source: str = Field(..., description="Data source(s) for the active backbone")
 
 
 class MetadataResponse(BaseModel):
@@ -141,4 +143,6 @@ class MetadataResponse(BaseModel):
     checkpoint_hash: str
     domain_bounds: dict[str, float]
     max_forecast_hours: int
+    backbone: str
+    data_source: str
     output_variables: list[dict[str, str]]
