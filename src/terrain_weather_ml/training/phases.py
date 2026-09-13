@@ -1,8 +1,11 @@
-"""Training phase implementations (tasks 6.1-6.3).
+"""Training phase implementations.
 
 Phase 1: CFD pre-training of the downscaling head (wind-only).
-Phase 2: Alpine fine-tuning with StormCast + LoRA + DEVINE init.
-Phase 3: Colorado LoRA adaptation with quantile mapping.
+Phase 2: Alpine fine-tuning with ERA5 passthrough + DEVINE init (head only).
+Phase 3: Colorado adaptation with HRRR passthrough + quantile mapping.
+
+Default backbone is NWP passthrough (raw ERA5/HRRR). StormCast is
+experimental and only used when explicitly configured.
 
 Each phase is a self-contained trainer that produces a phase-gated checkpoint.
 """
@@ -267,11 +270,11 @@ class Phase1Trainer:
 
 
 class Phase2Trainer:
-    """Phase 2: Alpine fine-tuning with StormCast backbone + LoRA.
+    """Phase 2: Alpine fine-tuning with ERA5 passthrough + DEVINE init.
 
-    Loads Phase 1 downscaling head checkpoint, injects LoRA into StormCast,
-    initializes wind channels from DEVINE weights, supports warmup with
-    wind channels frozen.
+    Uses raw ERA5 data via NWP passthrough adapter (no neural backbone).
+    No LoRA injection -- trains the downscaling head only. Optionally
+    initializes wind channels from DEVINE weights with warmup freeze.
     """
 
     def __init__(self, config: PhaseConfig):
@@ -284,22 +287,7 @@ class Phase2Trainer:
             prerequisite_checkpoint_path=config.prerequisite_checkpoint,
         )
 
-        # Build full pipeline: StormCast adapter + downscaling head
-        from terrain_weather_ml.backbone.stormcast import (
-            StormCastAdapter,
-            StormCastConfig,
-        )
-
-        # Create StormCast adapter
-        sc_config = StormCastConfig(
-            checkpoint_path=config.stormcast_checkpoint_path,
-            model_class=config.stormcast_model_class,
-            lora_rank=config.lora_rank,
-            lora_alpha=config.lora_alpha,
-        )
-        self.adapter = StormCastAdapter(sc_config)
-
-        # Build downscaling head
+        # Build downscaling head (no StormCast adapter -- ERA5 passthrough)
         self.head = TerrainDownscalingHead(
             c_terrain=config.c_terrain,
             c_weather=config.c_weather,
@@ -325,22 +313,12 @@ class Phase2Trainer:
         else:
             self._devine_loaded = False
 
-        # Inject LoRA into StormCast
-        self.adapter.inject_lora()
-
         # Move to device
         self.head.to(self.device)
-        self.adapter.to(self.device)
 
-        # Only LoRA params + head params are trainable
+        # Head-only optimizer (no LoRA, no backbone params)
         self.optimizer = torch.optim.Adam(
-            [
-                {"params": self.head.parameters()},
-                {"params": [
-                    p for p in self.adapter.parameters() if p.requires_grad
-                ]},
-            ],
-            lr=config.learning_rate,
+            self.head.parameters(), lr=config.learning_rate
         )
 
         self.loss_fn = DownscalingLoss(
@@ -417,15 +395,9 @@ class Phase2Trainer:
         """Unfreeze wind channels after warmup period."""
         for param in self.head.parameters():
             param.requires_grad = True
-        # Re-create optimizer to include unfrozen params
+        # Re-create optimizer with all head params
         self.optimizer = torch.optim.Adam(
-            [
-                {"params": self.head.parameters()},
-                {"params": [
-                    p for p in self.adapter.parameters() if p.requires_grad
-                ]},
-            ],
-            lr=self.config.learning_rate,
+            self.head.parameters(), lr=self.config.learning_rate,
         )
         logger.info("Phase 2: unfroze wind channels after warmup")
 
@@ -437,8 +409,8 @@ class Phase2Trainer:
         """Run Phase 2 training loop.
 
         Args:
-            dataset: AlpinePhaseDataset with (terrain, weather_in,
-                weather_target, mask) samples.
+            dataset: ERA5StationDataset with (terrain, weather,
+                target, mask) samples.
             val_dataset: Optional validation dataset.
 
         Returns:
@@ -471,27 +443,22 @@ class Phase2Trainer:
                 self._unfreeze_wind_channels()
 
             self.head.train()
-            self.adapter.train()
             epoch_loss = 0.0
             n_batches = 0
 
-            for terrain, weather_in, weather_target, mask in loader:
+            for terrain, weather, weather_target, mask in loader:
                 terrain = terrain.to(self.device)
-                weather_in = weather_in.to(self.device)
+                weather = weather.to(self.device)
                 weather_target = weather_target.to(self.device)
                 mask = mask.to(self.device)
 
                 self.optimizer.zero_grad()
 
-                # Forward through StormCast adapter
-                weather_features = self.adapter(
-                    weather_in, extract_surface=True
-                )
+                # ERA5 weather is already extracted via NWP passthrough
+                # -- feed directly to downscaling head
+                pred = self.head(terrain, weather)
 
-                # Forward through downscaling head
-                pred = self.head(terrain, weather_features)
-
-                # Compute loss (masked where we have observations)
+                # Compute loss
                 loss_dict = self.loss_fn(pred, weather_target, terrain)
                 loss = loss_dict["total"]
 
@@ -521,21 +488,16 @@ class Phase2Trainer:
     def _validate(self, val_loader: DataLoader) -> float:
         """Compute validation loss."""
         self.head.eval()
-        self.adapter.eval()
         total_loss = 0.0
         n_batches = 0
 
         with torch.no_grad():
-            for terrain, weather_in, weather_target, mask in val_loader:
+            for terrain, weather, weather_target, mask in val_loader:
                 terrain = terrain.to(self.device)
-                weather_in = weather_in.to(self.device)
+                weather = weather.to(self.device)
                 weather_target = weather_target.to(self.device)
-                mask = mask.to(self.device)
 
-                weather_features = self.adapter(
-                    weather_in, extract_surface=True
-                )
-                pred = self.head(terrain, weather_features)
+                pred = self.head(terrain, weather)
                 loss_dict = self.loss_fn(pred, weather_target, terrain)
                 total_loss += loss_dict["total"].item()
                 n_batches += 1
@@ -543,7 +505,7 @@ class Phase2Trainer:
         return total_loss / max(n_batches, 1)
 
     def _save_checkpoint(self, dataset: Dataset) -> Path:
-        """Save Phase 2 checkpoint with head + LoRA weights."""
+        """Save Phase 2 checkpoint with head weights only."""
         data_hash = "unknown"
         if hasattr(dataset, "compute_data_hash"):
             data_hash = dataset.compute_data_hash()
@@ -560,13 +522,10 @@ class Phase2Trainer:
             parent_checkpoint_hash=parent_hash,
         )
 
-        # Save both head and LoRA state
+        # Head-only state (no LoRA in passthrough mode)
         combined_state = {}
         for key, value in self.head.state_dict().items():
             combined_state[f"head.{key}"] = value
-        lora_state = self.adapter.get_lora_state_dict()
-        for key, value in lora_state.items():
-            combined_state[f"adapter.{key}"] = value
 
         ckpt = PhaseCheckpoint(
             metadata=metadata,
@@ -582,10 +541,13 @@ class Phase2Trainer:
 
 
 class Phase3Trainer:
-    """Phase 3: Colorado LoRA adaptation with quantile mapping.
+    """Phase 3: Colorado adaptation with HRRR passthrough + quantile mapping.
 
-    Loads Phase 2 checkpoint, freezes the downscaling head, trains only
-    LoRA adapters on SNOTEL data with quantile-mapped coarse input.
+    Default mode: Uses raw HRRR via NWP passthrough, fine-tunes the
+    downscaling head with reduced LR. No LoRA, no StormCast.
+
+    Experimental StormCast mode (stormcast_model_class set): Uses StormCast
+    backbone with LoRA adapters, freezes head, trains LoRA only.
     """
 
     def __init__(
@@ -603,20 +565,8 @@ class Phase3Trainer:
             prerequisite_checkpoint_path=config.prerequisite_checkpoint,
         )
 
-        # Build StormCast adapter
-        from terrain_weather_ml.backbone.stormcast import (
-            StormCastAdapter,
-            StormCastConfig,
-        )
-
-        sc_config = StormCastConfig(
-            checkpoint_path=config.stormcast_checkpoint_path,
-            model_class=config.stormcast_model_class,
-            lora_rank=config.lora_rank,
-            lora_alpha=config.lora_alpha,
-        )
-        self.adapter = StormCastAdapter(sc_config)
-        self.adapter.inject_lora()
+        # Determine mode: passthrough (default) vs experimental StormCast
+        self._use_stormcast = config.stormcast_model_class is not None
 
         # Build downscaling head
         self.head = TerrainDownscalingHead(
@@ -627,24 +577,44 @@ class Phase3Trainer:
             apply_divergence_free=False,
         )
 
-        # Load Phase 2 weights
+        # Load Phase 2 head weights
         self._init_from_phase2()
 
-        # Freeze downscaling head -- only LoRA adapters train
-        for param in self.head.parameters():
-            param.requires_grad = False
+        if self._use_stormcast:
+            # Experimental: StormCast + LoRA mode
+            from terrain_weather_ml.backbone.stormcast import (
+                StormCastAdapter,
+                StormCastConfig,
+            )
 
-        # Move to device
-        self.head.to(self.device)
-        self.adapter.to(self.device)
+            sc_config = StormCastConfig(
+                checkpoint_path=config.stormcast_checkpoint_path,
+                model_class=config.stormcast_model_class,
+                lora_rank=config.lora_rank,
+                lora_alpha=config.lora_alpha,
+            )
+            self.adapter = StormCastAdapter(sc_config)
+            self.adapter.inject_lora()
 
-        # Only LoRA params are trainable
-        trainable_params = [
-            p for p in self.adapter.parameters() if p.requires_grad
-        ]
-        self.optimizer = torch.optim.Adam(
-            trainable_params, lr=config.learning_rate
-        )
+            # Freeze head, train only LoRA
+            for param in self.head.parameters():
+                param.requires_grad = False
+
+            self.head.to(self.device)
+            self.adapter.to(self.device)
+
+            trainable_params = [
+                p for p in self.adapter.parameters() if p.requires_grad
+            ]
+            self.optimizer = torch.optim.Adam(
+                trainable_params, lr=config.learning_rate
+            )
+        else:
+            # Default: passthrough mode, fine-tune head
+            self.head.to(self.device)
+            self.optimizer = torch.optim.Adam(
+                self.head.parameters(), lr=config.learning_rate
+            )
 
         self.loss_fn = DownscalingLoss(
             lambda_div=config.lambda_div,
@@ -656,7 +626,11 @@ class Phase3Trainer:
         self.best_val_loss: float | None = None
 
     def _init_from_phase2(self) -> None:
-        """Load downscaling head and LoRA weights from Phase 2 checkpoint."""
+        """Load downscaling head weights from Phase 2 checkpoint.
+
+        In default passthrough mode, only head weights transfer.
+        No backbone/LoRA weights carry over.
+        """
         if self.phase2_ckpt is None:
             return
 
@@ -670,18 +644,9 @@ class Phase3Trainer:
 
         if head_state:
             self.head.load_state_dict(head_state)
-            logger.info("Phase 3: loaded %d head params from Phase 2", len(head_state))
-
-        # Extract and load LoRA weights
-        lora_state = {}
-        for key, value in p2_state.items():
-            if key.startswith("adapter."):
-                lora_state[key[8:]] = value  # Strip "adapter." prefix
-
-        if lora_state:
-            self.adapter.load_lora_state_dict(lora_state)
             logger.info(
-                "Phase 3: loaded %d LoRA params from Phase 2", len(lora_state)
+                "Phase 3: loaded %d head params from Phase 2",
+                len(head_state),
             )
 
     def train(
@@ -716,8 +681,12 @@ class Phase3Trainer:
         best_val_loss = float("inf")
 
         for epoch in range(self.config.epochs):
-            self.head.eval()  # Head is frozen, keep in eval mode
-            self.adapter.train()
+            if self._use_stormcast:
+                self.head.eval()  # Head frozen in StormCast mode
+                self.adapter.train()
+            else:
+                self.head.train()  # Head trains in passthrough mode
+
             epoch_loss = 0.0
             n_batches = 0
 
@@ -729,10 +698,15 @@ class Phase3Trainer:
 
                 self.optimizer.zero_grad()
 
-                weather_features = self.adapter(
-                    weather_in, extract_surface=True
-                )
-                pred = self.head(terrain, weather_features)
+                if self._use_stormcast:
+                    # StormCast mode: pass through adapter first
+                    weather_features = self.adapter(
+                        weather_in, extract_surface=True
+                    )
+                    pred = self.head(terrain, weather_features)
+                else:
+                    # Passthrough mode: weather_in already has 6 channels
+                    pred = self.head(terrain, weather_in)
 
                 loss_dict = self.loss_fn(pred, weather_target, terrain)
                 loss = loss_dict["total"]
@@ -763,7 +737,8 @@ class Phase3Trainer:
     def _validate(self, val_loader: DataLoader) -> float:
         """Compute validation loss."""
         self.head.eval()
-        self.adapter.eval()
+        if self._use_stormcast:
+            self.adapter.eval()
         total_loss = 0.0
         n_batches = 0
 
@@ -772,12 +747,15 @@ class Phase3Trainer:
                 terrain = terrain.to(self.device)
                 weather_in = weather_in.to(self.device)
                 weather_target = weather_target.to(self.device)
-                mask = mask.to(self.device)
 
-                weather_features = self.adapter(
-                    weather_in, extract_surface=True
-                )
-                pred = self.head(terrain, weather_features)
+                if self._use_stormcast:
+                    weather_features = self.adapter(
+                        weather_in, extract_surface=True
+                    )
+                    pred = self.head(terrain, weather_features)
+                else:
+                    pred = self.head(terrain, weather_in)
+
                 loss_dict = self.loss_fn(pred, weather_target, terrain)
                 total_loss += loss_dict["total"].item()
                 n_batches += 1
@@ -785,7 +763,7 @@ class Phase3Trainer:
         return total_loss / max(n_batches, 1)
 
     def _save_checkpoint(self, dataset: Dataset) -> Path:
-        """Save Phase 3 checkpoint with head + LoRA + quantile mapping."""
+        """Save Phase 3 checkpoint with head + optional LoRA + quantile."""
         data_hash = "unknown"
         if hasattr(dataset, "compute_data_hash"):
             data_hash = dataset.compute_data_hash()
@@ -802,13 +780,16 @@ class Phase3Trainer:
             parent_checkpoint_hash=parent_hash,
         )
 
-        # Save head (frozen) + LoRA weights
+        # Save head weights
         combined_state = {}
         for key, value in self.head.state_dict().items():
             combined_state[f"head.{key}"] = value
-        lora_state = self.adapter.get_lora_state_dict()
-        for key, value in lora_state.items():
-            combined_state[f"adapter.{key}"] = value
+
+        # Save LoRA weights only if using StormCast
+        if self._use_stormcast:
+            lora_state = self.adapter.get_lora_state_dict()
+            for key, value in lora_state.items():
+                combined_state[f"adapter.{key}"] = value
 
         # Include quantile mapping parameters
         extra_data = {}

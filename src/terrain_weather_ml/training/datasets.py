@@ -1,8 +1,8 @@
-"""PyTorch Dataset wrappers for each training phase (tasks 6.1-6.3).
+"""PyTorch Dataset wrappers for each training phase.
 
 Phase 1: CFD wind fields -> downscaling head training
-Phase 2: Alpine station data + HRRR -> full pipeline training
-Phase 3: Colorado SNOTEL data + quantile-mapped HRRR -> LoRA adaptation
+Phase 2: ERA5 + Alpine station observations -> head-only training
+Phase 3: HRRR + Colorado SNOTEL data + quantile mapping -> head fine-tuning
 """
 
 from __future__ import annotations
@@ -82,6 +82,46 @@ class AlpinePhaseDataset(Dataset):
             h.update(str(terrain.shape).encode())
             h.update(str(weather_in.shape).encode())
             h.update(str(_target.shape).encode())
+        return h.hexdigest()[:16]
+
+
+class ERA5StationDataset(Dataset):
+    """Phase 2 dataset: ERA5 grid cells paired with Alpine station observations.
+
+    Each sample pairs ERA5-derived weather variables (via NWP passthrough) with
+    terrain features and station observation targets. The weather tensor has
+    the same spatial resolution as the terrain (interpolated to fine grid).
+
+    Uses ERA5Conditioner from backbone/era5_conditioner.py for data access.
+
+    Expected sample dict keys:
+        terrain: Tensor (C_terrain, H, W) -- static terrain features
+        weather: Tensor (C_weather, H, W) -- ERA5 surface variables (6 channels)
+        target: Tensor (C_out, H, W) -- station observation targets
+        mask: Tensor (H, W) -- valid observation locations
+    """
+
+    def __init__(self, samples: list[dict[str, torch.Tensor]]) -> None:
+        self.samples = samples
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def __getitem__(
+        self, idx: int
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        s = self.samples[idx]
+        return s["terrain"], s["weather"], s["target"], s["mask"]
+
+    def compute_data_hash(self) -> str:
+        """Compute hash of dataset for checkpoint metadata."""
+        h = hashlib.sha256()
+        h.update(str(len(self)).encode())
+        if len(self) > 0:
+            terrain, weather, target, _mask = self[0]
+            h.update(str(terrain.shape).encode())
+            h.update(str(weather.shape).encode())
+            h.update(str(target.shape).encode())
         return h.hexdigest()[:16]
 
 
