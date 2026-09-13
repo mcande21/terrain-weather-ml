@@ -1,14 +1,34 @@
-"""StormCast backbone adapter.
+"""StormCast backbone adapter -- EXPERIMENTAL.
 
-Loads frozen NVIDIA StormCast, injects LoRA adapters for regional
-specialization, and extracts surface weather variables for the
-downscaling head.
+This adapter wraps the frozen NVIDIA StormCast model for use as an
+experimental backbone. The default backbone is NWP passthrough; this
+adapter is selected via `backbone: "stormcast"` configuration.
+
+StormCast provides 4 surface variables (T2M, U10, V10, MSLP) from its
+99-channel output. The remaining 2 variables (PRATE, BLH) are supplied
+by HRRR passthrough to satisfy the C_WEATHER=6 interface contract.
+
+EXPERIMENTAL STATUS:
+    StormCast is preserved for A/B comparison against raw NWP passthrough.
+    It is NOT the default and should not be used without explicit opt-in.
+    See Design Decision D3 in the raw-nwp-backbone-refactor change.
+
+Key corrections from real-weight analysis:
+    - .mdlus loading: repack zip to strip model/ prefix
+    - Surface indices: [2, 0, 1, 3] (not [0..5])
+    - LoRA targets: 'affine' nn.Linear layers (not attn QKV Conv2d)
+    - Only 4 of 6 weather vars from StormCast; 2 via HRRR passthrough
+
+Implements the WeatherAdapter protocol (adapter_protocol.py).
 """
 
 from __future__ import annotations
 
 import importlib
+import io
 import logging
+import warnings
+import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -18,23 +38,31 @@ from torch import nn
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Surface variable extraction constants (Design Decision D2)
+# Surface variable extraction constants
+#
+# StormCast's 99 output variables include 4 surface fields:
+#   idx 0: u10m (10m u-wind)
+#   idx 1: v10m (10m v-wind)
+#   idx 2: t2m  (2m temperature)
+#   idx 3: mslp (mean sea level pressure)
+#
+# The remaining C_WEATHER channels (PRATE, BLH) come from HRRR passthrough.
 # ---------------------------------------------------------------------------
 
 C_WEATHER = 6
 
-SURFACE_VARIABLE_NAMES = [
-    "T2M",    # 2m temperature
-    "U10",    # 10m u-wind component
-    "V10",    # 10m v-wind component
-    "PRATE",  # Precipitation rate
-    "SP",     # Surface pressure
-    "BLH",    # Boundary layer height
-]
+# StormCast provides these 4 surface variables
+STORMCAST_SURFACE_NAMES = ["T2M", "U10", "V10", "MSLP"]
+STORMCAST_SURFACE_INDICES = [2, 0, 1, 3]  # T2M=idx2, U10=idx0, V10=idx1, MSLP=idx3
 
-# Default StormCast output indices for surface variables.
-# These are validated against model metadata at load time when available.
-DEFAULT_SURFACE_INDICES = [0, 1, 2, 3, 4, 5]
+# HRRR passthrough provides these 2 variables StormCast lacks
+HRRR_PASSTHROUGH_NAMES = ["PRATE", "BLH"]
+
+# Combined output order: 4 from StormCast + 2 from HRRR passthrough
+SURFACE_VARIABLE_NAMES = STORMCAST_SURFACE_NAMES + HRRR_PASSTHROUGH_NAMES
+
+# Legacy alias kept for backward compatibility during migration
+DEFAULT_SURFACE_INDICES = list(STORMCAST_SURFACE_INDICES)
 
 
 def _get_device() -> str:
@@ -54,33 +82,80 @@ def _get_device() -> str:
 class StormCastConfig:
     """Configuration for the StormCast backbone adapter.
 
+    EXPERIMENTAL: StormCast is not the default backbone. Use
+    `backbone: "stormcast"` configuration to enable it.
+
     Args:
-        checkpoint_path: Local path to StormCast weights.
+        checkpoint_path: Local path to StormCast weights (.pt or .mdlus).
         hf_repo_id: HuggingFace repo for downloading weights.
         model_class: Fully qualified class name for the model architecture.
             Use for testing with mock models.
         surface_indices: Indices into StormCast's 99-var output for the
-            6 surface variables.
+            4 surface variables it provides. Default [2, 0, 1, 3].
         device: PyTorch device string. Auto-detected if None.
         lora_rank: LoRA adapter rank (r). Default 8 per WeatherPEFT.
         lora_alpha: LoRA scaling factor. Default 16.
         lora_dropout: LoRA dropout rate. Default 0.0.
-        lora_target_modules: Attention layer name patterns to target.
+        lora_target_modules: Layer name patterns to target for LoRA.
+            Default ['affine'] -- targets the 55 nn.Linear affine
+            projections in StormCast UNet blocks. Skips fused QKV Conv2d.
     """
 
     checkpoint_path: str | None = None
     hf_repo_id: str = "nvidia/stormcast-v1-era5-hrrr"
     model_class: str | None = None
     surface_indices: list[int] = field(
-        default_factory=lambda: list(DEFAULT_SURFACE_INDICES)
+        default_factory=lambda: list(STORMCAST_SURFACE_INDICES)
     )
     device: str | None = None
     lora_rank: int = 8
     lora_alpha: int = 16
     lora_dropout: float = 0.0
     lora_target_modules: list[str] = field(
-        default_factory=lambda: ["attn_q", "attn_k", "attn_v"]
+        default_factory=lambda: ["affine"]
     )
+
+
+# ---------------------------------------------------------------------------
+# .mdlus format handling
+# ---------------------------------------------------------------------------
+
+def _load_mdlus_state_dict(path: Path) -> dict[str, torch.Tensor]:
+    """Load state dict from NVIDIA Modulus .mdlus format.
+
+    The .mdlus format is a zip archive where weight files are stored
+    under a ``model/`` prefix. This function repacks the archive to
+    strip that prefix before loading via ``torch.load``.
+
+    Args:
+        path: Path to the .mdlus file.
+
+    Returns:
+        The model state dict.
+    """
+    with zipfile.ZipFile(path, "r") as zf:
+        # Find the weights file (model/weights.pt or similar)
+        weight_entries = [
+            n for n in zf.namelist()
+            if n.startswith("model/") and n.endswith(".pt")
+        ]
+        if not weight_entries:
+            raise FileNotFoundError(
+                f"No model/*.pt found in .mdlus archive: {path}\n"
+                f"Archive contents: {zf.namelist()}"
+            )
+
+        # Read the weights file, stripping the model/ prefix
+        weights_data = zf.read(weight_entries[0])
+
+    # Load via BytesIO to avoid temp files
+    buf = io.BytesIO(weights_data)
+    state_dict = torch.load(buf, map_location="cpu", weights_only=True)
+    logger.info(
+        "Loaded .mdlus checkpoint from %s (entry: %s)",
+        path, weight_entries[0],
+    )
+    return state_dict
 
 
 # ---------------------------------------------------------------------------
@@ -129,23 +204,43 @@ class LoRALinear(nn.Module):
 
 
 # ---------------------------------------------------------------------------
-# StormCast Adapter
+# StormCast Adapter -- EXPERIMENTAL
 # ---------------------------------------------------------------------------
 
 class StormCastAdapter(nn.Module):
-    """Frozen StormCast backbone with LoRA adapters.
+    """Frozen StormCast backbone with LoRA adapters -- EXPERIMENTAL.
 
     Loads a StormCast model, freezes all parameters, optionally injects
-    LoRA adapters into attention layers, and extracts the 6 surface
-    weather variables consumed by the downscaling head.
+    LoRA adapters into ``affine`` layers, and extracts 4 surface weather
+    variables. Combined with 2 HRRR passthrough variables via the
+    ``extract()`` method to produce C_WEATHER=6 output.
 
-    Output shape: (B, C_WEATHER, H, W) where C_WEATHER=6.
+    This adapter implements the ``WeatherAdapter`` protocol.
+
+    EXPERIMENTAL: Not the default backbone. Enable via
+    ``backbone: "stormcast"`` configuration. See Design Decision D3.
+
+    Output shapes:
+        - extract_surface_variables(): (B, 4, H, W) -- StormCast only
+        - extract(): (B, 6, H, W) -- StormCast + HRRR passthrough
+        - forward(extract_surface=True): (B, 4, H, W)
+        - forward(extract_surface=False): (B, 99, H, W)
     """
+
+    # Mark as experimental for runtime checks
+    experimental = True
 
     def __init__(self, config: StormCastConfig):
         super().__init__()
         self.config = config
         self.device_str = config.device or _get_device()
+
+        warnings.warn(
+            "StormCastAdapter is EXPERIMENTAL. The default backbone is NWP "
+            "passthrough. Use StormCast only for A/B comparison experiments. "
+            "See Design Decision D3 in raw-nwp-backbone-refactor.",
+            stacklevel=2,
+        )
 
         # Load backbone
         self.backbone = self._load_backbone(config)
@@ -158,8 +253,9 @@ class StormCastAdapter(nn.Module):
         """Load the StormCast model from checkpoint."""
         if config.checkpoint_path is None and config.model_class is None:
             raise FileNotFoundError(
-                f"StormCast checkpoint not found. Provide a local checkpoint_path "
-                f"or download from HuggingFace: {config.hf_repo_id}\n"
+                f"StormCast checkpoint not found. Provide a local "
+                f"checkpoint_path or download from HuggingFace: "
+                f"{config.hf_repo_id}\n"
                 f"  pip install huggingface-hub\n"
                 f"  huggingface-cli download {config.hf_repo_id}"
             )
@@ -176,7 +272,15 @@ class StormCastAdapter(nn.Module):
                     f"Download from HuggingFace: {config.hf_repo_id}\n"
                     f"  huggingface-cli download {config.hf_repo_id}"
                 )
-            state_dict = torch.load(path, map_location="cpu", weights_only=True)
+
+            # Handle .mdlus (NVIDIA Modulus) format
+            if path.suffix == ".mdlus":
+                state_dict = _load_mdlus_state_dict(path)
+            else:
+                state_dict = torch.load(
+                    path, map_location="cpu", weights_only=True
+                )
+
             model.load_state_dict(state_dict)
             logger.info("Loaded StormCast checkpoint from %s", path)
 
@@ -203,19 +307,22 @@ class StormCastAdapter(nn.Module):
         """Report parameter count and memory footprint."""
         total_params = sum(p.numel() for p in self.backbone.parameters())
         trainable_params = sum(
-            p.numel() for p in self.backbone.parameters() if p.requires_grad
+            p.numel()
+            for p in self.backbone.parameters()
+            if p.requires_grad
         )
         # Include LoRA params if injected
         if self._lora_injected:
-            total_params += sum(p.numel() for p in self.parameters()) - sum(
-                p.numel() for p in self.backbone.parameters()
-            )
+            total_params += sum(
+                p.numel() for p in self.parameters()
+            ) - sum(p.numel() for p in self.backbone.parameters())
             trainable_params = sum(
                 p.numel() for p in self.parameters() if p.requires_grad
             )
 
         memory_bytes = sum(
-            p.numel() * p.element_size() for p in self.backbone.parameters()
+            p.numel() * p.element_size()
+            for p in self.backbone.parameters()
         )
         memory_mb = memory_bytes / (1024 * 1024)
 
@@ -229,14 +336,19 @@ class StormCastAdapter(nn.Module):
             ),
         }
 
-    def extract_surface_variables(self, full_output: torch.Tensor) -> torch.Tensor:
-        """Extract the 6 surface variables from StormCast's full output.
+    def extract_surface_variables(
+        self, full_output: torch.Tensor
+    ) -> torch.Tensor:
+        """Extract the 4 StormCast surface variables from full output.
+
+        StormCast provides 4 surface variables at indices [2, 0, 1, 3]:
+        T2M (idx 2), U10 (idx 0), V10 (idx 1), MSLP (idx 3).
 
         Args:
             full_output: StormCast output tensor of shape (B, 99, H, W).
 
         Returns:
-            Surface variables tensor of shape (B, C_WEATHER, H, W).
+            Surface variables tensor of shape (B, 4, H, W).
         """
         if full_output.shape[1] < max(self.surface_indices) + 1:
             raise ValueError(
@@ -246,8 +358,42 @@ class StormCastAdapter(nn.Module):
             )
         return full_output[:, self.surface_indices, :, :]
 
+    def extract(
+        self, nwp_data: dict[str, torch.Tensor]
+    ) -> torch.Tensor:
+        """Extract 6 weather variables (WeatherAdapter protocol).
+
+        Combines 4 StormCast surface variables with 2 HRRR passthrough
+        variables (PRATE, BLH) to produce the C_WEATHER=6 output.
+
+        Args:
+            nwp_data: Dictionary containing:
+                - 'stormcast_input': (B, 99, H, W) tensor for StormCast
+                - 'PRATE': (B, 1, H, W) precipitation rate from HRRR
+                - 'BLH': (B, 1, H, W) boundary layer height from HRRR
+
+        Returns:
+            Weather tensor of shape (B, C_WEATHER, H, W) = (B, 6, H, W).
+        """
+        # Run StormCast and extract 4 surface variables
+        stormcast_input = nwp_data["stormcast_input"]
+        stormcast_output = self.forward(
+            stormcast_input, extract_surface=True
+        )
+
+        # Get HRRR passthrough variables
+        prate = nwp_data["PRATE"]
+        blh = nwp_data["BLH"]
+
+        # Concatenate: 4 StormCast + 2 HRRR = 6 total
+        return torch.cat([stormcast_output, prate, blh], dim=1)
+
     def inject_lora(self) -> int:
-        """Inject LoRA adapters into backbone attention layers.
+        """Inject LoRA adapters into backbone layers.
+
+        Targets ``affine`` nn.Linear layers (55 in real StormCast).
+        Skips Conv2d layers (including fused QKV) since LoRA only
+        wraps nn.Linear modules.
 
         Returns:
             Number of LoRA adapters injected.
@@ -282,8 +428,10 @@ class StormCastAdapter(nn.Module):
 
         self._lora_injected = True
         logger.info(
-            "Injected %d LoRA adapters (rank=%d, alpha=%d)",
+            "Injected %d LoRA adapters (rank=%d, alpha=%d, "
+            "targets=%s)",
             injected, config.lora_rank, config.lora_alpha,
+            config.lora_target_modules,
         )
         return injected
 
@@ -295,14 +443,18 @@ class StormCastAdapter(nn.Module):
                 lora_state[name] = param.data.clone()
         return lora_state
 
-    def load_lora_state_dict(self, state_dict: dict[str, torch.Tensor]) -> None:
+    def load_lora_state_dict(
+        self, state_dict: dict[str, torch.Tensor]
+    ) -> None:
         """Load LoRA-only parameters onto the model."""
         current_state = self.state_dict()
         for key, value in state_dict.items():
             if key in current_state:
                 current_state[key] = value
             else:
-                logger.warning("LoRA key %s not found in model, skipping", key)
+                logger.warning(
+                    "LoRA key %s not found in model, skipping", key
+                )
         self.load_state_dict(current_state, strict=False)
 
     def forward(
@@ -314,13 +466,18 @@ class StormCastAdapter(nn.Module):
 
         Args:
             x: Input tensor of shape (B, 99, H, W).
-            extract_surface: If True, return only 6 surface variables.
+            extract_surface: If True, return 4 StormCast surface variables.
 
         Returns:
-            If extract_surface: tensor of shape (B, C_WEATHER, H, W).
+            If extract_surface: tensor of shape (B, 4, H, W).
             Otherwise: full output of shape (B, 99, H, W).
         """
-        with torch.no_grad() if not self._lora_injected else torch.enable_grad():
+        ctx = (
+            torch.enable_grad()
+            if self._lora_injected
+            else torch.no_grad()
+        )
+        with ctx:
             output = self.backbone(x)
 
         if extract_surface:
