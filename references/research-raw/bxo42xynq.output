@@ -1,0 +1,383 @@
+Running query 1: Swiss IMIS network SLF high elevation automatic weather stations data access API
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 2: SLF IMIS avalanche warning weather station network GeoJSON download historical data
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 3: NREL wind resource complex terrain meteorological tower dataset dense array
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 4: Wind farm meteorological mast data complex terrain research dataset public download
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 5: Reynolds Creek Experimental Watershed weather station network data access dense
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 6: Senator Beck Basin Study Area weather station network data access
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 7: Niwot Ridge LTER meteorological station network data climate
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 8: NEON National Ecological Observatory Network meteorological stations complex terrain
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 9: MeteoSwiss automatic weather station network data access API download
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 10: ZAMG Austria weather station network open data mountain
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 11: Meteo France SAFRAR SURFEX mountain reanalysis Alps snow weather data access
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 12: CROCUS SAFRAN reanalysis French Alps snow meteorological data download
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 13: ski resort weather station network open data snow depth temperature wind
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 14: dense mountain meteorological station network complex terrain machine learning dataset
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 15: Swiss MeteoSwiss IDAWEB historical weather data mountain stations
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 16: Austria mountain weather station network eHYD hydrographic data open
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 17: Colorado avalanche information center weather station network data
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 18: SNOTEL network USDA snow telemetry weather stations data access density
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 19: complex terrain wind field observation dataset training machine learning WindNinja,
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+Running query 20: alpine meteorological network dense stations 1km spacing terrain
+  File "<string>", line 1
+    import json,sys; print(json.dumps('query': sys.argv[1]))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps( 'type':'deep'))
+                                             ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('num_results':8))
+                                                   ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    import json,sys; print(json.dumps('contents':{'highlights':{'max_characters':3000}}))
+                                                ^
+SyntaxError: invalid syntax
+curl: option : blank argument where content is expected
+curl: try 'curl --help' or 'curl --manual' for more information
+DONE
+
+[exited with code 0]

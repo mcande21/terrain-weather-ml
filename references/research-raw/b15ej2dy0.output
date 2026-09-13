@@ -1,0 +1,614 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- /Users/cooperanderson/work/personal/code/colorado-avalanche-ml/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/cooperanderson/work/personal/code/colorado-avalanche-ml
+configfile: pyproject.toml
+plugins: timeout-2.4.0, asyncio-1.4.0, anyio-4.15.1, respx-0.23.1
+timeout: 120.0s
+timeout method: signal
+timeout func_only: False
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 62 items
+
+tests/test_snotel.py::test_discover_stores_stations FAILED               [  1%]
+tests/test_snotel.py::test_discover_parses_metadata FAILED               [  3%]
+tests/test_snotel.py::test_discover_updates_existing_stations FAILED     [  4%]
+tests/test_snotel.py::test_ingest_daily_stores_readings FAILED           [  6%]
+tests/test_snotel.py::test_ingest_daily_parses_values FAILED             [  8%]
+tests/test_snotel.py::test_ingest_daily_upserts_on_overlap FAILED        [  9%]
+tests/test_snotel.py::test_ingest_hourly_stores_readings FAILED          [ 11%]
+tests/test_snotel.py::test_ingest_flags_negative_swe FAILED              [ 12%]
+tests/test_snotel.py::test_ingest_flags_temp_out_of_range FAILED         [ 14%]
+tests/test_snotel.py::test_ingest_flags_discontinuity FAILED             [ 16%]
+tests/test_snotel.py::test_ingest_no_flag_on_clean_data PASSED           [ 17%]
+tests/test_snotel.py::test_ingest_sets_watermark FAILED                  [ 19%]
+tests/test_snotel.py::test_incremental_ingest_uses_watermark FAILED      [ 20%]
+tests/test_snotel.py::test_backfill_ignores_watermark FAILED             [ 22%]
+tests/test_snotel.py::test_retry_on_5xx FAILED                           [ 24%]
+tests/test_snotel.py::test_retry_exhaustion_raises PASSED                [ 25%]
+tests/test_snotel.py::test_rate_limit_429_retry FAILED                   [ 27%]
+tests/test_snotel.py::test_empty_response_returns_zero PASSED            [ 29%]
+tests/test_snotel.py::test_partial_data_stores_nulls FAILED              [ 30%]
+tests/test_snotel.py::test_ingest_daily_correct_station_id FAILED        [ 32%]
+tests/test_caic.py::TestCaicSchema::test_danger_ratings_table_exists PASSED [ 33%]
+tests/test_caic.py::TestCaicSchema::test_problem_types_table_exists PASSED [ 35%]
+tests/test_caic.py::TestCaicSchema::test_zone_station_mapping_table_exists PASSED [ 37%]
+tests/test_caic.py::TestDangerRatingIngestion::test_stores_danger_ratings PASSED [ 38%]
+tests/test_caic.py::TestDangerRatingIngestion::test_parses_elevation_bands PASSED [ 40%]
+tests/test_caic.py::TestDangerRatingIngestion::test_danger_levels_1_to_5 PASSED [ 41%]
+tests/test_caic.py::TestDangerRatingIngestion::test_source_tagged_caic PASSED [ 43%]
+tests/test_caic.py::TestDangerRatingIngestion::test_null_danger_for_missing_date PASSED [ 45%]
+tests/test_caic.py::TestProblemTypeIngestion::test_stores_problem_types PASSED [ 46%]
+tests/test_caic.py::TestProblemTypeIngestion::test_preserves_problem_ordering PASSED [ 48%]
+tests/test_caic.py::TestProblemTypeIngestion::test_normalizes_problem_type_names PASSED [ 50%]
+tests/test_caic.py::TestProblemTypeIngestion::test_stores_likelihood_and_size PASSED [ 51%]
+tests/test_caic.py::TestOapFallback::test_oap_danger_ingestion PASSED    [ 53%]
+tests/test_caic.py::TestOapFallback::test_oap_tagged_source PASSED       [ 54%]
+tests/test_caic.py::TestOapFallback::test_oap_problem_ingestion PASSED   [ 56%]
+tests/test_caic.py::TestOapFallback::test_caic_failure_falls_back_to_oap FAILED [ 58%]
+tests/test_caic.py::TestZoneStationMapping::test_maps_station_to_zone PASSED [ 59%]
+tests/test_caic.py::TestZoneStationMapping::test_station_in_multiple_zones PASSED [ 61%]
+tests/test_caic.py::TestDeduplication::test_danger_upsert_no_duplicates PASSED [ 62%]
+tests/test_caic.py::TestDeduplication::test_problem_upsert_no_duplicates PASSED [ 64%]
+tests/test_caic.py::TestClassDistribution::test_danger_distribution PASSED [ 66%]
+tests/test_caic.py::TestClassDistribution::test_problem_distribution PASSED [ 67%]
+tests/test_caic.py::TestClassDistribution::test_distribution_percentages PASSED [ 69%]
+tests/test_lstm_data.py::TestFeatureColumns::test_sequence_feature_count PASSED [ 70%]
+tests/test_lstm_data.py::TestDatasetLength::test_eligible_sample_count PASSED [ 72%]
+tests/test_lstm_data.py::TestDatasetLength::test_short_history_skipped PASSED [ 74%]
+tests/test_lstm_data.py::TestBranchShapes::test_branch1_shape PASSED     [ 75%]
+tests/test_lstm_data.py::TestBranchShapes::test_branch2_shape PASSED     [ 77%]
+tests/test_lstm_data.py::TestBranchShapes::test_branch3_shape PASSED     [ 79%]
+tests/test_lstm_data.py::TestBranch3::test_branch3_lengths PASSED        [ 80%]
+tests/test_lstm_data.py::TestBranch3::test_padding_is_zeros PASSED       [ 82%]
+tests/test_lstm_data.py::TestBranch3::test_3day_aggregation_values PASSED [ 83%]
+tests/test_lstm_data.py::TestBranch3::test_season_starts_oct1 PASSED     [ 85%]
+tests/test_lstm_data.py::TestNormalization::test_stats_computed PASSED   [ 87%]
+tests/test_lstm_data.py::TestNormalization::test_normalized_near_zero_mean PASSED [ 88%]
+tests/test_lstm_data.py::TestNormalization::test_no_data_leakage PASSED  [ 90%]
+tests/test_lstm_data.py::TestMissingData::test_nan_filled PASSED         [ 91%]
+tests/test_lstm_data.py::TestCollate::test_batch_shapes PASSED           [ 93%]
+tests/test_lstm_data.py::TestDataLoader::test_iteration PASSED           [ 95%]
+tests/test_lstm_data.py::TestDataLoader::test_create_dataloaders FAILED  [ 96%]
+tests/test_lstm_data.py::TestLabels::test_label_keys PASSED              [ 98%]
+tests/test_lstm_data.py::TestLabels::test_danger_binary_encoding PASSED  [100%]
+
+=================================== FAILURES ===================================
+________________________ test_discover_stores_stations _________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118b1b230>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x10b9e4330>
+snotel_stations_response = [{'stationTriplet': '335:CO:SNTL', 'name': 'Berthoud Summit', 'latitude': 39.7975, 'longitude': -105.7778, ...}, {'sta..., ...}, {'stationTriplet': '415:CO:SNTL', 'name': 'Cumbres Trestle', 'latitude': 36.9883, 'longitude': -106.4478, ...}]
+
+    @respx.mock
+    async def test_discover_stores_stations(client, snotel_db, snotel_stations_response):
+        respx.get(f"{AWDB_BASE}/stations").mock(
+            return_value=httpx.Response(200, json=snotel_stations_response)
+        )
+        count = await client.discover()
+>       assert count == 3
+E       assert 0 == 3
+
+tests/test_snotel.py:33: AssertionError
+________________________ test_discover_parses_metadata _________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118c8e0d0>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x113b06330>
+snotel_stations_response = [{'stationTriplet': '335:CO:SNTL', 'name': 'Berthoud Summit', 'latitude': 39.7975, 'longitude': -105.7778, ...}, {'sta..., ...}, {'stationTriplet': '415:CO:SNTL', 'name': 'Cumbres Trestle', 'latitude': 36.9883, 'longitude': -106.4478, ...}]
+
+    @respx.mock
+    async def test_discover_parses_metadata(client, snotel_db, snotel_stations_response):
+        respx.get(f"{AWDB_BASE}/stations").mock(
+            return_value=httpx.Response(200, json=snotel_stations_response)
+        )
+        await client.discover()
+        row = snotel_db.execute(
+            "SELECT station_id, name, latitude, longitude, elevation, huc "
+            "FROM stations WHERE station_id = '335:CO:SNTL'"
+        ).fetchone()
+>       assert row[0] == "335:CO:SNTL"
+               ^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_snotel.py:48: TypeError
+___________________ test_discover_updates_existing_stations ____________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118c8e350>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118cc2170>
+snotel_stations_response = [{'stationTriplet': '335:CO:SNTL', 'name': 'Berthoud Summit', 'latitude': 39.7975, 'longitude': -105.7778, ...}, {'sta..., ...}, {'stationTriplet': '415:CO:SNTL', 'name': 'Cumbres Trestle', 'latitude': 36.9883, 'longitude': -106.4478, ...}]
+
+    @respx.mock
+    async def test_discover_updates_existing_stations(client, snotel_db, snotel_stations_response):
+        route = respx.get(f"{AWDB_BASE}/stations")
+        route.mock(return_value=httpx.Response(200, json=snotel_stations_response))
+        await client.discover()
+    
+        updated = [dict(s) for s in snotel_stations_response]
+        updated[0]["name"] = "Berthoud Summit Updated"
+        route.mock(return_value=httpx.Response(200, json=updated))
+        await client.discover()
+    
+        row = snotel_db.execute(
+            "SELECT name FROM stations WHERE station_id = '335:CO:SNTL'"
+        ).fetchone()
+>       assert row[0] == "Berthoud Summit Updated"
+               ^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_snotel.py:70: TypeError
+______________________ test_ingest_daily_stores_readings _______________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118b9fbb0>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x113a1d330>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_daily_stores_readings(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+        count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+>       assert count == 3
+E       assert 0 == 3
+
+tests/test_snotel.py:87: AssertionError
+_______________________ test_ingest_daily_parses_values ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118cc83e0>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118d826b0>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_daily_parses_values(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+        await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+        row = snotel_db.execute(
+            "SELECT swe_inches, snow_depth_inches, air_temp_min_f, air_temp_max_f, "
+            "air_temp_mean_f, precip_increment_inches "
+            "FROM snotel_daily WHERE date = '2024-01-01'"
+        ).fetchone()
+>       assert abs(row[0] - 12.5) < 0.01
+                   ^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_snotel.py:108: TypeError
+_____________________ test_ingest_daily_upserts_on_overlap _____________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118cc6d50>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118d94bf0>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_daily_upserts_on_overlap(client, snotel_db, snotel_daily_response):
+        import copy
+        route = respx.get(f"{AWDB_BASE}/data")
+        route.mock(return_value=httpx.Response(200, json=snotel_daily_response))
+        await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+        updated = copy.deepcopy(snotel_daily_response)
+        updated[0]["values"][0]["swe"] = 99.9
+        route.mock(return_value=httpx.Response(200, json=updated))
+        await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+        rows = snotel_db.execute("SELECT * FROM snotel_daily").fetchall()
+>       assert len(rows) == 3
+E       assert 0 == 3
+E        +  where 0 = len([])
+
+tests/test_snotel.py:137: AssertionError
+______________________ test_ingest_hourly_stores_readings ______________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118d35480>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118db1eb0>
+snotel_hourly_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01 00:00', 'endDate': '2024-01-01 03:00', 'values': [{'dateTi... 38.2, 'airTemp': 12.0, ...}, {'dateTime': '2024-01-01 03:00', 'swe': 12.6, 'snowDepth': 38.3, 'airTemp': 11.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_hourly_stores_readings(client, snotel_db, snotel_hourly_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_hourly_response)
+        )
+        count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 1),
+            resolution="hourly",
+        )
+>       assert count == 4
+E       assert 0 == 4
+
+tests/test_snotel.py:158: AssertionError
+________________________ test_ingest_flags_negative_swe ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118d34160>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118dc76f0>
+
+    @respx.mock
+    async def test_ingest_flags_negative_swe(client, snotel_db):
+        bad_response = [{
+            "stationTriplet": "335:CO:SNTL",
+            "beginDate": "2024-01-01",
+            "endDate": "2024-01-01",
+            "values": [
+                {"date": "2024-01-01", "swe": -5.0, "snowDepth": 38.0,
+                 "airTempMin": 5.0, "airTempMax": 22.0, "airTempAvg": 13.5,
+                 "precipIncrement": 0.3},
+            ],
+        }]
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=bad_response)
+        )
+        await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 1),
+            resolution="daily",
+        )
+        row = snotel_db.execute(
+            "SELECT quality_flag FROM snotel_daily WHERE date = '2024-01-01'"
+        ).fetchone()
+>       assert row[0] is not None
+               ^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_snotel.py:190: TypeError
+_____________________ test_ingest_flags_temp_out_of_range ______________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118d02250>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118cdc8f0>
+
+    @respx.mock
+    async def test_ingest_flags_temp_out_of_range(client, snotel_db):
+        bad_response = [{
+            "stationTriplet": "335:CO:SNTL",
+            "beginDate": "2024-01-01",
+            "endDate": "2024-01-01",
+            "values": [
+                {"date": "2024-01-01", "swe": 12.0, "snowDepth": 38.0,
+                 "airTempMin": -70.0, "airTempMax": 22.0, "airTempAvg": -24.0,
+                 "precipIncrement": 0.3},
+            ],
+        }]
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=bad_response)
+        )
+        await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 1),
+            resolution="daily",
+        )
+        row = snotel_db.execute(
+            "SELECT quality_flag FROM snotel_daily WHERE date = '2024-01-01'"
+        ).fetchone()
+>       assert row[0] is not None
+               ^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_snotel.py:218: TypeError
+_______________________ test_ingest_flags_discontinuity ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118d03850>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118d9b6f0>
+
+    @respx.mock
+    async def test_ingest_flags_discontinuity(client, snotel_db):
+        disc_response = [{
+            "stationTriplet": "335:CO:SNTL",
+            "beginDate": "2024-01-01",
+            "endDate": "2024-01-02",
+            "values": [
+                {"date": "2024-01-01", "swe": 10.0, "snowDepth": 30.0,
+                 "airTempMin": 5.0, "airTempMax": 22.0, "airTempAvg": 13.5,
+                 "precipIncrement": 0.3},
+                {"date": "2024-01-02", "swe": 35.0, "snowDepth": 30.0,
+                 "airTempMin": 5.0, "airTempMax": 22.0, "airTempAvg": 13.5,
+                 "precipIncrement": 0.3},
+            ],
+        }]
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=disc_response)
+        )
+        await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 2),
+            resolution="daily",
+        )
+        row = snotel_db.execute(
+            "SELECT quality_flag FROM snotel_daily WHERE date = '2024-01-02'"
+        ).fetchone()
+>       assert row[0] is not None
+               ^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_snotel.py:249: TypeError
+__________________________ test_ingest_sets_watermark __________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118d455e0>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118cded70>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_sets_watermark(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+        await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+        wm = snotel_db.execute(
+            "SELECT last_timestamp FROM ingestion_watermarks "
+            "WHERE source = 'snotel' AND entity_id = '335:CO:SNTL' AND resolution = 'daily'"
+        ).fetchone()
+>       assert wm is not None
+E       assert None is not None
+
+tests/test_snotel.py:289: AssertionError
+____________________ test_incremental_ingest_uses_watermark ____________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118cb5630>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118d981b0>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_incremental_ingest_uses_watermark(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+        await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+    
+        new_response = [{
+            "stationTriplet": "335:CO:SNTL",
+            "beginDate": "2024-01-04",
+            "endDate": "2024-01-04",
+            "values": [
+                {"date": "2024-01-04", "swe": 14.0, "snowDepth": 42.0,
+                 "airTempMin": 0.0, "airTempMax": 20.0, "airTempAvg": 10.0,
+                 "precipIncrement": 0.2},
+            ],
+        }]
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=new_response)
+        )
+        count = await client.ingest_incremental(
+            station_id="335:CO:SNTL",
+            resolution="daily",
+        )
+>       assert count == 1
+E       assert 0 == 1
+
+tests/test_snotel.py:322: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  avalanche_ml.ingestion.snotel:snotel.py:316 No watermark for 335:CO:SNTL/daily, skipping incremental
+_______________________ test_backfill_ignores_watermark ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118d26c10>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x113680430>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_backfill_ignores_watermark(client, snotel_db, snotel_daily_response):
+        snotel_db.execute(
+            "INSERT INTO ingestion_watermarks VALUES "
+            "('snotel', '335:CO:SNTL', 'daily', '2024-01-10', CURRENT_TIMESTAMP)"
+        )
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+        count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+>       assert count == 3
+E       assert 0 == 3
+
+tests/test_snotel.py:342: AssertionError
+______________________________ test_retry_on_5xx _______________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118dd47a0>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118d6b1b0>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_retry_on_5xx(client, snotel_db, snotel_daily_response):
+        route = respx.get(f"{AWDB_BASE}/data")
+        route.side_effect = [
+            httpx.Response(503),
+            httpx.Response(503),
+            httpx.Response(200, json=snotel_daily_response),
+        ]
+        count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+>       assert count == 3
+E       assert 0 == 3
+
+tests/test_snotel.py:362: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  avalanche_ml.ingestion.snotel:snotel.py:44 Server error 503, retry 1/3 in 1.0s
+WARNING  avalanche_ml.ingestion.snotel:snotel.py:44 Server error 503, retry 2/3 in 2.0s
+__________________________ test_rate_limit_429_retry ___________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118bf6990>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118d5aaf0>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_rate_limit_429_retry(client, snotel_db, snotel_daily_response):
+        route = respx.get(f"{AWDB_BASE}/data")
+        route.side_effect = [
+            httpx.Response(429, headers={"Retry-After": "0"}),
+            httpx.Response(200, json=snotel_daily_response),
+        ]
+        count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+>       assert count == 3
+E       assert 0 == 3
+
+tests/test_snotel.py:393: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  avalanche_ml.ingestion.snotel:snotel.py:38 Rate limited, waiting 0s
+________________________ test_partial_data_stores_nulls ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118d4fd80>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118cd7e70>
+
+    @respx.mock
+    async def test_partial_data_stores_nulls(client, snotel_db):
+        partial_response = [{
+            "stationTriplet": "335:CO:SNTL",
+            "beginDate": "2024-01-01",
+            "endDate": "2024-01-01",
+            "values": [
+                {"date": "2024-01-01", "swe": 12.5, "snowDepth": None,
+                 "airTempMin": 5.0, "airTempMax": None, "airTempAvg": None,
+                 "precipIncrement": 0.3},
+            ],
+        }]
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=partial_response)
+        )
+        count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 1),
+            resolution="daily",
+        )
+>       assert count == 1
+E       assert 0 == 1
+
+tests/test_snotel.py:434: AssertionError
+_____________________ test_ingest_daily_correct_station_id _____________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x118cf9090>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x118d38ab0>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_daily_correct_station_id(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+        await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+        ids = snotel_db.execute(
+            "SELECT DISTINCT station_id FROM snotel_daily"
+        ).fetchall()
+>       assert len(ids) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_snotel.py:459: AssertionError
+_____________ TestOapFallback.test_caic_failure_falls_back_to_oap ______________
+
+self = <tests.test_caic.TestOapFallback object at 0x10b98a060>
+client = <avalanche_ml.ingestion.caic.CaicClient object at 0x118cb67b0>
+caic_db = <_duckdb.DuckDBPyConnection object at 0x118d5be30>
+oap_csv_content = 'date,zone_id,danger_above,danger_near,danger_below\n2018-01-10,BTAC,3,2,1\n2018-01-11,BTAC,4,3,2\n2018-01-10,VS,2,2,1\n'
+
+    @respx.mock
+    async def test_caic_failure_falls_back_to_oap(
+        self, client, caic_db, oap_csv_content
+    ):
+        respx.get(f"{CAIC_API_BASE}/products/all").mock(
+            return_value=httpx.Response(503)
+        )
+        respx.get(f"{OAP_BASE}/main/labels/danger_ratings.csv").mock(
+            return_value=httpx.Response(200, text=oap_csv_content)
+        )
+        count = await client.ingest_danger_ratings_with_fallback(
+            start_date=datetime.date(2018, 1, 10),
+            end_date=datetime.date(2018, 1, 11),
+        )
+>       assert count > 0
+E       assert 0 > 0
+
+tests/test_caic.py:347: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  avalanche_ml.ingestion.caic:caic.py:196 Chunk 2018-01-10 to 2018-01-11 failed: RESPX: <Request('GET', 'https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-01-10&date_end=2018-01-11')> not mocked!
+____________________ TestDataLoader.test_create_dataloaders ____________________
+
+self = <tests.test_lstm_data.TestDataLoader object at 0x118c8d090>
+tmp_path = PosixPath('/private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-48/test_create_dataloaders0')
+
+    def test_create_dataloaders(self, tmp_path):
+        from avalanche_ml.models.lstm_data import create_dataloaders
+    
+        db_path = str(tmp_path / "test.duckdb")
+        conn = duckdb.connect(db_path)
+        create_training_matrix_table(conn)
+        _insert_data(conn, "DL", datetime.date(2023, 6, 15), 16, seed=100)
+        _insert_data(conn, "DL", datetime.date(2023, 7, 1), 15, seed=101)
+        _insert_data(conn, "DL", datetime.date(2024, 7, 1), 15, seed=102)
+        conn.close()
+        train_ld, val_ld, test_ld = create_dataloaders(db_path, batch_size=4)
+        assert len(train_ld.dataset) > 0
+        assert len(val_ld.dataset) > 0
+>       assert len(test_ld.dataset) > 0
+E       assert 0 > 0
+E        +  where 0 = len(<avalanche_ml.models.lstm_data.AvalancheSequenceDataset object at 0x118bf7b90>)
+E        +    where <avalanche_ml.models.lstm_data.AvalancheSequenceDataset object at 0x118bf7b90> = <torch.utils.data.dataloader.DataLoader object at 0x118ccb230>.dataset
+
+tests/test_lstm_data.py:309: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_snotel.py::test_discover_stores_stations - assert 0 == 3
+FAILED tests/test_snotel.py::test_discover_parses_metadata - TypeError: 'None...
+FAILED tests/test_snotel.py::test_discover_updates_existing_stations - TypeEr...
+FAILED tests/test_snotel.py::test_ingest_daily_stores_readings - assert 0 == 3
+FAILED tests/test_snotel.py::test_ingest_daily_parses_values - TypeError: 'No...
+FAILED tests/test_snotel.py::test_ingest_daily_upserts_on_overlap - assert 0 ...
+FAILED tests/test_snotel.py::test_ingest_hourly_stores_readings - assert 0 == 4
+FAILED tests/test_snotel.py::test_ingest_flags_negative_swe - TypeError: 'Non...
+FAILED tests/test_snotel.py::test_ingest_flags_temp_out_of_range - TypeError:...
+FAILED tests/test_snotel.py::test_ingest_flags_discontinuity - TypeError: 'No...
+FAILED tests/test_snotel.py::test_ingest_sets_watermark - assert None is not ...
+FAILED tests/test_snotel.py::test_incremental_ingest_uses_watermark - assert ...
+FAILED tests/test_snotel.py::test_backfill_ignores_watermark - assert 0 == 3
+FAILED tests/test_snotel.py::test_retry_on_5xx - assert 0 == 3
+FAILED tests/test_snotel.py::test_rate_limit_429_retry - assert 0 == 3
+FAILED tests/test_snotel.py::test_partial_data_stores_nulls - assert 0 == 1
+FAILED tests/test_snotel.py::test_ingest_daily_correct_station_id - assert 0 ...
+FAILED tests/test_caic.py::TestOapFallback::test_caic_failure_falls_back_to_oap
+FAILED tests/test_lstm_data.py::TestDataLoader::test_create_dataloaders - ass...
+======================== 19 failed, 43 passed in 18.13s ========================

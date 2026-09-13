@@ -1,0 +1,16 @@
+rows: 455111
+                  column_name column_type null  key default extra
+0                  station_id     VARCHAR   NO  PRI    None  None
+1                        date        DATE   NO  PRI    None  None
+2          temp_gradient_days      DOUBLE  YES  NaN    None  None
+3          surface_hoar_index      DOUBLE  YES  NaN    None  None
+4           wind_slab_loading      DOUBLE  YES  NaN    None  None
+5          rain_on_snow_hours      DOUBLE  YES  NaN    None  None
+6         rain_on_snow_amount      DOUBLE  YES  NaN    None  None
+7          snow_depth_anomaly      DOUBLE  YES  NaN    None  None
+8           early_season_flag      DOUBLE  YES  NaN    None  None
+9          freeze_thaw_cycles      DOUBLE  YES  NaN    None  None
+10  temp_gradient_consec_days      DOUBLE  YES  NaN    None  None
+(0.0, 187.0, 24.739268002750975, 455111)
+
+[exited with code 0]

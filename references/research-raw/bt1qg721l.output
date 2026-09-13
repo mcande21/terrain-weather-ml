@@ -1,0 +1,14 @@
+Cloning into '/tmp/oap'...
+Updating files:  80% (1362/1682)Updating files:  81% (1363/1682)Updating files:  82% (1380/1682)Updating files:  83% (1397/1682)Updating files:  84% (1413/1682)Updating files:  85% (1430/1682)Updating files:  86% (1447/1682)Updating files:  87% (1464/1682)Updating files:  88% (1481/1682)Updating files:  89% (1497/1682)Updating files:  90% (1514/1682)Updating files:  91% (1531/1682)Updating files:  92% (1548/1682)Updating files:  93% (1565/1682)Updating files:  94% (1582/1682)Updating files:  95% (1598/1682)Updating files:  96% (1615/1682)Updating files:  97% (1632/1682)Updating files:  98% (1649/1682)Updating files:  99% (1666/1682)Updating files: 100% (1682/1682)Updating files: 100% (1682/1682), done.
+Done
+/tmp/oap/TestData/CleanedForecastsNWAC_CAIC_UAC_CAC.V1.2013-2021.csv
+/tmp/oap/TestData/4.MLData/y_test_batch_1_unit_test.parquet
+/tmp/oap/TestData/4.MLData/FeatureLabels_unit_test.csv
+/tmp/oap/TestData/4.MLData/y_train_batch_0_unit_test.parquet
+/tmp/oap/TestData/3.GFSFiltered1xInterpolationZarr3H/lat_lon_union.csv
+/tmp/oap/GetTrainingData/GetData/CASample.json
+/tmp/oap/GetTrainingData/GetData/NWACsampleforecast.json
+/tmp/oap/Scratch/Notebooks/optuna_trials.json
+/tmp/oap/WebApp/OpenAvalancheProjectWebApp/Connected Services/oapstoragedevelopAzureStorage/ConnectedService.json
+
+[exited with code 0]

@@ -1,0 +1,488 @@
+
+====================================================================================================
+PINNs for atmospheric science/meteorology (q1)
+====================================================================================================
+
+--- Physics-informed neural networks for high-resolution weather reconstruction from sparse weather stations
+https://pmc.ncbi.nlm.nih.gov/articles/PMC11308984/
+  > In this article, we foster the use of physics-informed neural networks (PINNs), a type of machine learning (ML) architecture which embeds mathematically accurate physics models, to generate high-quality weather information subject to the regularization provided by the Navier-Stokes equations.
+...
+The application of PINNs is oriented to the reconstruction of dense and precise wind and pressure fields in areas where only a few local measurements provided by weather stations are available. Our model does not only disclose and regularize such data, which are potentially corrupted by noise, but is 
+
+--- Envisioning the Role of Physics-Informed Neural Networks in Atmospheric Science: Advancements, Challenges, and Future Prospects
+https://doi.org/10.5194/egusphere-egu25-243
+  > # Envisioning the Role of Physics-Informed Neural Networks in Atmospheric Science: Advancements, Challenges, and Future Prospects
+
+Published: 2025-03-14. 1 citation.
+
+## Abstract
+
+Since the inception of physics-informed neural networks (PINNs) by Raissi et al. in 2019, it has been seen as a promising approach to outperform conventional algorithms in terms of computational efficiency, reduced costs, and improved prediction accuracy, especially in small data regimes.PINNs incorporate known physical governing equations in the form of partial differential equations (PDEs) or ordinary differential 
+
+--- A Survey on Physics-Informed Machine Learning for Weather Prediction: Challenges and Opportunities - ADS
+https://ui.adsabs.harvard.edu/abs/2023AMS...10320317B/abstract
+  > In recent years, machine learning (ML) and deep learning (DL) models have shown remarkable results in domains like computer-vision, speech-recognition, natural language processing, autonomous driving, etc. However, due to the black-box nature of such models, they have seen minimum success in the scientific domains as most ML techniques are unable to extract interpretable information and knowledge from the data. Poor generalization performance due to extrapolation or observational biases may lead to physically inconsistent or implausible predictions by the purely data-driven models [1, 2]. This
+
+--- Physics-informed machine learning: case studies for weather and climate modelling | Philosophical Transactions of the Royal Society A | The Royal Society
+https://royalsocietypublishing.org/rsta/article/379/2194/20200093/41210/Physics-informed-machine-learning-case-studies-for
+  > Machine learning (ML) provides novel and powerful ways of accurately and efficiently recognizing complex patterns, emulating nonlinear dynamics, and predicting the spatio-temporal evolution of weather and climate processes. Off-the-shelf ML models, however, do not necessarily obey the fundamental governing laws of physical systems, nor do they generalize well to scenarios on which they have not been trained. We survey systematic approaches to incorporating physics and domain knowledge into ML models and distill these approaches into broad categories. Through 10 case studies, we show how these 
+
+--- Physics-Guided Learning of Meteorological Dynamics for Weather Downscaling and Forecasting | Proceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2
+https://dl.acm.org/doi/10.1145/3711896.3737081
+  > Weather forecasting is essential but remains computationally intensive and physically incomplete in traditional numerical weather prediction (NWP) methods. Deep learning (DL) models offer efficiency and accuracy but often ignore physical laws, limiting interpretability and generalization. We propose PhyDL-NWP, a physics-guided deep learning framework that integrates physical equations with latent force parameterization into data-driven models. It predicts weather variables from arbitrary spatiotemporal coordinates, computes physical terms via automatic differentiation, and uses a physics-infor
+
+--- Physics-Guided Learning of Meteorological Dynamics for Weather Downscaling and Forecasting
+https://arxiv.org/html/2505.14555
+  > Weather forecasting is essential but remains computationally intensive and physically incomplete in traditional numerical weather prediction (NWP) methods. Deep learning (DL) models offer efficiency and accuracy but often ignore physical laws, limiting interpretability and generalization. We propose PhyDL-NWP, a physics-guided deep learning framework that integrates physical equations with latent force parameterization into data-driven models. It predicts weather variables from arbitrary spatiotemporal coordinates, computes physical terms via automatic differentiation, and uses a physics-infor
+
+--- Realistic tropical cyclone wind and pressure fields can be reconstructed from sparse data using deep learning
+https://doi.org/10.1038/s43247-023-01144-2
+  > Tropical cyclones are responsible for large-scale loss of life and property1–4, motivating accurate risk assessment and forecasting. These objectives require accurate reconstructions of storms’ wind and pressure fields which assimilate real-time observations5–9, but current methods used for these reconstructions remain computationally expensive and limited10. Here, we show that a physics-informed neural network11,12 can be a promising and compu tationally efficient algorithm for tropical cyclone data assimilation. Using synthetic training data sparsely sampled from hurricanes simulated in a fo
+
+--- Physics-Informed Neural Networks for Hurricane Reconstruction and Data Assimilation
+https://doi.org/10.21203/rs.3.rs-2706220/v1
+  > formed Neural Networks
+...
+Data Assimilation
+...
+7 Tropical cyclones (TCs) are responsible for large-scale loss of life and property, and billions of dollars worth of damage annually 1–4 8 . Forecasting is typically accomplished through the use of dynamical models which directly integrate the governing equations of motion 2 9 . These 10 forecasts, and especially intensity forecasts, rely on accurate initial conditions obtained by as similating real-time observational data 5–9 11 . However, current methods used to generate these 12 initial conditions are computationally expensive and limited, a
+
+--- Enhancing Sustainable Disaster Resilience: A Physics-Informed Spatial Attention Network for Wind Gust Forecast Correction at Sparse Stations
+https://doi.org/10.3390/su18042000
+  > Wind gusts pose an increasing threat to sustainable development, damaging resilient infrastructure (SDG 9), disrupting clean energy systems (SDG 7), and endangering community safety (SDG 11). However, the reliability of early warning systems remains limited by systematic biases in Numerical Weather Prediction (NWP) models and insufficient uncertainty quantification, particularly in regions with sparse monitoring networks. To address these challenges in sustainable disaster risk reduction, this study proposes a physics-informed deep learning framework-the Physics-Informed Spatial Attention Netw
+
+--- Review of Physics-Informed Neural Networks: Challenges in Loss Function Design and Geometric Integration
+https://doi.org/10.3390/math13203289
+  > Physics-Informed Neural Networks (PINNs) represent a transformative approach to solving partial differential equation (PDE)-based boundary value problems by embedding physical laws into the learning process, addressing challenges such as non-physical solutions and data scarcity, which are inherent in traditional neural networks. This review analyzes critical challenges in PINN development, focusing on loss function design, geometric information integration, and their application in engineering modeling. We explore advanced strategies for constructing loss functions-including adaptive weighting
+
+====================================================================================================
+Conservation-law-constrained weather models (q2)
+====================================================================================================
+
+--- Improving AI Weather Prediction Models Using Global Mass and Energy Conservation Schemes
+https://doi.org/10.1029/2025ms005138
+  > # Improving AI Weather Prediction Models Using Global Mass and Energy Conservation Schemes
+...
+Abstract Artificial Intelligence (AI) weather prediction (AIWP) models are powerful tools for medium‐range forecasts but often lack physical consistency, leading to outputs that violate conservation laws. This study introduces a set of novel physics‐based schemes designed to enforce the conservation of global dry air mass, moisture budget, and total atmospheric energy in AIWP models during both training and inference. The schemes are highly modular, allowing for seamless integration into a wide range
+
+--- Physics-Guided Learning of Meteorological Dynamics for Weather Downscaling and Forecasting
+https://arxiv.org/html/2505.14555
+  > Physics-Informed Neural Networks
+...
+Raissi et al., 2019) have gained
+...
+numerical simulations, offering innovative approaches to weather prediction. However, weather prediction is inherently
+...
+involving numerous factors and processes
+...
+are influenced by local variations, boundary condition changes, small-
+...
+microclimates, and external forces.
+...
+of these critical factors, which significantly affect first-principle equations, are often missing from existing datasets due to challenges in measurement and quantification. For
+...
+, the PDE governing
+...
+evolution (see Table 6) includes
+...
+
+--- ThoR: A Motion-Dependent Physics-Informed Deep Learning Framework with Constraint-Centric Theory of Functional Connections for Rainfall Nowcasting
+https://doi.org/10.1038/s41598-025-26126-6
+  > are as follows: • We extend the Theory of Functional Connections (TFC) by incorporating the advection-diffusion equation and the associated physical constraints of the motion field directly into the optimization objectives of each component within our framework. This formulation, referred to as Soft TFC with constraint-centric design, enhances the interpretability of the model and improves
+...
+Parametric differential equations (DEs) are essential for modeling dynamical systems in fields such as fluid mechanics, meteorology, and finance 34 . In precipitation nowcasting, deterministic models dis
+
+--- [2002.08525] Towards Physically-consistent, Data-driven Models of Convection
+https://ar5iv.labs.arxiv.org/html/2002.08525
+  > to within machine
+...
+guarantee generalizability
+...
+physically rescale
+...
+improve the ability
+...
+generalize to unseen climates
+...
+resolve scales of $\mathrm{O}\left(1\mathrm{km}\right)$ , greatly reducing these
+...
+However, their increased computational cost
+...
+Machine-learning
+...
+this context, when trained on high-resolution simulations to replace semi-empirical convective parametrizations in low-resolution models, hence bridging the $1-100$ km scales at reduced computational cost [4, 5, 6]. In particular, neural networks
+...
+) are scalable and powerful non-linear regression tools that 
+
+--- The Deep Wind Method: Physics-Informed Wind Field Reconstruction with Mass Consistency
+https://wes.copernicus.org/preprints/wes-2025-160/wes-2025-160.pdf
+  > Abstract. We present the Deep Wind methodology, a physics-informed neural network (PINN) formulation for reconstruct ing three-dimensional wind fields from incomplete and noisy data. The approach embeds mass conservation and boundary conditions directly into the loss function, enabling physically consistent and stable reconstructions without mesh-based dis cretization. A series of synthetic benchmarks and real observations from Super Typhoon Kong-Rey (2024) demonstrate the 5 robustness of the method compared to classical variational approaches. We show that Deep Wind consistently maintains sta
+
+--- Hard-Constrained Deep Learning for Climate Downscaling
+https://www.jmlr.org/papers/volume24/23-0158/23-0158.pdf
+  > The availability of reliable, high-resolution climate and weather data is important to inform long-term decisions on climate adaptation and mitigation and to guide rapid responses to extreme events. Forecasting models are limited by computational costs and, therefore, often generate coarse-resolution predictions. Statistical downscaling, including super resolution methods from deep learning, can provide an efficient method of upsampling low-resolution data. However, despite achieving visually compelling results in some cases, such models frequently violate conservation laws when predicting phy
+
+--- Imposing the Fundamental Dynamical Constraint of Hydrostatic Balance to Improve Global ML Weather Prediction
+https://arxiv.org/html/2506.08285
+  > Forecasting weather accurately and efficiently is a critical capability in our ability to adapt to climate change. Data driven approaches to this problem have enjoyed much success recently providing forecasts with accuracy comparable to physics based numerical prediction models but at significantly reduced computational expense. However, these models typically do not incorporate any physics priors. In this work, we demonstrate improved skill of data driven weather prediction approaches by incorporating physical constraints, specifically in the context of the DLWP model (karlbauer_advancing_202
+
+--- [1906.06622] Achieving Conservation of Energy in Neural Network Emulators for Climate Modeling
+https://ar5iv.labs.arxiv.org/html/1906.06622
+  > Artificial neural-networks have the potential to emulate cloud processes with higher accuracy than the semi-empirical emulators currently used in climate models. However, neural-network models do not intrinsically conserve energy and mass, which is an obstacle to using them for long-term climate predictions. Here, we propose two methods to enforce linear conservation laws in neural-network emulators of physical models: Constraining (1) the loss function or (2) the architecture of the network itself. Applied to the emulation of explicitly-resolved cloud processes in a prototype multi-scale clim
+
+--- Hard-Constrained Deep Learning for Climate Downscaling
+https://www.jmlr.org/papers/v24/23-0158.html
+  > Hard-Constrained Deep Learning for Climate Downscaling
+
+## Hard-Constrained Deep Learning for Climate Downscaling
+
+Paula Harder, Alex Hernandez-Garcia, Venkatesh Ramesh, Qidong Yang, Prasanna Sattegeri, Daniela Szwarcman, Campbell Watson, David Rolnick; 24(365):1−40, 2023.
+
+### Abstract
+
+The availability of reliable, high-resolution climate and weather data is important to inform long-term decisions on climate adaptation and mitigation and to guide rapid responses to extreme events. Forecasting models are limited by computational costs and, therefore, often generate coarse-resolution predictio
+
+--- CondensNet: Enabling stable long-term climate simulations via hybrid deep learning models with adaptive physical constraints
+https://arxiv.org/html/2502.13185v2
+  > In this study, we show that the regulation of water vapor saturation is critical to obtain long-term stability in hybrid DL climate models, and to avoid oversaturation that in turn leads the simulations to fail. To address this problem, we propose a new neural network architecture, depicted in Figure 1, constituted of two main components: 1) a basic model (BasicNet), learning the cloud representation, and 2) a condensation correction network (ConCorrNet), learning the condensation process. We name this new neural network architecture, composed of the BasicNet and the ConCorrNet, CondensNet, to
+
+====================================================================================================
+Neural operators (FNO/DeepONet) for terrain-scale weather (q3)
+====================================================================================================
+
+--- [2111.05512] A comprehensive and fair comparison of two neural operators (with practical extensions) based on FAIR data
+https://ar5iv.labs.arxiv.org/html/2111.05512
+  > Neural operators can learn nonlinear mappings between function spaces and offer a new simulation paradigm for real-time prediction of complex dynamics for realistic diverse applications as well as for system identification in science and engineering. Herein, we investigate the performance of two neural operators, which have shown promising results so far, and we develop new practical extensions that will make them more accurate and robust and importantly more suitable for industrial-complexity applications. The first neural operator, DeepONet, was published in 2019 [1], and its original archit
+
+--- A comprehensive and fair comparison of two neural operators (with practical extensions) based on $\mathrm{FAIR}$ data (Journal Article) | OSTI.GOV
+https://www.osti.gov/biblio/1976975
+  > Neural operators can learn nonlinear mappings between function spaces and offer a new simulation paradigm for real-time prediction of complex dynamics for realistic diverse applications as well as for system identification in science and engineering. Herein, we investigate the performance of two neural operators, which have shown promising results so far, and we develop new practical extensions that will make them more accurate and robust and importantly more suitable for industrial-complexity applications. The first neural operator, DeepONet, was published in 2019 (Lu et al., 2019), and its o
+
+--- [2208.05419] FourCastNet: Accelerating Global High-Resolution Weather Forecasting using Adaptive Fourier Neural Operators
+https://ar5iv.labs.arxiv.org/html/2208.05419
+  > Neural operators learn mappings between infinite dimensional spaces and have demonstrated impressive results in creating surrogate models of classical problems in fluid dynamics governed by the Navier-Stokes equations [9]. The Fourier Neural Operator (FNO) is a class of integral operators that efficiently implements global convolution via Fast Fourier Transform (FFT) which has been used very successfully to solve nonlinear and chaotic PDEs [10]. Transformer models, the state-of-the-art in DL, are proving to be tremendously successful across diverse applications [11, 12]. Unhindered by prescrib
+
+--- Full article: Comparing and Contrasting Deep Learning Weather Prediction Backbones on Navier-Stokes and Atmospheric Dynamics
+https://www.tandfonline.com/doi/full/10.1080/26941899.2026.2638055
+  > WP) architectures
+...
+backbones,
+...
+and data choices
+...
+methods and architectures
+...
+Lastly, we benchmark architectures based on FNO (Li et al. Citation2020b). FNO is a type of operator learning method (Li et al. Citation2020a; Lu et al. Citation2021; Gupta et al. Citation2021) that learns a function-to-function mapping by combining pointwise operations in physical space and in the wavenumber/frequency domain. In contrast to the aforementioned architectures, FNO is a discretization invariant operator method. While FNO can be applied to higher resolutions than it was trained on, it may not b
+
+--- (PDF) Deep Learning for Atmospheric Modeling: A Proof of Concept Using a Fourier Neural Operator on WRF Data to Accelerate Transient Wind Forecasting at Multiple Altitudes
+https://www.researchgate.net/publication/390347332_Deep_Learning_for_Atmospheric_Modeling_A_Proof_of_Concept_Using_a_Fourier_Neural_Operator_on_WRF_Data_to_Accelerate_Transient_Wind_Forecasting_at_Multiple_Altitudes
+  > This study addresses the problem of the computational cost of transient CFD simulations, which rely on iterative time-step calculations, by employing deep learning to generate optimized initial conditions for accelerating the Weather Research and Forecasting (WRF) model. To this end, we forecasted wind speed for short time frames over the Houston region using the WRF model data from 2019 to 2022, training the models to predict the X-component (U) wind speed. The so-called global FNO model, trained across all atmospheric heights, was first tested, achieving competitive results. A more refined a
+
+--- Deep Learning for Atmospheric Modeling: A Proof of Concept Using a Fourier Neural Operator on WRF Data to Accelerate Transient Wind Forecasting at Multiple Altitudes
+https://www.mdpi.com/2073-4433/16/4/394
+  > This study addresses the problem of the computational cost of transient CFD simulations, which rely on iterative time-step calculations, by employing deep learning to generate optimized initial conditions for accelerating the Weather Research and Forecasting (WRF) model. To this end, we forecasted wind speed for short time frames over the Houston region using the WRF model data from 2019 to 2022, training the models to predict the X-component (U) wind speed. The so-called global FNO model, trained across all atmospheric heights, was first tested, achieving competitive results. A more refined a
+
+--- FANO: Fourier Advection Neural Operator for Weather Prediction
+      -  Harbin Institute of Technology
+https://scholar.hit.edu.cn/en/publications/fano-fourier-advection-neural-operator-for-weather-prediction/
+  > FANO: Fourier Advection Neural Operator for Weather Prediction - Harbin Institute of Technology
+
+# FANO: Fourier Advection Neural Operator for Weather Prediction
+
+*Corresponding author for this work
+
+Research output: Contribution to journal › Article › peer-review
+
+## Abstract
+
+Weather prediction is essential for various societal applications, including disaster management and agricultural planning. Traditional numerical weather prediction (NWP) models, which solve partial differential equations (PDEs) governing atmospheric motion, have achieved remarkable accuracy. However, their effectivenes
+
+--- Transformer-based neural operators for 3D wind field prediction over complex mountainous terrain | Communications Physics
+https://www.nature.com/articles/s42005-026-02770-w
+  > Transformer-based neural operators for 3D wind field prediction over complex mountainous terrain | Communications Physics
+...
+# Transformer-based neural operators for 3D wind field prediction over complex mountainous terrain
+...
+Accurate prediction of three-dimensional wind fields over complex mountainous terrain is essential for renewable energy deployment and regional weather modeling. Existing computational fluid dynamics simulations are accurate but expensive and require laborious mesh generation, while many deep learning methods struggle to capture sharp local wind variations induced by c
+
+--- [2605.25679] Transformer-based Neural Operators for 3D Wind Field Prediction over Complex Mountainous Terrain
+https://ar5iv.labs.arxiv.org/html/2605.25679
+  > In recent years, deep learning (DL) has become a promising paradigm for the rapid prediction of wind resources, and it has achieved strong performance in global weather forecasting at spatial resolutions of about $0.25\degree$ (e.g., NVIDIA Earth-2 [39], Pangu-Weather [7], FuXi [11]). However, such coarse resolutions are insufficient for microscale, three-dimensional wind–field prediction over complex terrain. Operator learning offers a complementary route. Unlike conventional numerical solvers that iteratively integrate the Navier–Stokes equations on a fixed mesh, neural operators approximate
+
+--- On the effectiveness of neural operators at zero-shot weather downscaling | Environmental Data Science | Cambridge Core
+https://www.cambridge.org/core/journals/environmental-data-science/article/on-the-effectiveness-of-neural-operators-at-zeroshot-weather-downscaling/70E4F46811337C0DF5BC99AEEB696544
+  > We design challenging experiments to investigate whether neural-operator-based models have an enhanced ability to perform zero-shot weather downscaling. We adapt and expand the learning framework for applying neural operators to this setting as proposed in (Yang et al., Reference Yang, Hernandez-Garcia, Harder, Ramesh, Sattegeri, Szwarcman, Watson and Rolnick 2023). One of the key difficulties of zero-shot weather downscaling is generalizing to an upsampling factor where the data at the finest spatial scales contains physical phenomena unseen at the highest resolutions seen during training. Fi
+
+====================================================================================================
+Differentiable physics simulators for atmospheric flow in complex terrain (q4)
+====================================================================================================
+
+--- Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications
+https://www.nature.com/articles/s41467-026-70562-5
+  > Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coarse-resolution atmospheric inputs and high-resolution terrain information. The model is trained on a
+
+--- Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications | Springer Nature Link
+https://link.springer.com/article/10.1038/s41467-026-70562-5
+  > Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coarse-resolution atmospheric inputs and high-resolution terrain information. The model is trained on a
+
+--- GMD - JCM v1.1: a differentiable, intermediate-complexity atmospheric model
+https://gmd.copernicus.org/articles/19/6451/2026/
+  > In this paper we present version 1.1 of the JAX Circulation Model (JCM). JCM is a differentiable atmospheric model that is built in Python with the JAX numerical library and is released under a free and open-source software (FOSS) license. Earth system modeling is rapidly evolving, particularly through hybrid approaches that combine known dynamics with data-driven components. However, the training and validation of hybrid methods in traditional models remain difficult due to the absence of gradients and the complexity of legacy code. Differentiable models written in modern frameworks offer a p
+
+--- Differentiable Programming for Atmospheric Models: Experiences and Perspectives
+https://doi.org/10.5194/egusphere-egu25-12601
+  > # Differentiable Programming for Atmospheric Models: Experiences and Perspectives
+
+Published: 2025-03-15. 0 citations.
+
+## Abstract
+
+Differentiable programming enables automatic differentiation (AD) tools to compute gradients through code without manually defining derivatives. AD tools can differentiate through entire software stacks, composing many functions and algorithms via the chain rule. With models that incorporate differentiable programming long-standing challenges like systematic calibration, comprehensive sensitivity analyses, and uncertainty quantification can be tackled, and machin
+
+--- Differentiable Atmospheric Modelling with SpeedyWeather.jl
+https://doi.org/10.5194/egusphere-egu26-1927
+  > # Differentiable Atmospheric Modelling with SpeedyWeather.jl
+
+Published: 2026-03-13. 0 citations.
+
+## Abstract
+
+The current generation of hybrid machine learning and physics-informed machine learning is often limited by the missing availability of comprehensive differentiable models: either strongly simplified models have to be used or machine learning (ML) can’t be integrated natively into process-based models and must be trained separately. Here, we present the ongoing development of SpeedyWeather.jl: A general circulation model that’s differentiable, GPU-capable and ready for ML simulations
+
+--- [2311.07222] Neural General Circulation Models
+https://ar5iv.labs.arxiv.org/html/2311.07222
+  > General circulation models (GCMs) are the foundation of weather and climate prediction. GCMs are physics-based simulators which combine a numerical solver for large-scale dynamics with tuned representations for small-scale processes such as cloud formation. Recently, machine learning (ML) models trained on reanalysis data achieved comparable or better skill than GCMs for deterministic weather forecasting. However, these models have not demonstrated improved ensemble forecasts, or shown sufficient stability for long-term weather and climate simulations. Here we present the first GCM that combin
+
+--- 
+https://arxiv.org/pdf/2603.25635
+  > However, in the context of urban air flow, deep learning models struggle to adapt to the high
+...
+Anchored Branched Steady-state WInd Flow Transformer (AB-SWIFT), a transformer-based
+...
+model with an internal branched structure uniquely designed for atmospheric flow modeling. We
+...
+a specially designed database of
+...
+urban geometries and with a mixture of unstable, neutral, and stable
+...
+stratifications.
+...
+Machine learning has recently gained attraction as a viable option to develop fast surrogates (Karniadakis et al.,
+...
+2021). However, local air flows present several complex challenge
+
+--- Learning vertical coordinates via automatic differentiation of a dynamical core
+https://arxiv.org/html/2512.17877v1
+  > Terrain-following coordinates in atmospheric models often imprint their grid structure onto the solution, particularly over steep topography, where distorted coordinate layers can generate spurious horizontal and vertical motion. Standard formulations, such as hybrid or SLEVE coordinates, mitigate these errors by using analytic decay functions controlled by heuristic scale parameters that are typically tuned by hand and fixed a priori. In this work, we propose a framework to define a parametric vertical coordinate system as a learnable component within a differentiable dynamical core. We devel
+
+--- Acoustic wave in shear layer · Breeze
+https://numericalearth.github.io/BreezeDocumentation/stable/literated/acoustic_wave/
+  > Acoustic refraction in wind shear
+...
+same compressible forward
+...
+Second, we use this setup as a minimal introduction to differentiable atmospheric simulation in Breeze. After running the forward problem, we take a gradient through the entire compressible time-stepping — asking which parts of the wind profile control how much acoustic energy ends up trapped near the surface? — using Enzyme.jl for reverse-mode automatic differentiation and Reactant.jl to compile the model down to XLA. The result is a 2D sensitivity field obtained in a single backward pass; the same answer via finite differenc
+
+--- JCM v1.1: a differentiable, intermediate-complexity atmospheric model
+https://doi.org/10.5194/gmd-19-6451-2026
+  > In this paper we present version 1.1 of the JAX Circulation Model (JCM). JCM is a differentiable atmospheric model that is built in Python with the JAX numerical library and is released under a free and open-source software (FOSS) license. Earth system modeling is rapidly evolving, particularly through hybrid approaches that combine known dynamics with data-driven components. However, the training and validation of hybrid methods in traditional models remain difficult due to the absence of gradients and the complexity of legacy code. Differentiable models written in modern frameworks offer a p
+
+====================================================================================================
+Hybrid physics-ML models for mountain weather (q5)
+====================================================================================================
+
+--- A hybrid physics-machine learning model for orographic precipitation forecasting
+https://repository.library.noaa.gov/view/noaa/61903/noaa_61903_DS1.pdf
+  > ## A hybrid physics-machine learning model for orographic
+...
+Model resolution is important for simulating precipitation over complex terrain, such as that over the western United States (Hsieh et al., 2024). It requires kilometer-scale horizontal model grid spacing to resolve the small-scale topographic features and their interaction with cloud and pre cipitation processes. The eXperimental System for High-resolution modeling for Earth-to-Local Domains (X-SHiELD; Harris et al. (2020); Cheng et al. (2022); Harris et al. (2023)) developed at the Geophysical Fluid Dynamics Laboratory (GFDL) is o
+
+--- Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications | Springer Nature Link
+https://link.springer.com/article/10.1038/s41467-026-70562-5
+  > Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coarse-resolution atmospheric inputs and high-resolution terrain information. The model is trained on a
+
+--- High-resolution climate prediction in mountainous terrain using a ConvLSTM-XGBoost hybrid model with dynamic bayesian weighting | Scientific Reports
+https://www.nature.com/articles/s41598-025-20882-1
+  > To address the challenge where the interplay between spatiotemporal dynamics and topographic effects complicates climate modeling over complex terrain, we propose a hybrid ConvLSTM-XGBoost model incorporating dynamic Bayesian weighting, and demonstrate its capacity for high-precision climate prediction through a case study in the Hongyuan Mountain region of Yunnan, China (22.5°–23.5°N, 102.5°–103.5°E); specifically, the ConvLSTM network captures spatiotemporal evolution patterns (e.g., propagation of the southwest monsoon front) from the 0.25° resolution CN05.1 climate dataset, while XGBoost q
+
+--- Physics-Guided Learning of Meteorological Dynamics for Weather Downscaling and Forecasting
+https://arxiv.org/html/2505.14555
+  > Weather forecasting is essential but remains computationally intensive and physically incomplete in traditional numerical weather prediction (NWP) methods. Deep learning (DL) models offer efficiency and accuracy but often ignore physical laws, limiting interpretability and generalization. We propose PhyDL-NWP, a physics-guided deep learning framework that integrates physical equations with latent force parameterization into data-driven models. It predicts weather variables from arbitrary spatiotemporal coordinates, computes physical terms via automatic differentiation, and uses a physics-infor
+
+--- Physics-Guided Learning of Meteorological Dynamics for Weather Downscaling and Forecasting | Proceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2
+https://dl.acm.org/doi/10.1145/3711896.3737081
+  > Weather forecasting is essential but remains computationally intensive and physically incomplete in traditional numerical weather prediction (NWP) methods. Deep learning (DL) models offer efficiency and accuracy but often ignore physical laws, limiting interpretability and generalization. We propose PhyDL-NWP, a physics-guided deep learning framework that integrates physical equations with latent force parameterization into data-driven models. It predicts weather variables from arbitrary spatiotemporal coordinates, computes physical terms via automatic differentiation, and uses a physics-infor
+
+--- Physics-informed machine learning: case studies for weather and climate modelling | Philosophical Transactions of the Royal Society A | The Royal Society
+https://royalsocietypublishing.org/rsta/article/379/2194/20200093/41210/Physics-informed-machine-learning-case-studies-for
+  > Machine learning (ML) provides novel and powerful ways of accurately and efficiently recognizing complex patterns, emulating nonlinear dynamics, and predicting the spatio-temporal evolution of weather and climate processes. Off-the-shelf ML models, however, do not necessarily obey the fundamental governing laws of physical systems, nor do they generalize well to scenarios on which they have not been trained. We survey systematic approaches to incorporating physics and domain knowledge into ML models and distill these approaches into broad categories. Through 10 case studies, we show how these 
+
+--- Hybrid Deep Learning Architectures for Multi-Horizon Precipitation Forecasting in Mountainous Regions: Systematic Comparison of Component-Combination Models in the Colombian Andes
+https://www.mdpi.com/2306-5338/13/3/98
+  > Forecasting monthly precipitation in mountainous terrain poses challenges that push conventional deep learning approaches to their limits: convective processes operate locally while orographic effects span entire drainage basins. We compare three architecture families on precipitation prediction across the Colombian Andes: ConvLSTM (convolutional recurrent), FNO-ConvLSTM (spectral–temporal), and GNN-TAT (graph attention LSTM). Using CHIRPS v2.0 and SRTM topography for Boyacá department (61 × 65 grid, 3965 nodes), we evaluate 39 configurations across feature bundles (BASIC, KCE elevation cluste
+
+--- A hybrid physics-machine learning model for orographic precipitation forecasting
+https://repository.library.noaa.gov/view/noaa/61903
+  > A hybrid physics-machine learning model for orographic precipitation forecasting
+...
+# A hybrid physics-machine learning model for orographic precipitation forecasting
+...
+Title : A hybrid physics-machine learning model for orographic precipitation forecasting Personal Author(s) : Hsieh, Tsung-Lin;Harris, Lucas;Clark, Spencer; Corporate Authors(s) : Geophysical Fluid Dynamics Laboratory (U.S.);Princeton University.;Allen Institute for Artificial Intelligence.; Published Date : 2024 Series : NOAA technical memorandum OAR GFDL ; 2024-001 DOI : https://doi.org/10.25923/xydc-9n85 Hsieh, Tsung-Lin 
+
+====================================================================================================
+Data-driven turbulence models for terrain-influenced ABL (q6)
+====================================================================================================
+
+--- GMD - Can machine learning improve the model representation of turbulent kinetic energy dissipation rate in the boundary layer for complex terrain?
+https://gmd.copernicus.org/articles/13/4271/2020/
+  > Current turbulence parameterizations in numerical weather prediction models at the mesoscale assume a local equilibrium between production and dissipation of turbulence. As this assumption does not hold at fine horizontal resolutions, improved ways to represent turbulent kinetic energy (TKE) dissipation rate (ϵ) are needed. Here, we use a 6-week data set of turbulence measurements from 184 sonic anemometers in complex terrain at the Perdigão field campaign to suggest improved representations of dissipation rate. First, we demonstrate that the widely used Mellor, Yamada, Nakanishi, and Niino (M
+
+--- Can machine learning improve the model representation of TKE dissipation rate in the boundary layer for complex terrain?
+https://doi.org/10.5194/gmd-2020-16
+  > Current turbulence parameterizations in numerical weather prediction models at the mesoscale assume a local equilibrium between production and dissipation of turbulence. As this assumption does not hold at fine horizontal resolutions, improved ways to represent turbulent kinetic energy (TKE) dissipation rate ( ) are needed. Here, we use a 6-week data set of turbulence measurements from 184 sonic anemometers in complex terrain at the Perdigão field campaign to suggest improved representations of dissipation rate. First, we demonstrate that a widely used Mellor, Yamada, Nakanishi, and Niino (MYN
+
+--- Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications
+https://www.nature.com/articles/s41467-026-70562-5
+  > Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coarse-resolution atmospheric inputs and high-resolution terrain information. The model is trained on a
+
+--- Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications | Springer Nature Link
+https://link.springer.com/article/10.1038/s41467-026-70562-5
+  > Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coarse-resolution atmospheric inputs and high-resolution terrain information. The model is trained on a
+
+--- Revealing the Drivers of Turbulence Anisotropy over Flat and Complex Terrain: An Interpretable Machine Learning Approach | Boundary-Layer Meteorology | Springer Nature Link
+https://link.springer.com/article/10.1007/s10546-025-00946-5
+  > Turbulence anisotropy was recently integrated into Monin-Obukhov Similarity Theory (MOST), extending its applicability to complex terrain and diverse surface conditions. Understanding which processes drive anisotropy over a variety of surfaces and stability conditions still remains a challenge. This study therefore employed random forest models trained on measurement data from both flat and complex terrain and including upstream terrain features, to understand the drivers of turbulence anisotropy. Two approaches were compared: using dimensional variables directly or employing non-dimensional g
+
+--- Revealing the drivers of turbulence anisotropy over flat and complex terrain: an interpretable machine learning approach
+https://doi.org/10.48550/arxiv.2503.15276
+  > Turbulence anisotropy was recently integrated into Monin-Obukhov Similar ity Theory (MOST), extending its applicability to complex terrain and diverse surface conditions. Implementing this generalized MOST in numerical mod els, however, requires understanding the key drivers of turbulence anisotropy across various terrain conditions. This study therefore employs random for est models trained on measurement data from both flat and complex terrain and including upstream terrain features, to predict turbulence anisotropy. Two approaches were compared: using dimensional variables directly or emplo
+
+--- Deep learning for subgrid-scale turbulence modeling in large-eddy simulations
+https://arxiv.org/pdf/1910.12125
+  > In large-eddy simulations, subgrid-scale (SGS) processes are parameterized as a function of filtered grid-scale variables. First-order, algebraic SGS models are based on the eddy-viscosity assumption, which does not always hold for turbulence. Here we apply supervised deep neural networks (DNNs) to learn SGS stresses from a set of neighboring coarse-grained velocity from direct numerical simulations (DNSs) of the atmospheric boundary layer at friction Reynolds numbers up to 1243 without invoking the eddy-viscosity assumption. The DNN model was found to produce higher correlation of SGS stresse
+
+--- Data-Driven Flux Parameterization for the Atmospheric Boundary Layer
+https://arxiv.org/html/2606.24593v1
+  > Turbulent fluxes in the atmospheric boundary layer (ABL) govern the exchange of momentum, heat, and mass between the surface and the atmosphere, thereby shaping the vertical structure of the ABL and influencing a wide range of engineering applications, atmospheric processes, and boundary-layer dynamics. Accurate parameterization of these fluxes in coarse-resolution weather and climate models remains challenging, particularly under unstable conditions where flux transport is strongly nonlocal and under stable conditions where turbulence may become intermittent and partially decoupled from surfa
+
+--- [2107.11046] Learning the structure of wind: A data-driven nonlocal turbulence model for the atmospheric boundary layer
+https://ar5iv.labs.arxiv.org/html/2107.11046
+  > [2107.11046] Learning the structure of wind: A data-driven nonlocal turbulence model for the atmospheric boundary layer
+...
+We develop a novel data-driven approach to modeling the atmospheric boundary layer. This approach leads to a nonlocal, anisotropic synthetic turbulence model which we refer to as the deep rapid distortion (DRD) model. Our approach relies on an operator regression problem which characterizes the best fitting candidate in a general family of nonlocal covariance kernels parameterized in part by a neural network. This family of covariance kernels is expressed in Fourier space
+
+====================================================================================================
+ML models for orographic precipitation enhancement (q7)
+====================================================================================================
+
+--- Evaluation of a Convolutional Neural Network to Predict Wintertime Orographic Precipitation Gradients of the CONUS Northern Rockies
+https://doi.org/10.1175/aies-d-25-0066.1
+  > # Evaluation of a Convolutional Neural Network to Predict Wintertime Orographic Precipitation Gradients of the CONUS Northern Rockies
+
+Artificial Intelligence for the Earth Systems. Published: 2026-04-01. 0 citations.
+
+## Abstract
+
+Abstract In the complex terrain of the western contiguous United States (CONUS), most operational forecast models lack sufficient grid spacing to resolve orographic precipitation processes. Downscaling methods are therefore needed to produce finer-scale prediction forecasts. This study presents a convolutional neural network (CNN) for downscaling winter precipitatio
+
+--- Automatic Detection and Classification of Orographic Precipitation using Machine Learning
+https://doi.org/10.1002/essoar.10502701.1
+  > # Automatic Detection and Classification of Orographic Precipitation using Machine Learning
+...
+Ground-clutter is a major cause of large detection and underestimation errors in satellite-based (e.g. Global Precipitation Measurement Dual Polarization Radar, GPM DPR) precipitation radar retrievals in complex terrain. Here, an Artificial Intelligence (AI) framework consisting of sequential precipitation detection and vertical structure prediction algorithms is proposed to mitigate these errors using machine learning techniques to uncover predictive associations among satellite- and ground-based m
+
+--- Deep Learning for Bias Correction of Satellite Retrievals of Orographic Precipitation
+https://repository.library.noaa.gov/view/noaa/65991
+  > Deep Learning for Bias Correction of Satellite Retrievals of Orographic Precipitation
+...
+The performance of various composite satellite precipitation products is severely limited by their individual passive microwave (PMW)-based retrieval uncertainties because the PMW sensors have difficulties in resolving heavy rain and/or shallow orographic precipitation systems. Characterizing the error structure of PMW retrievals is crucial to improving precipitation mapping at different space–time scales. To this end, this article introduces a machine learning framework to quantify the uncertainties asso
+
+--- Automatic Detection and Classification of Orographic Precipitation using Machine Learning - Art Boulevard
+https://artboulevard.org/items/5649842/
+  > Automatic Detection and Classification of Orographic Precipitation using Machine Learning - Art Boulevard
+
+# Automatic Detection and Classification of Orographic Precipitation using Machine Learning
+
+Ground-clutter is a major cause of large detection and underestimation errors in satellite-based (e.g. Global Precipitation Measurement Dual Polarization Radar, GPM DPR) precipitation radar retrievals in complex terrain. Here, an Artificial Intelligence (AI) framework consisting of sequential precipitation detection and vertical structure prediction algorithms is proposed to mitigate these errors 
+
+--- Precipitation Nowcasting with Orographic Enhanced Stacked Generalization: Improving Deep Learning Predictions on Extreme Events
+https://www.mdpi.com/2073-4433/11/3/267
+  > # Precipitation Nowcasting with Orographic Enhanced Stacked Generalization: Improving Deep Learning Predictions on Extreme Events
+...
+One of the most crucial applications of radar-based precipitation nowcasting systems is the short-term forecast of extreme rainfall events such as flash floods and severe thunderstorms. While deep learning nowcasting models have recently shown to provide better overall skill than traditional echo extrapolation models, they suffer from conditional bias, sometimes reporting lower skill on extreme rain rates compared to Lagrangian persistence, due to excessive pred
+
+--- Hybrid Deep Learning Architectures for Multi-Horizon Precipitation Forecasting in Mountainous Regions: Systematic Comparison of Component-Combination Models in the Colombian Andes
+https://doi.org/10.3390/hydrology13030098
+  > Forecasting monthly precipitation in mountainous terrain poses challenges that push conventional deep learning approaches to their limits: convective processes operate locally while orographic effects span entire drainage basins. We compare three architecture families on precipitation prediction across the Colombian Andes: ConvLSTM (convolutional recurrent), FNO-ConvLSTM (spectral-temporal), and GNN-TAT (graph attention LSTM). Using CHIRPS v2.0 and SRTM topography for Boyacá department (61 × 65 grid, 3965 nodes), we evaluate 39 configurations across feature bundles (BASIC, KCE elevation cluste
+
+--- A hybrid physics-machine learning model for orographic precipitation forecasting
+https://repository.library.noaa.gov/view/noaa/61903/noaa_61903_DS1.pdf
+  > Earlier corrective-ML projects using this code (Bretherton et al., 2022; Kwa et al., 2023; Sanford et al., 2023) coupled a low resolution model (FV3GFS, ∆x = 200 km) with machine learning models to emulate the behavior of a high resolution model, X-SHiELD (∆x = 3.25 km). In this framework, the machine learning models learn the nudging tendencies and surface radiative fuxes of a 200-km simulation nudged to the coarse-grained X-SHiELD output as a function of the 200-km model’s column state. Predictions by these ML models can then be applied every timestep to generate an ML-corrected simulation. 
+
+--- Data-driven exploration of orographic enhancement of precipitation
+https://doi.org/10.5194/asr-6-129-2011
+  > This study presents a methodology to analyse orographic enhancement of precipitation using sequences of radar images and a digital elevation model. Image processing techniques are applied to extract precipitation cells from radar imagery. DEM is used to derive the topographic indices potentially relevant to orographic precipitation enhancement at different spatial scales, e.g. terrain convexity and slope exposure to mesoscale flows. Two recently developed machine learning algorithms are then used to analyse the relationship between the repeatability of precipitation patterns and the underlying
+
+--- Kernel-Based Mapping of Orographic Rainfall Enhancement in the Swiss Alps as Detected by Weather Radar
+https://doi.org/10.1109/tgrs.2011.2179550
+  > # Kernel-Based Mapping of Orographic Rainfall Enhancement in the Swiss Alps as Detected by Weather Radar
+...
+In this paper, we develop a data-driven methodology to characterize the likelihood of orographic precipitation enhancement using sequences of weather radar images and a digital elevation model (DEM). Geographical locations with topographic characteristics favorable to enforce repeatable and persistent orographic precipitation such as stationary cells, upslope rainfall enhancement, and repeated convective initiation are detected by analyzing the spatial distribution of a set of precipita
+
+--- Hybrid Deep Learning Architectures for Multi-Horizon Precipitation Forecasting in Mountainous Regions: Systematic Comparison of Component-Combination Models in the Colombian Andes
+https://www.mdpi.com/2306-5338/13/3/98
+  > Forecasting monthly precipitation in mountainous terrain poses challenges that push conventional deep learning approaches to their limits: convective processes operate locally while orographic effects span entire drainage basins. We compare three architecture families on precipitation prediction across the Colombian Andes: ConvLSTM (convolutional recurrent), FNO-ConvLSTM (spectral–temporal), and GNN-TAT (graph attention LSTM). Using CHIRPS v2.0 and SRTM topography for Boyacá department (61 × 65 grid, 3965 nodes), we evaluate 39 configurations across feature bundles (BASIC, KCE elevation cluste
+
+====================================================================================================
+Neural parameterizations of sub-grid terrain effects (q8)
+====================================================================================================
+
+--- Neural Network Parameterization of Subgrid‐Scale Physics From a Realistic Geography Global Storm‐Resolving Simulation
+https://repository.library.noaa.gov/view/noaa/65641/noaa_65641_DS1.pdf
+  > Abstract Parameterization of subgrid‐scale processes is a major source of uncertainty in global
+...
+this uncertainty by explicitly resolving deep convection and details of orography. This study uses machine
+...
+learning to replace the physical parameterizations of heating and moistening rates, but not wind tendencies, in a
+...
+imperfectly simulated by the coarse model. A neural network is trained to predict the time‐dependent heating
+...
+and moistening rates in each grid column using the coarse‐grained temperature, specific humidity, surface
+...
+neural network can be used to skillfully predict
+
+--- Vertically Recurrent Neural Networks for Sub‐Grid Parameterization
+https://doi.org/10.1029/2024ms004833
+  > Machine learning has the potential to improve the physical realism and/or computational efficiency of parameterizations. A typical approach has been to feed concatenated vertical profiles to a dense neural network. However, feed-forward networks lack the connections to propagate information sequentially through the vertical column. Here we examine if predictions can be improved by instead traversing the column with recurrent neural networks (RNNs) such as Long Short-Term Memory (LSTMs). This method encodes physical priors (locality) and uses parameters more efficiently. Firstly, we test RNN-ba
+
+--- Interpretable multiscale Machine Learning-Based Parameterizations of Convection for ICON
+https://arxiv.org/html/2311.03251v2
+  > In order to improve climate projections, machine learning (ML)-based parameterizations have been developed for Earth System Models (ESMs) with the goal to better represent subgrid-scale processes or to accelerate computations by emulating existent parameterizations.
+...
+However, most studies have used a particular machine learning method to parameterize the subgrid tendencies or fluxes originating from the compound effect of various small-scale processes (e.g., turbulence, radiation, convection, gravity waves) in mostly idealized settings or from superparameterizations.
+...
+Here, we use a filt
+
+--- Neural Network Parameterization of Subgrid‐Scale Physics From a Realistic Geography Global Storm‐Resolving Simulation
+https://doi.org/10.1029/2023ms003668
+  > Parameterization of subgrid‐scale processes is a major source of uncertainty in global atmospheric model simulations. Global storm‐resolving simulations use a finer grid (less than 5 km) to reduce this uncertainty by explicitly resolving deep convection and details of orography. This study uses machine learning to replace the physical parameterizations of heating and moistening rates, but not wind tendencies, in a coarse‐grid (200 km) global atmosphere model, using training data obtained by spatially coarse‐graining a 40‐ day realistic geography global storm‐resolving simulation. The training 
+
+--- Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications
+https://www.nature.com/articles/s41467-026-70562-5
+  > Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coarse-resolution atmospheric inputs and high-resolution terrain information. The model is trained on a
+
+--- Stable Machine‐Learning Parameterization of Subgrid Processes in a Comprehensive Atmospheric Model Learned From Embedded Convection‐Permitting Simulations (Journal Article) | OSTI.GOV
+https://www.osti.gov/pages/biblio/2585394
+  > Modern climate projections often suffer from inadequate spatial and temporal resolution due to computational limitations, resulting in inaccurate representations of sub-grid processes. A promising technique to address this is the multiscale modeling framework (MMF), which embeds a kilometer-resolution cloud-resolving model (CRM) within each atmospheric column of a host climate model to replace traditional convection and cloud parameterizations. Machine learning offers a unique opportunity to make MMF more accessible by emulating the embedded CRM and reducing its substantial computational cost.
+
+--- Stable Machine-Learning Parameterization of Subgrid Processes with Real Geography and Full-physics Emulation
+https://arxiv.org/html/2407.00124v2
+  > Modern climate projections often suffer from inadequate spatial and temporal resolution due to computational limitations, resulting in inaccurate representations of sub-resolution processes. A promising technique to address this is the Multiscale Modeling Framework (MMF), which embeds a small-domain, kilometer-resolution cloud-resolving model within each atmospheric column of a host climate model to replace traditional convection and cloud parameterizations. Machine learning (ML) offers a unique opportunity to make MMF more accessible by emulating the embedded cloud-resolving model and thereby
+
+--- Stable machine-learning parameterization of subgrid processes for climate modeling at a range of resolutions | Nature Communications
+https://www.nature.com/articles/s41467-020-17142-3
+  > Global climate models represent small-scale processes such as convection using subgrid models known as parameterizations, and these parameterizations contribute substantially to uncertainty in climate projections. Machine learning of new parameterizations from high-resolution model output is a promising approach, but such parameterizations have been prone to issues of instability and climate drift, and their performance for different grid spacings has not yet been investigated. Here we use a random forest to learn a parameterization from coarse-grained output of a three-dimensional high-resolu
+
+--- Stable Machine‐Learning Parameterization of Subgrid Processes in a Comprehensive Atmospheric Model Learned From Embedded Convection‐Permitting Simulations (Journal Article) | OSTI.GOV
+https://www.osti.gov/biblio/2585394
+  > Modern climate projections often suffer from inadequate spatial and temporal resolution due to computational limitations, resulting in inaccurate representations of sub-grid processes. A promising technique to address this is the multiscale modeling framework (MMF), which embeds a kilometer-resolution cloud-resolving model (CRM) within each atmospheric column of a host climate model to replace traditional convection and cloud parameterizations. Machine learning offers a unique opportunity to make MMF more accessible by emulating the embedded CRM and reducing its substantial computational cost.

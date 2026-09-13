@@ -1,0 +1,109 @@
+2026/09/13 10:43:50 INFO mlflow.agent.hint: Load the `instrumenting-with-mlflow-tracing` skill at /Users/cooperanderson/work/personal/code/colorado-avalanche-ml/.venv/lib/python3.14/site-packages/mlflow/assistant/skills/instrumenting-with-mlflow-tracing/SKILL.md before writing any tracing code; it ships with this MLflow install. Set MLFLOW_DISABLE_AGENT_HINT=1 to silence this.
+Features: 76 usable / 98 total
+
+================================================================================
+BAND: ATL (above_treeline)
+================================================================================
+  Train: 193006, Val: 32258, Test: 32082
+  Class dist (train): {0: np.int64(0), 1: np.int64(36553), 2: np.int64(107034), 3: np.int64(44122), 4: np.int64(5297)}
+
+--- Group A: RF hyperparameter grid (20 configs) ---
+  Best RF: RF(n=300,d=None) val_macro_f1=0.457 [404s]
+
+--- Group B: ExtraTrees grid (20 configs) ---
+  Best ET: ET(n=500,d=None) val_macro_f1=0.449 [293s]
+
+--- Group C: XGBoost grid (12 configs) ---
+  Best XGB: XGB(n=300,d=10,lr=0.05) val_macro_f1=0.425 [64s]
+
+  Best A-C: RF(n=300,d=None) (macro_f1=0.457)
+
+--- Group D: Class weight ablation (5 configs) ---
+  Best CW: RF(cw=balanced) val_macro_f1=0.457 [101s]
+
+--- Group E: Ensemble size sweep ---
+  Best Ensemble: Ensemble(top=3) val_macro_f1=0.446 [477s]
+
+--- Group F: Threshold optimization ---
+  Best Thresh: Thresh(0.50) val_macro_f1=0.460 [3s]
+
+================================================================================
+BAND: NTL (near_treeline)
+================================================================================
+  Train: 201393, Val: 33518, Test: 33451
+  Class dist (train): {0: np.int64(0), 1: np.int64(43114), 2: np.int64(109586), 3: np.int64(43253), 4: np.int64(5440)}
+
+--- Group A: RF hyperparameter grid (20 configs) ---
+  Best RF: RF(n=500,d=20) val_macro_f1=0.437 [448s]
+
+--- Group B: ExtraTrees grid (20 configs) ---
+  Best ET: ET(n=200,d=None) val_macro_f1=0.436 [300s]
+
+--- Group C: XGBoost grid (12 configs) ---
+  Best XGB: XGB(n=300,d=10,lr=0.05) val_macro_f1=0.416 [61s]
+
+  Best A-C: RF(n=500,d=20) (macro_f1=0.437)
+
+--- Group D: Class weight ablation (5 configs) ---
+  Best CW: RF(cw=balanced) val_macro_f1=0.437 [174s]
+
+--- Group E: Ensemble size sweep ---
+  Best Ensemble: Ensemble(top=3) val_macro_f1=0.428 [477s]
+
+--- Group F: Threshold optimization ---
+  Best Thresh: Thresh(0.50) val_macro_f1=0.441 [5s]
+
+================================================================================
+BAND: BTL (below_treeline)
+================================================================================
+  Train: 201393, Val: 33518, Test: 33451
+  Class dist (train): {0: np.int64(0), 1: np.int64(90001), 2: np.int64(84665), 3: np.int64(23200), 4: np.int64(3527)}
+
+--- Group A: RF hyperparameter grid (20 configs) ---
+  Best RF: RF(n=300,d=None) val_macro_f1=0.390 [403s]
+
+--- Group B: ExtraTrees grid (20 configs) ---
+  Best ET: ET(n=200,d=None) val_macro_f1=0.378 [289s]
+
+--- Group C: XGBoost grid (12 configs) ---
+  Best XGB: XGB(n=300,d=10,lr=0.1) val_macro_f1=0.367 [72s]
+
+  Best A-C: RF(n=300,d=None) (macro_f1=0.390)
+
+--- Group D: Class weight ablation (5 configs) ---
+  Best CW: RF(cw=balanced) val_macro_f1=0.390 [103s]
+
+--- Group E: Ensemble size sweep ---
+  Best Ensemble: Ensemble(top=3) val_macro_f1=0.367 [543s]
+
+--- Group F: Threshold optimization ---
+  Best Thresh: Thresh(0.50) val_macro_f1=0.396 [3s]
+
+================================================================================
+Group G: Physics feature update + retrain
+================================================================================
+
+--- Group G: Recomputing physics features ---
+Traceback (most recent call last):
+  File "/Users/cooperanderson/work/personal/code/colorado-avalanche-ml/scripts/run_gap_experiments.py", line 779, in <module>
+    main()
+    ~~~~^^
+  File "/Users/cooperanderson/work/personal/code/colorado-avalanche-ml/scripts/run_gap_experiments.py", line 731, in main
+    g_results = run_group_g(df, feat_cols)
+  File "/Users/cooperanderson/work/personal/code/colorado-avalanche-ml/scripts/run_gap_experiments.py", line 460, in run_group_g
+    n_rows = compute_physics_features(db)
+  File "/Users/cooperanderson/work/personal/code/colorado-avalanche-ml/src/avalanche_ml/features/physics.py", line 258, in compute_physics_features
+    conn.executemany(f"""
+    ~~~~~~~~~~~~~~~~^^^^^
+        INSERT INTO physics_features ({', '.join(cols)})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+            {update_clause}
+            ^^^^^^^^^^^^^^^
+    """, results)
+    ^^^^^^^^^^^^^
+_duckdb.BinderException: Binder Error: Table "physics_features" does not have a column with name "temp_gradient_consec_days"
+
+Did you mean: "temp_gradient_days"
+
+[exited with code 1]

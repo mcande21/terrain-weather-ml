@@ -1,0 +1,10 @@
+Device: mps
+Features: 98
+Grid: 3 bands x 3 lookbacks x 2 LRs = 18 experiments
+
+=== ABOVE_TREELINE ===
+  Loading and normalizing...
+  Stations: 117
+  Training: lookback=7, lr=0.001
+    Sizes: train=406681, val=11102, test=11338
+      Epoch 5: train=0.0981 val=0.3628 lr=0.001000

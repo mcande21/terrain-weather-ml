@@ -1,0 +1,275 @@
+{
+  "summary": "Research validation for snowpack instability ML architecture",
+  "agentCount": 6,
+  "logs": [
+    "Launching 5 parallel research dimensions",
+    "5/5 research dimensions completed",
+    "Synthesizing cross-domain findings into architecture recommendations"
+  ],
+  "result": {
+    "architecture_recommendations": [
+      {
+        "recommendation": "Use Random Forest with engineered features as the baseline (Model A), not XGBoost. Benchmark everything against it before investing in deep learning.",
+        "rationale": "The Swiss SLF operational system (Perez-Guillen et al. 2022, 2025) uses Random Forest and achieves ~70% agreement with human-published danger levels. RAvaFcast v1.0.0 (Maissen et al. 2024) scales this to regional maps. RF is the only architecture deployed operationally in avalanche forecasting worldwide. XGBoost has not been shown to outperform RF in this domain, while RF provides better interpretability via feature importance -- critical for safety-critical forecaster trust. The NHESS 2023 neural network study showed NNs achieve comparable (76.54% validation) but not superior performance to RF, confirming tree-based methods as the right baseline.",
+        "evidence": "ML architectures dimension (Swiss SLF operational RF, RAvaFcast pipeline, NHESS 2023 NN comparison); Physics dimension (SNOWPACK+RF hybrid as state-of-the-art)"
+      },
+      {
+        "recommendation": "Implement a two-stage classification pipeline: Stage 1 predicts avalanche problem types (Persistent Slab, Storm Slab, Loose Wet), Stage 2 predicts danger level using problem-type predictions as intermediate features alongside weather and derived snowpack features.",
+        "rationale": "Schwartzreich and Rodriguez (2026) demonstrated this exact architecture on 28,140 region-band-days across 8 CAIC forecast regions in Colorado. This is the single most directly relevant paper -- it works on Colorado data, with CAIC labels, using publicly available meteorological sources. The two-stage decomposition mirrors how human forecasters reason (identify the problem type, then assess severity) and decomposes an otherwise noisy 5-class problem into tractable sub-problems. Critically, it works without the dense instrumentation (100+ stations, SNOWPACK simulations) the Swiss system requires.",
+        "evidence": "ML architectures dimension (Schwartzreich & Rodriguez 2026 Colorado two-stage framework); Spatial downscaling dimension (two-stage architecture validated by RAvaFcast and Colorado-specific research)"
+      },
+      {
+        "recommendation": "For Model B (sequence model), use LSTM with 180-day lookback as the starting architecture, not Transformer or Mamba. Test sensitivity up to 365 days.",
+        "rationale": "The HESS 2025 benchmark ('From RNNs to Transformers') shows LSTM outperforms Transformers for hydrologic regression tasks with median KGE advantage of 0.11 on global streamflow. Multiple snow-hydrology papers use 365-day lookback as standard for snow-influenced catchments. LSTM cell states have been shown to naturally encode snow accumulation processes (ASCE paper on Rio Hondo basin). Transformers add value for spatial generalization, not temporal modeling at a single site. At 180 tokens (daily steps), quadratic attention cost is not a bottleneck, but the inductive bias of LSTM recurrence is better suited to accumulation-type state tracking.",
+        "evidence": "Time-series architectures dimension (HESS 2025 LSTM vs Transformer benchmark, 365-day lookback standard, LSTM cell state encoding snow accumulation); Physics dimension (path-dependent weak layer evolution requiring state tracking)"
+      },
+      {
+        "recommendation": "Implement hierarchical temporal input using N-HiTS-style multi-rate MaxPool sampling: one branch consumes the last 14-30 days at hourly or sub-daily resolution, another branch consumes the full 180-day season history at daily resolution with progressively compressed older data.",
+        "rationale": "The hierarchical recent-detail plus compressed-history approach is validated by four independent lines of research: N-HiTS multi-rate sampling (AAAI 2023, outperformed LSTM for soil moisture), SST Mamba-Transformer decomposition (showed Mamba excels at long-range, Transformer at short-range), TimeMixer multiscale mixing, and dilated TCN pyramids. N-HiTS is the simplest implementation path -- it uses MaxPool at different kernel sizes so one block sees every timestep while another sees every 8th or 16th. This maps directly to snowpack physics: recent weather drives current loading and surface instability, while season history captures persistent weak layer formation from October onward.",
+        "evidence": "Time-series architectures dimension (N-HiTS AAAI 2023, SST hybrid decomposition, TimeMixer, dilated TCN pyramids); Physics dimension (early-season faceting requires full-season context, recent loading drives current instability)"
+      },
+      {
+        "recommendation": "Engineer these specific physics-informed features from weather station data, ordered by expected predictive value: (1) multi-window new snow sums (24h, 48h, 72h, 120h), (2) cumulative temperature-gradient-days proxy (estimated from air temp, snow depth, assumed 0C ground temp), (3) surface hoar formation potential index (clear-sky hours multiplied by humidity when wind is below threshold), (4) snow depth relative to seasonal climatological normal, (5) wind-weighted precipitation for wind slab loading, (6) rain-on-snow binary detection, (7) temperature trend and proximity to 0C.",
+        "rationale": "Perez-Guillen et al. (2022) used 67 features combining meteorological variables and SNOWPACK-derived features. Eastern Canada studies derived 88 variables from basic meteorological data using cumulative windows of 24-120h. Snow depth changes and new snow amounts were consistently top predictors. The temperature gradient threshold of ~10-20 K/m for faceting onset is the key physics signal for persistent weak layers. These features approximate what SNOWPACK computes explicitly (stability indices, grain metamorphism) without requiring the full physics simulation infrastructure. The 2026 Colorado paper confirmed these derived features work for CAIC danger prediction.",
+        "evidence": "Physics dimension (SNOWPACK feature importance, metamorphism thresholds, weak layer formation physics, simplified proxy features); ML architectures dimension (67-88 engineered features in successful systems, Schwartzreich 2026 Colorado derived features)"
+      },
+      {
+        "recommendation": "Target binary or 3-class danger output (e.g., Low/Moderate vs Considerable/High/Extreme) as the primary prediction, with probability distributions over all 5 levels as secondary output. Do not optimize for 5-class accuracy.",
+        "rationale": "The Northern Norway study (Cryosphere 2025) showed binary classification achieves 76% accuracy versus only 57% for 4-level prediction. Danger levels 4-5 are too rare for reliable prediction. The Swiss SLF operational system outputs probability distributions that forecasters interpret, not hard classifications. Binary elevated-vs-not-elevated is the most actionable output for safety decisions. The class imbalance problem (avalanche events are ~1.1% of days) compounds the multi-class difficulty.",
+        "evidence": "ML architectures dimension (Northern Norway 76% binary vs 57% 4-class, extreme class imbalance at 1.1%, SLF probability distribution output); Data sources dimension (CAIC danger ratings as labels)"
+      },
+      {
+        "recommendation": "For Phase 2 spatial downscaling, use HRRR 3km grids as primary input (not SNOTEL interpolation), bias-corrected against SNOTEL observations, with XGBoost over DEM-derived terrain features (elevation, TPI at 500m, slope, aspect, sky view factor, curvature) as the downscaling model. Add explicit cold-air-pool handling using topographic position metrics.",
+        "rationale": "SNOTEL stations are 20-50km apart in Colorado -- too sparse for sub-km interpolation (Fassnacht et al. 2003). HRRR provides hourly 3km coverage but has 25-65% precipitation bias in Colorado mountains (NOAA evaluation). The fix is HRRR as base layer with SNOTEL bias correction. A 2024 Alps intercomparison found CNN outperforms RF for temperature downscaling, but XGBoost with terrain features is simpler and well-validated as a starting point. Cold air pools and inversions are the hardest sub-problem -- a tiered ML approach with TPI and catchment geometry reduces valley RMSE by 50-70% (2025 interpretable ML paper). TopoPyScale provides a ready-made physically-based baseline for comparison.",
+        "evidence": "Spatial downscaling dimension (SNOTEL spacing limitations, HRRR bias evaluation, cold air pool ML correction, TPI importance, TopoPyScale baseline); Data sources dimension (SNOTEL 118 stations, HRRR on AWS)"
+      },
+      {
+        "recommendation": "Design the system as human-in-the-loop decision support from day one, not as an autonomous forecaster. Output explanations (SHAP values, feature contributions) alongside every prediction.",
+        "rationale": "Even the most advanced operational system worldwide (Swiss SLF, running since 2021) positions ML as a 'second opinion' at the forecaster briefing table. The SLF emphasizes human experts will continue to produce the bulletin. SHAP values from tree-based models are a significant practical advantage -- forecasters can see that the model flagged danger because of 72h new snow accumulation plus a persistent weak layer signal, not just a number. This is not just a nice-to-have; it is a prerequisite for adoption in safety-critical avalanche forecasting.",
+        "evidence": "ML architectures dimension (SLF operational deployment as second opinion since 2021, explainability as first-class requirement); Physics dimension (forecaster trust requires understanding model reasoning)"
+      }
+    ],
+    "temporal_window": {
+      "recommendation": "Use a 180-day lookback starting from October 1 (season start) with hierarchical multi-rate sampling: full hourly resolution for the most recent 7 days, daily resolution for the last 30 days, and 3-day aggregated resolution for the remainder of the season back to October 1. Test sensitivity up to 365 days. The 30-day-only window proposed earlier is confirmed as dangerously insufficient.",
+      "rationale": "Early season conditions (October-December) determine avalanche hazard for the entire winter. The 2022-23 deep persistent slab problem in western Canada was directly caused by below-average November-December snowpack. Basal facets formed in thin early-season snowpacks persist as the primary avalanche problem through the entire season. A model looking at only the last 30 days would completely miss deep persistent slab problems, which are the most dangerous and hardest-to-predict type. The hydrology literature standardizes on 365-day lookback for snow-influenced catchments (multiple LSTM papers). N-HiTS multi-rate sampling (AAAI 2023) validates that different model blocks can consume input at different temporal resolutions. The SST paper (2024) confirms that decomposing long-range and short-range signals and routing each to an appropriate model (Mamba for long, Transformer/LSTM for short) outperforms either alone. Starting at 180 days captures a full accumulation season while keeping computational cost reasonable.",
+      "academic_precedent": "365-day lookback is standard in snow-hydrology LSTM models (HESS 2022, ASCE snowmelt papers). N-HiTS (AAAI 2023) validated hierarchical multi-rate temporal sampling outperforming flat LSTM for soil moisture. Perez-Guillen et al. (2022) use 24h averaging windows within multi-day cumulative features (24h, 48h, 72h, 96h, 120h). The 2022-23 DPS analysis from Avalanche Canada documents season-spanning weak layer persistence. Eastern Canada studies derive 88 variables using cumulative windows up to 120h but do not model full-season context, which is identified as a gap."
+    },
+    "model_choices": {
+      "recommended_baseline": "Random Forest with 67-88 engineered features following the Perez-Guillen et al. (2022) feature design. Use multi-window cumulative weather features (24h through 120h sums/averages for precipitation, temperature, wind) plus the physics-informed proxy features (temperature gradient days, surface hoar potential index, snow depth anomaly, wind loading index, rain-on-snow flag). Implement the Schwartzreich & Rodriguez (2026) two-stage architecture: Stage 1 RF predicts avalanche problem types (Persistent Slab, Storm Slab, Loose Wet), Stage 2 RF uses those predictions as features alongside weather features to predict danger level per elevation band. This is directly validated on Colorado CAIC data across 8 forecast regions.",
+      "recommended_sequence": "LSTM with 180-day lookback using N-HiTS-style multi-rate input sampling. Architecture: parallel branches with MaxPool at kernel sizes 1 (recent 14 days at daily resolution), 7 (last 60 days compressed), and 14 (full 180-day season compressed). Each branch feeds a separate LSTM, outputs concatenated for prediction. This is simpler to implement than custom Mamba-Transformer hybrids and validated by N-HiTS (AAAI 2023) outperforming flat LSTM for geophysical prediction. If this underperforms, upgrade the long-range branch to Mamba (linear complexity, validated for 120-hour streamflow forecasting on EarthArXiv 2025) while keeping LSTM for the recent-detail branch. Do NOT use vanilla Transformer -- HESS 2025 benchmark shows LSTM outperforms Transformers for hydrologic regression by KGE 0.11.",
+      "physics_informed_approach": "Two-tier architecture without running SNOWPACK: (1) Physics feature engineering layer computes proxy features from raw weather data -- cumulative temperature gradient days (air_temp - 0C ground / snow_depth, accumulated when gradient exceeds 10 K/m threshold), surface hoar formation index (hours where clear-sky fraction > 0.8 AND relative humidity > 80% AND wind speed < 2 m/s), new snow loading at 5 time windows (24h/48h/72h/96h/120h), wind transport index (wind_speed * sin(wind_direction - slope_aspect) * precipitation), rain-on-snow events (precipitation when air_temp > 0C with existing snowpack), snow depth relative to 30-year SNOTEL climatological mean (thin snowpack = faceting risk). (2) These features plus raw weather time series feed both the RF baseline and sequence model. This approximates what SNOWPACK computes explicitly (Viallon-Galinier et al. 2023 confirmed physics-based stability indices outperform meteorological features alone) without requiring the simulation infrastructure. If accuracy plateaus, consider integrating SNOWPACK simulations at SNOTEL station locations as a Phase 1.5 enhancement -- the RAvaFcast pipeline validates this exact upgrade path."
+    },
+    "data_sources": [
+      {
+        "source": "NRCS SNOTEL via AWDB REST API (118 Colorado stations, hourly/daily SWE, snow depth, temperature, precipitation, back to late 1970s)",
+        "availability": "confirmed_api",
+        "relevance": "Primary weather input for station-level prediction. No authentication required. Python libraries exist (snotelpy, official NRCS demo). Most reliable and well-documented source. Covers 8000-12000 ft elevation range across Colorado mountains."
+      },
+      {
+        "source": "HRRR 3km gridded weather model on AWS S3 (noaa-hrrr-bdp-pds bucket, hourly surface fields, July 2014 to present)",
+        "availability": "confirmed_api",
+        "relevance": "Primary gridded weather input for Phase 2 spatial downscaling. No API key required. Herbie Python package provides clean subsetting interface. Covers all Colorado mountain terrain at 3km resolution. CRITICAL: has 25-65% precipitation bias in Colorado mountains -- must be bias-corrected against SNOTEL before use."
+      },
+      {
+        "source": "CAIC danger ratings and avalanche observations via caic-python (unofficial async Python client, MIT license, scrapes CAIC website endpoints)",
+        "availability": "uncertain",
+        "relevance": "Primary label source for supervised learning. Provides historical danger ratings, field observations, and avalanche events. Coverage back to ~1980 for observations. RISK: depends on undocumented endpoints that can break with website redesigns (happened 2021-2022). No official API exists. Consider formal data partnership request to CAIC for production use."
+      },
+      {
+        "source": "Open Avalanche Project (curated forecast labels for 3 US avalanche centers, 2015-16 through 2020-21 seasons, MIT license)",
+        "availability": "confirmed_download",
+        "relevance": "Pre-curated training labels that solve many data alignment problems already. Provides danger ratings aligned to weather data for US regions. Strong starting point to avoid building label pipeline from scratch. Extend with Colorado-specific data from CAIC for additional seasons."
+      },
+      {
+        "source": "USGS 3DEP DEM (1/3 arc-second ~10m nationwide, 1m lidar where available) and Copernicus DEM (30m global on AWS)",
+        "availability": "confirmed_download",
+        "relevance": "Terrain feature source for Phase 2 spatial downscaling. Pre-compute slope, aspect, curvature, TPI at 500m radius, sky view factor, wind exposure index as static feature layers. 10-30m resolution confirmed adequate for avalanche release area delineation. One-time batch computation."
+      },
+      {
+        "source": "CAIC ArcGIS FeatureServer (avalanche path polygons and structures, queryable via ArcGIS REST API, max 2000 records per query)",
+        "availability": "confirmed_api",
+        "relevance": "Spatial ground truth defining where avalanches occur. Provides path geometries for model validation and target definition in Phase 2/3. High value for connecting predictions to specific terrain features."
+      },
+      {
+        "source": "CDOT RWIS (109 road weather stations, 15-minute observations at mountain passes) and CAIC MADIS stations (68 stations)",
+        "availability": "confirmed_api",
+        "relevance": "Supplementary weather observations filling elevation and spatial gaps between SNOTEL stations. CDOT RWIS stations at Berthoud, Loveland, Vail passes are directly relevant to avalanche terrain. Adds density to the observation network for Phase 2 interpolation."
+      },
+      {
+        "source": "SnowPilot snowpit database (snowpilot.org, CAAML XML export, query interface by location and date)",
+        "availability": "confirmed_download",
+        "relevance": "Only structured source of snowpack stratigraphy data (weak layer observations, grain types, hardness profiles). Sparse but high-value for validating physics-informed features and persistent weak layer detection. Coverage is opportunistic, not systematic."
+      },
+      {
+        "source": "Schwartzreich & Rodriguez (2026) Colorado two-stage framework dataset (28,140 region-band-days across 8 CAIC regions, publicly available meteorological and avalanche-forecast data)",
+        "availability": "uncertain",
+        "relevance": "The most directly relevant pre-assembled dataset for this exact problem. If the authors release their data pipeline or assembled dataset, it would save significant data engineering effort. The paper states it uses publicly available sources, so the pipeline is reproducible even if data files are not shared."
+      }
+    ],
+    "risks": [
+      "CAIC data access is the single largest project risk. No official API exists. The caic-python library scrapes undocumented endpoints that broke during the 2021-2022 website redesign. Production dependence on web scraping for safety-critical labels is untenable. Mitigation: contact CAIC directly about data partnership or official API access before building the pipeline. Fallback: Open Avalanche Project curated labels for initial development.",
+      "Cross-region transfer learning does not work. Every major study trains and validates on region-specific data. The Swiss model does not transfer to Norway or North America. This means training data MUST come from Colorado specifically -- cannot bootstrap with Swiss or French data. The 118 SNOTEL stations and CAIC zones define the maximum geographic scope without new instrumentation.",
+      "Multi-class danger level prediction (5 levels) achieves only ~57% accuracy in the best systems. Danger level 5 (Extreme) is so rare that no model has enough training examples. Do not promise or target fine-grained 5-level accuracy. Binary or 3-class output is far more reliable (76% for binary). Probability distributions over levels are more useful than hard classifications.",
+      "HRRR precipitation has 25-65% bias in Colorado mountain terrain (NOAA evaluation). Using raw HRRR precipitation without bias correction will propagate large errors into snowfall estimates, new snow features, and loading calculations. This is not optional to fix -- it is a prerequisite for Phase 2.",
+      "Sub-kilometer precipitation and wind downscaling remains an unsolved research problem. Temperature downscaling to 250m is demonstrated, but precipitation and wind below 1km are significantly harder due to convective and orographic processes at sub-grid scales. Phase 2 may need to accept coarser resolution for these variables or use physical correction methods.",
+      "Persistent weak layer prediction is the hardest sub-problem AND the most safety-critical. Snowpack stratigraphy data (from SnowPilot and CAIC field reports) is sparse and opportunistic. Without explicit layer tracking (which only SNOWPACK/CROCUS provides), ML must implicitly learn path-dependent metamorphism from weather sequences alone. This is the fundamental accuracy ceiling for a pure ML approach.",
+      "Extreme class imbalance: avalanche events are approximately 1.1% of observation days. Without explicit handling (SMOTE, cost-sensitive learning, threshold tuning), models will optimize for predicting safe conditions and fail catastrophically on the dangerous days that matter most. This is not a nice-to-have -- multiple studies confirm it is a prerequisite.",
+      "Deep learning (LSTM, Transformer, Mamba) has NOT demonstrated clear advantages over gradient-boosted trees for this domain in any published study. The small-to-medium dataset sizes and tabular feature structure favor tree-based methods. Investing heavily in deep learning architecture before establishing a strong RF baseline risks wasted effort. The NHESS 2023 study explicitly showed NNs did not substantially outperform RF."
+    ],
+    "novel_ideas": [
+      "Two-stage classification (predict avalanche problem type first, then danger level) from Schwartzreich & Rodriguez 2026 -- this was not in our original design and is the single highest-value architectural insight. It decomposes a noisy 5-class problem into interpretable sub-problems, mirrors forecaster reasoning, and is validated on Colorado CAIC data specifically. Implement this as the primary architecture for both Model A and Model B.",
+      "LSTM cell states naturally encode snow accumulation without being explicitly trained to do so (ASCE Rio Hondo basin paper). This suggests recurrent architectures have a built-in inductive bias for the state-tracking problem that snowpack instability requires. It also suggests analyzing learned cell state activations could provide interpretability -- mapping which hidden units track persistent weak layer signals.",
+      "Mamba (selective state-space model) for the long-range seasonal branch of a hybrid architecture. Linear O(n) complexity means a 200-day lookback costs the same as a 30-day lookback, unlike Transformers. EarthArXiv 2025 validates Mamba for hydrological forecasting. The SST paper shows decomposing signals into long-range (Mamba) and short-range (attention) components and routing each to the appropriate model outperforms either alone. This is the frontier architecture for our hierarchical temporal approach.",
+      "GNN (Graph Neural Network) for spatial downscaling in Phase 2 instead of treating it as image super-resolution. The GeoGNN paper (2025) argues that irregular station networks are fundamentally graphs, not grids. Treating SNOTEL stations as nodes in a terrain-aware graph with edges weighted by topographic similarity is a more natural fit than UNet/CNN approaches designed for regular grids. This could also enable seamless integration of heterogeneous station networks (SNOTEL + CDOT RWIS + CAIC MADIS).",
+      "Cold air pool and valley inversion handling as an explicit sub-model. A 2025 paper showed that a tiered ML approach with novel terrain metrics (area-volume ratio for radiative cooling capacity, fraction of inner-catchment area below site elevation) reduces valley temperature RMSE by 50-70%. Standard lapse-rate corrections fail in valleys. This is directly relevant for predicting conditions on valley-facing avalanche paths.",
+      "TopoPyScale (open-source Python) as a ready-made physically-based downscaling baseline before any ML work in Phase 2. It clusters DEM pixels by topographic similarity and applies physically-based corrections for elevation, radiation, and pressure. Using it as a first-pass feature engineering layer (computing terrain-corrected weather at arbitrary points) means the ML model only needs to learn the residual error, not the full downscaling transform.",
+      "SAR satellite imagery combined with deep learning for spatial avalanche detection is an emerging capability (ISSW 2024, Gatti et al. 2026) that could solve the ground-truth data sparsity problem for remote terrain. While not ready for integration now, monitoring this research could provide a future path to dense spatial labels that do not depend on human field observations.",
+      "The Schwartzreich 2026 paper includes prediction across elevation bands within CAIC zones -- above treeline, near treeline, below treeline. This elevation-band decomposition is how CAIC actually publishes forecasts and should be the prediction target, not a single zone-level danger rating. It was not in our original design."
+    ]
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Research"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "avalanche-ml",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "aa98bd6b64b602ad7",
+      "model": "claude-opus-4-6[1m]",
+      "state": "done",
+      "startedAt": 1789260821301,
+      "queuedAt": 1789260821285,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "ML and Deep Learning Approaches for Avalanche Prediction an…",
+      "promptPreview": "Research: ML and deep learning approaches for avalanche prediction and snowpack instability modeling.\n\nSearch for:\n1. Academic papers on machine learning for avalanche forecasting (arxiv, journals)\n2. ML models predicting avalanche danger from weather data\n3. Snowpack instability prediction using neural networks or gradient boosting\n4. CAIC or Swiss SLF research on automated avalanche forecasting\n…",
+      "promptFramed": false,
+      "lastProgressAt": 1789261006311,
+      "tokens": 50267,
+      "toolCalls": 10,
+      "durationMs": 185007,
+      "resultPreview": "{\"dimension\":\"ML and Deep Learning Approaches for Avalanche Prediction and Snowpack Instability Modeling\",\"key_findings\":[{\"finding\":\"Random Forests are the dominant and most operationally successful architecture for avalanche danger prediction, with the Swiss SLF's operational RF classifier achieving approximately 70% agreement with published danger levels during live testing (winter 2020-2021), …"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "snowpack-physics",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a0bf2d99813c5f351",
+      "model": "claude-opus-4-6[1m]",
+      "state": "done",
+      "startedAt": 1789260821302,
+      "queuedAt": 1789260821285,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Physics-Based Snowpack Models and Temporal Dynamics",
+      "promptPreview": "Research: Physics-based snowpack models and how they handle temporal dynamics.\n\nSearch for:\n1. SNOWPACK model (SLF Switzerland) - how it simulates snow metamorphism\n2. CROCUS model (Meteo France) - snowpack simulation approach\n3. How physics-based models represent weak layer formation (faceting, surface hoar)\n4. Temperature gradient metamorphism modeling - what inputs matter, what timescales\n5. Hy…",
+      "promptFramed": false,
+      "lastProgressAt": 1789261041268,
+      "tokens": 56701,
+      "toolCalls": 14,
+      "durationMs": 217271,
+      "resultPreview": "{\"dimension\":\"Physics-Based Snowpack Models and Temporal Dynamics\",\"key_findings\":[{\"finding\":\"SNOWPACK (SLF) and CROCUS (Meteo France) are the two dominant physics-based snowpack models, both solving 1D energy/mass/momentum conservation equations with Lagrangian finite element methods, requiring hourly meteorological inputs (air temperature, humidity, wind speed, shortwave/longwave radiation, pre…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "timeseries-crossdomain",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a57dc6f3b793f6dc4",
+      "model": "claude-opus-4-6[1m]",
+      "state": "done",
+      "startedAt": 1789260821303,
+      "queuedAt": 1789260821285,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Time-Series ML Architectures for Geophysical Prediction",
+      "promptPreview": "Research: Time-series ML architectures for geophysical prediction problems analogous to snowpack instability.\n\nSearch for:\n1. LSTM vs Transformer vs state-space models (Mamba, S4) for long-range temporal dependencies in geoscience\n2. Weather prediction ML (GraphCast, Pangu-Weather, FourCastNet) - architectural choices\n3. Landslide prediction from weather/soil data - similar sequential prediction p…",
+      "promptFramed": false,
+      "lastProgressAt": 1789261025314,
+      "tokens": 54765,
+      "toolCalls": 13,
+      "durationMs": 201317,
+      "resultPreview": "{\"dimension\":\"Time-Series ML Architectures for Geophysical Prediction\",\"key_findings\":[{\"finding\":\"LSTM still outperforms Transformers for hydrologic regression tasks (streamflow, SWE), with median KGE advantage of 0.11 on global streamflow benchmarks, though Transformers gain advantage in more complex tasks like autoregression and zero-shot prediction.\",\"confidence\":\"high\",\"source\":\"https://hess.…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "spatial-downscaling",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "abb901ca2cd8f5a99",
+      "model": "claude-opus-4-6[1m]",
+      "state": "done",
+      "startedAt": 1789260821304,
+      "queuedAt": 1789260821285,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "ML-Based Spatial Downscaling of Weather in Complex Mountain…",
+      "promptPreview": "Research: ML-based spatial downscaling of weather data in complex mountain terrain.\n\nSearch for:\n1. Statistical and ML downscaling of gridded weather data to point locations\n2. PRISM, TopoWx, and other spatial interpolation methods for mountain weather\n3. ML super-resolution for weather fields in complex terrain\n4. Using DEM-derived terrain features for weather interpolation\n5. HRRR model resoluti…",
+      "promptFramed": false,
+      "lastProgressAt": 1789261041794,
+      "tokens": 57821,
+      "toolCalls": 14,
+      "durationMs": 217797,
+      "resultPreview": "{\"dimension\":\"ML-Based Spatial Downscaling of Weather in Complex Mountain Terrain\",\"key_findings\":[{\"finding\":\"ML-based spatial downscaling of weather in mountains is active research with rapid progress (2022-2026), not a solved problem -- UNet, CNN, GNN, XGBoost, and Random Forest approaches are all being actively developed and compared, with deep learning methods (especially UNet) consistently o…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "colorado-data",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a7e1f3d0956294e3a",
+      "model": "claude-opus-4-6[1m]",
+      "state": "done",
+      "startedAt": 1789260821304,
+      "queuedAt": 1789260821285,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Available Data Sources for Colorado Avalanche and Weather M…",
+      "promptPreview": "Research: Available data sources for Colorado avalanche and weather modeling.\n\nSearch for:\n1. CAIC data availability - historical observations, danger ratings, avalanche events API or download\n2. SNOTEL API documentation and data access (NRCS)\n3. HRRR model data access and API for Colorado\n4. Colorado-specific weather station networks beyond SNOTEL\n5. DEM data sources for Colorado mountains (USGS,…",
+      "promptFramed": false,
+      "lastProgressAt": 1789261026085,
+      "tokens": 54617,
+      "toolCalls": 13,
+      "durationMs": 202088,
+      "resultPreview": "{\"dimension\":\"Available Data Sources for Colorado Avalanche and Weather Modeling\",\"key_findings\":[{\"finding\":\"CAIC does not offer a public API, but an unofficial Python client (caic-python, MIT license) reverse-engineers the CAIC website endpoints to access field observations, avalanche events, and forecast data programmatically.\",\"confidence\":\"high\",\"source\":\"https://github.com/gormaniac/caic-pyt…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 6,
+      "label": "cross-domain-synthesis",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "a1692015e06233f94",
+      "model": "claude-opus-4-6[1m]",
+      "state": "done",
+      "startedAt": 1789261041811,
+      "queuedAt": 1789261041796,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "You are synthesizing research from 5 parallel investigations into actionable architecture recommendations for a Colorado snowpack instability prediction system.\n\nThe system design so far:\n- Phase 1: Station-level instability prediction from SNOTEL weather time series\n- Phase 2: Spatial downscaling (micro-weather from HRRR grids + DEM terrain features)\n- Phase 3: Connect micro-weather to instabilit…",
+      "promptFramed": false,
+      "lastProgressAt": 1789261223378,
+      "tokens": 49491,
+      "toolCalls": 1,
+      "durationMs": 181567,
+      "resultPreview": "{\"architecture_recommendations\":[{\"recommendation\":\"Use Random Forest with engineered features as the baseline (Model A), not XGBoost. Benchmark everything against it before investing in deep learning.\",\"rationale\":\"The Swiss SLF operational system (Perez-Guillen et al. 2022, 2025) uses Random Forest and achieves ~70% agreement with human-published danger levels. RAvaFcast v1.0.0 (Maissen et al. 2…"
+    }
+  ],
+  "totalTokens": 323662,
+  "totalToolCalls": 65
+}

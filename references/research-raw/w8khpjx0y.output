@@ -1,0 +1,361 @@
+{
+  "summary": "Research cross-domain mountain weather physics models and transfer learning for terrain-scale prediction",
+  "agentCount": 7,
+  "logs": [
+    "Launching 6 parallel research dimensions on cross-domain mountain weather physics",
+    "6/6 research dimensions completed",
+    "Synthesizing cross-domain findings into terrain-weather model architecture"
+  ],
+  "result": {
+    "feasibility": {
+      "verdict": "promising",
+      "rationale": "No paper was found doing the exact 'train on Swiss Alps data, deploy in North American mountains' transfer for general terrain-weather prediction — this is a genuine literature gap. However, three adjacent precedents validate the core hypothesis: (1) Swiss-trained avalanche RF models transferred to the Pyrenees with ~60-70% zero-shot agreement (Bacardit et al. 2026), proving cross-range transfer works but degrades without local adaptation; (2) Sierra Nevada to Colorado Rockies SWE transfer learning improved R2 from 0.45 to 0.54-0.56 and reduced bias ~30% (El Halabi et al. 2025), confirming topographic predictors (elevation, slope, aspect) behave similarly enough across US mountain ranges for transfer to help; (3) the RainShift benchmark (Harder et al. 2026) rigorously demonstrates that geographic distribution shift degrades deep-learning downscaling models substantially, but explicit domain adaptation (quantile-mapping for zero-shot, fine-tuning for few-shot) recovers skill. The dominant 2024-2026 architecture pattern — LoRA/PEFT adapting a frozen foundation-model backbone with lightweight terrain-aware heads — makes the approach tractable without full retraining. Multiple open-weight pretrained models exist at relevant scales. The physics (mass conservation, terrain-forced flow) is well understood and constrainable. The gap is engineering integration and cross-continent validation, not fundamental science.",
+      "precedent": "Sierra Nevada -> Colorado Rockies SWE transfer (El Halabi et al. 2025, JGR ML&C): R2 +20%, bias -30% with topographic predictors. Swiss Alps -> Pyrenees avalanche model transfer (Bacardit et al. 2026, Cold Regions Sci. Tech.): ~60-70% zero-shot agreement. RainShift benchmark (Harder et al. 2026): domain adaptation recovers downscaling skill across geographic regions. DEVINE wind downscaling CNN: trained on synthetic topographies, validated on real Alpine stations. granite-geospatial-wxc-downscaling: Prithvi WxC fine-tuned for 6x temperature / 8x wind downscaling with open weights."
+    },
+    "recommended_pretrain_data": [
+      {
+        "dataset": "PeakWeather (MeteoSwiss)",
+        "why": "Purpose-built ML benchmark: 302 complex-terrain stations, 10-min resolution, 8+ years, ships with per-station topographic indices (elevation, slope, aspect, curvature, sky-view factor) specifically for spatiotemporal deep learning. Already packaged on HuggingFace. Start here for a working baseline before adding density from other sources.",
+        "accessibility": "Open. GitHub: MeteoSwiss/PeakWeather, HuggingFace: MeteoSwiss/PeakWeather, arXiv:2506.13652",
+        "priority": 1
+      },
+      {
+        "dataset": "HRRR 3km CONUS (NOAA) — already in use",
+        "why": "The project already ingests HRRR. StormCast was trained on this exact data at 3km with dense boundary-layer vertical resolution. Using HRRR as the coarse-input conditioning signal for a terrain downscaling head means zero new data pipeline work for the backbone stage, and StormCast provides a pre-learned representation of HRRR physics.",
+        "accessibility": "Open. AWS S3: noaa-hrrr-bdp-pds bucket. Already integrated in the current system.",
+        "priority": 2
+      },
+      {
+        "dataset": "Swiss IMIS Network (SLF)",
+        "why": "180-200 automatic high-alpine stations, mostly above treeline near avalanche starting zones (2000-3000m), 30-min interval. Live REST API (measurement-api.slf.ch) plus historical data on EnviDat (CC BY 4.0). The most avalanche-relevant dense station network in existence. Use to supplement PeakWeather with high-elevation avalanche-zone observations.",
+        "accessibility": "Open. Live API: measurement-api.slf.ch/v1 (unauthenticated). Historical: envidat.ch/dataset/imis-measuring-network (DOI 10.16904/envidat.406)",
+        "priority": 3
+      },
+      {
+        "dataset": "Reynolds Creek Experimental Watershed gridded product",
+        "why": "21TB hourly gridded product on a 10m LiDAR DEM using detrended kriging from 35 stations over 238 km2, 40-year record. The terrain-station-weather relationship is already spatially continuous and explicit — ideal for learning terrain-driven downscaling physics as supervised training pairs (coarse input -> gridded fine output over known terrain).",
+        "accessibility": "Open. ESSD doi 10.5194/essd-10-1197-2018. HydroShare RCCZO resources.",
+        "priority": 4
+      },
+      {
+        "dataset": "Synthetic CFD terrain-wind data (HuggingFace wind-cfd-trial + WindNinja-generated)",
+        "why": "wind-cfd-trial provides ~10,000 RANS CFD simulation cases over ~1,000 real-world complex-terrain locations at 30m resolution, explicitly built for training ML terrain-wind models. Supplement with locally-generated WindNinja runs over Colorado avalanche-path DEMs to create target-domain synthetic training pairs. This is the proven DEVINE/FuXi-CFD pretraining strategy — learn terrain physics from physics simulators, not sparse stations.",
+        "accessibility": "Open. HuggingFace: souravsud/wind-cfd-trial. WindNinja: public domain, pip install windninjapy.",
+        "priority": 5
+      },
+      {
+        "dataset": "SAFRAN-SURFEX/Crocus S2M Reanalysis (French Alps/Pyrenees)",
+        "why": "Massif-resolved, terrain-aware (elevation/slope/aspect) meteorological and snow-cover reanalysis, 1958-2021. Already encodes hand-built terrain-weather physics stratified by terrain attributes. Use as physically-consistent training labels or as a benchmark to validate whether a learned model recovers the same terrain-weather relationships that operational meteorologists encoded manually.",
+        "accessibility": "Open. ESSD doi 10.5194/essd-14-1707-2022. cnrm.sedoo.fr/s2m/",
+        "priority": 6
+      },
+      {
+        "dataset": "SNOTEL + CAIC multi-operator aggregator (Colorado target domain)",
+        "why": "118 SNOTEL stations in current system plus CAIC's Jan 2026 aggregator (ski areas + CDOT + CAIC own network, hundreds of stations). This is the fine-tuning target, not pretraining data. Compute nearest-neighbor distances to find sub-5km clusters (likely along I-70 corridor and around major ski areas) for local validation.",
+        "accessibility": "Open. SNOTEL: AWDB REST API. CAIC: stations.avalanche.state.co.us/zones.php",
+        "priority": 7
+      },
+      {
+        "dataset": "WFIP2 Columbia Gorge + WindNinja field validation campaigns",
+        "why": "Dense (sub-km) multi-instrument arrays purpose-built to resolve terrain-induced flow: gap winds, mountain waves, wakes. Use for physics-validation testing — if the model cannot reproduce documented terrain-flow phenomena from these campaigns, it has not learned real terrain physics. Not for training (too short), but essential for evaluation.",
+        "accessibility": "Open. WFIP2: AMS BAMS 2019 / OSTI 1409835. WindNinja: ninjastorm.firelab.org/windninja/field/",
+        "priority": 8
+      }
+    ],
+    "recommended_architecture": {
+      "name": "StormCast backbone + DEVINE-style terrain downscaling head with LoRA adaptation",
+      "description": "Two-stage architecture: (1) NVIDIA StormCast as the mesoscale backbone — the only open-weight model trained at actual terrain/mesoscale resolution (3km HRRR), with dense boundary-layer vertical resolution, 99 state variables, and a commercially-permissive license (NVIDIA Open Model License). It already understands HRRR-scale dynamics over CONUS. (2) A terrain-aware downscaling head inspired by DEVINE's U-Net architecture — takes StormCast's 3km output plus high-resolution DEM-derived terrain features (elevation, slope, aspect, curvature, Sx wind-exposure index, roughness/vegetation class) and produces sub-km wind, temperature, and precipitation fields at specific terrain locations. Mass conservation enforced as a hard architectural constraint on the wind output (divergence-free projection layer), following the JMLR hard-constrained downscaling pattern that demonstrably improves out-of-distribution generalization. The terrain encoder uses the proven minimal feature set recurring across WindNinja, WAsP, DEVINE, and PeakWeather: elevation, slope, aspect, curvature, sky-view factor, Sx upwind exposure, and roughness class — all computable from a standard DEM plus land-cover data.",
+      "pretrain_approach": "Phase 1 — Synthetic terrain physics pretraining: Train the downscaling head on synthetic CFD data (HuggingFace wind-cfd-trial 10K cases + locally-generated WindNinja runs over diverse terrain) to learn general terrain-flow physics without needing dense real stations. This mirrors the proven DEVINE strategy (trained on 7,279 synthetic Gaussian topographies) and FuXi-CFD (trained on large CFD corpus). Phase 2 — Dense Alpine station training: Fine-tune on PeakWeather (302 Swiss stations, 10-min, 8+ years with topographic indices) plus Swiss IMIS high-alpine data (~180 stations), learning the statistical relationship between terrain descriptors and observed weather across a dense mountain network. Phase 3 — Reynolds Creek gridded product: Further train on the 21TB hourly 10m-grid product to learn terrain-resolved spatial patterns from a single well-instrumented catchment. Throughout, pair StormCast or ERA5 as the coarse atmospheric conditioning input.",
+      "finetune_approach": "LoRA/PEFT adaptation of the frozen StormCast backbone for the Colorado domain (following the WeatherPEFT and MENA regional adaptation patterns — arXiv 2509.22020, 2409.07585). Fine-tune the terrain downscaling head on SNOTEL + CAIC aggregated Colorado stations using few-shot domain adaptation per the RainShift protocol: (1) quantile-mapping data alignment between Alpine and Rockies climate distributions for zero-shot baseline, (2) few-shot fine-tuning on the densest Colorado station clusters (I-70 corridor, ski areas where sub-5km spacing exists), (3) evaluate on held-out Colorado stations. Expected baseline: ~60-70% skill retention from zero-shot transfer (per Alps-to-Pyrenees precedent), improving to ~80-85% with few-shot fine-tuning (per Sierra-Nevada-to-Rockies SWE precedent of +20% R2 gain). Add mass conservation loss term during fine-tuning to improve out-of-distribution generalization to unseen Colorado terrain.",
+      "precedent": "StormCast: trained on HRRR 3km, open weights on HuggingFace (nvidia/stormcast-v1-era5-hrrr), NVIDIA Open Model License. DEVINE: U-Net wind downscaling to 30m over complex terrain, pretrained weights on Zenodo, purpose-built for snow-transport/avalanche applications. WeatherPEFT (ICLR 2026): LoRA adapters on weather foundation models for regional specialization. Global-to-Local framework (arXiv 2607.03279): lightweight prediction heads on frozen backbone achieve ~100x resolution increase. Hard-Constrained Deep Learning for Climate Downscaling (JMLR 24(365)): architectural conservation constraints improve OOD generalization."
+    },
+    "existing_models": [
+      {
+        "name": "NVIDIA StormCast",
+        "what_it_does": "Autoregressively predicts 99 state variables at 3km resolution over CONUS, trained on HRRR data with dense boundary-layer vertical resolution and 1-hour timestep. Diffusion-based mesoscale model.",
+        "how_we_use_it": "Primary backbone. Already operates at near-terrain-scale (3km) over CONUS including Colorado. Freeze most parameters, apply LoRA adapters for Colorado-specific fine-tuning, and attach a terrain downscaling head for sub-km output. Its HRRR training means it already understands the same data our system ingests.",
+        "source": "huggingface.co/nvidia/stormcast-v1-era5-hrrr",
+        "pretrained_weights": true
+      },
+      {
+        "name": "DEVINE (wind_downscaling_cnn)",
+        "what_it_does": "Fully convolutional U-Net that downscales NWP wind fields to 30m resolution over complex mountain terrain, conditioned on DEM-derived topographic features. Purpose-built for wind-driven snow transport and avalanche-relevant nivology.",
+        "how_we_use_it": "Architecture template and potential weight initialization for the terrain downscaling head. Clone the repo, evaluate pretrained weights on Colorado terrain/wind data, and adapt the U-Net architecture for our multi-variable (wind + temperature + precipitation) downscaling head. The closest existing domain match to our target application.",
+        "source": "github.com/louisletoumelin/wind_downscaling_cnn + github.com/louisletoumelin/neural_network_and_devine, Zenodo tagged release",
+        "pretrained_weights": true
+      },
+      {
+        "name": "FuXi-CFD",
+        "what_it_does": "Generates 3D near-surface wind fields at 30m horizontal resolution from coarse atmospheric inputs plus high-resolution terrain, capturing slope jets, flow deflection, and recirculation that km-scale models average out.",
+        "how_we_use_it": "Inference-only evaluation — download the ONNX model from HuggingFace, run it over Colorado avalanche terrain DEMs with HRRR boundary conditions, and use its output as (a) a baseline to beat, (b) potential pseudo-labels for terrain-wind training data generation, and (c) an architecture reference. Cannot fine-tune (ONNX only), but can distill from.",
+        "source": "huggingface.co/daisy1212/FuXi-CFD-model",
+        "pretrained_weights": true
+      },
+      {
+        "name": "ECMWF AIFS",
+        "what_it_does": "ECMWF's operational AI Forecasting System — encoder-processor-decoder model comparable to GraphCast/Pangu, produced by the agency that generates ERA5/HRES reference data.",
+        "how_we_use_it": "Alternative backbone if StormCast proves insufficient. Fully open CC BY 4.0 license (most permissive of all top-tier global models), and comes from the same institution producing the verification data — lowest distribution-shift risk. Use as global-scale input conditioning if we need synoptic-scale context beyond HRRR's CONUS domain.",
+        "source": "huggingface.co/ecmwf/aifs-single-2.0",
+        "pretrained_weights": true
+      },
+      {
+        "name": "granite-geospatial-wxc-downscaling (Prithvi WxC fine-tuned)",
+        "what_it_does": "IBM/NASA fine-tuned version of Prithvi WxC foundation model for 6x temperature and 8x wind downscaling, validated on MERRA-2, ECCC data, and EURO-CORDEX climate simulations.",
+        "how_we_use_it": "Direct comparison baseline — this is the closest existing open-weight model to what we are building (foundation model fine-tuned specifically for weather downscaling). Evaluate it on Colorado stations to establish what a foundation-model-downscaling approach achieves out of the box before investing in custom training.",
+        "source": "huggingface.co/ibm-granite/granite-geospatial-wxc-downscaling",
+        "pretrained_weights": true
+      },
+      {
+        "name": "SNOWstorm",
+        "what_it_does": "Deep-learning emulator (multiple U-Nets) trained on 50m LES that predicts near-surface wind, snow mass change rate, sublimation rate, and snow transport flux — the full wind-driven snow redistribution chain, not just wind.",
+        "how_we_use_it": "Evaluate for the wind-loading / snow-redistribution vertical specifically — its output variables (snow mass change, transport flux) map more directly onto avalanche-relevant quantities (windslab loading) than raw wind speed. Investigate whether its intermediate wind-field predictions can serve as initialization or auxiliary targets for our terrain head.",
+        "source": "zenodo.org/records/17580745, gmd.copernicus.org/articles/19/6497/2026/",
+        "pretrained_weights": true
+      },
+      {
+        "name": "NVIDIA FourCastNet3 (SFNO)",
+        "what_it_does": "Global probabilistic ensemble weather forecasting using Spherical Fourier Neural Operator attention, Apache 2.0 licensed.",
+        "how_we_use_it": "Feature extractor — the AFNO/SFNO attention blocks are architecturally simple and liftable as a reusable spectral-attention encoder. If we build a custom backbone rather than using StormCast, FourCastNet's SFNO blocks are the cleanest open building block for a Fourier-domain terrain-weather encoder.",
+        "source": "huggingface.co/nvidia/fourcastnet3",
+        "pretrained_weights": true
+      },
+      {
+        "name": "WindNinja",
+        "what_it_does": "Open-source (public domain) terrain wind-flow model with mass-conserving and RANS CFD solvers, widely used operationally for wildfire, wind energy, and search-and-rescue. Python bindings available (windninjapy).",
+        "how_we_use_it": "Not a neural model — use as (a) a synthetic training-data generator: run WindNinja over Colorado avalanche-path DEMs to create terrain-to-wind-field training pairs, (b) a physics baseline to benchmark our learned model against, and (c) a reference for the proven minimal terrain-feature schema (DEM + vegetation/roughness + initial wind).",
+        "source": "github.com/firelab/windninja, pip: windninjapy",
+        "pretrained_weights": false
+      }
+    ],
+    "novel_approach": "Pair NASA/IBM Prithvi-EO (geospatial/land-cover foundation model trained on Harmonized Landsat/Sentinel-2 imagery) as a terrain encoder with a weather backbone (StormCast or AIFS), following arXiv 2608.12271 which demonstrated that earth-observation foundation-model embeddings used as sub-grid terrain/land-surface descriptors to condition a downscaling model outperform hand-engineered terrain features. This cross-domain pairing — a computer-vision model trained on satellite imagery providing the 'what does this terrain look like' representation, fused with an atmospheric model providing the 'what is the weather doing' representation — is the most creative architecture the research surfaced. It sidesteps the terrain-feature-engineering problem entirely: instead of manually computing slope, aspect, curvature, sky-view factor, and roughness from DEMs, let a pretrained vision model learn what terrain features matter for weather from raw satellite imagery. The Prithvi-EO weights are open (Apache-style), and the approach has been validated in at least one published downscaling study but never applied to avalanche terrain-weather prediction specifically.",
+    "risks": [
+      "Domain shift between European Alps and Colorado Rockies is real and quantified: the best available precedent (Alps-to-Pyrenees avalanche transfer) shows ~30-40% accuracy degradation from zero-shot cross-range transfer due to different snow climate regimes, terrain geometry scales, and continental vs. maritime influence patterns. Budget for explicit domain adaptation, not just hope.",
+      "Station density in Colorado (~118 SNOTEL + CAIC aggregated stations) may be insufficient for meaningful fine-tuning — the dense Alpine networks have 180-300+ stations in much smaller areas. Compute actual nearest-neighbor distance histograms for Colorado stations before assuming sub-5km clusters exist; if they do not, fine-tuning signal will be weak.",
+      "Orographic precipitation ML is significantly less mature than wind downscaling — the literature is still largely correlational/statistical (CNN downscaling, radar+DEM kernels) rather than physics-constrained. Wind and temperature transfer may work well while precipitation (critical for avalanche forecasting) lags behind.",
+      "Safety-critical application risk: avalanche forecasting is life-safety. A model that appears to work on average but fails on the specific terrain configurations and weather patterns that produce dangerous avalanches (wind-loaded leeward slopes, temperature inversions in starting zones) could be worse than no model at all. Evaluation must focus on the dangerous tail, not average skill.",
+      "License ambiguity on key models: Aurora weights are listed as 'Other' license requiring Microsoft contact for commercial use; GraphCast/GenCast weights are CC BY-NC-SA 4.0 (non-commercial only). If the terrain-weather API has any commercial angle, the usable model set narrows to StormCast, FourCastNet3, AIFS, and ClimaX. Confirm licenses before investing training compute.",
+      "Synthetic CFD training data (DEVINE-style, WindNinja-generated) may not capture the full complexity of real atmospheric boundary-layer dynamics over terrain — CFD simplifies turbulence (RANS steady-state vs. real transient flow), omits moisture/precipitation entirely, and assumes idealized boundary conditions. Models pretrained on synthetic data alone will need real-observation fine-tuning.",
+      "Computational cost of fine-tuning billion-parameter foundation models (Prithvi-WxC is 2.3B parameters, Aurora is comparable) may exceed project resources even with LoRA/PEFT. StormCast's model size should be evaluated against available GPU memory before committing.",
+      "Validation paradox: the whole point is predicting weather where stations do not exist, but validation requires ground truth at those locations. Short-term field campaigns (like WFIP2 or T-REX) provide sub-km validation data but only for weeks, not climatological periods. Plan for leave-one-station-out cross-validation on existing networks as the primary evaluation, supplemented by physics-consistency checks (mass conservation, terrain-flow phenomenology).",
+      "The hyperlocal weather API market ($4.35B by 2034) is attractive but monetization is explicitly flagged as harder than forecast quality (per WindBorne Systems coverage). Building a technically excellent terrain-weather model does not guarantee a viable business without a clear go-to-market for specific verticals."
+    ],
+    "action_plan": [
+      {
+        "step": 1,
+        "description": "Download and evaluate existing pretrained models on Colorado data. (a) Download StormCast weights from HuggingFace (nvidia/stormcast-v1-era5-hrrr), run inference over Colorado HRRR domain for a recent winter storm period, compare 3km predictions against SNOTEL observations for wind, temperature, precipitation. (b) Download granite-geospatial-wxc-downscaling from HuggingFace, evaluate its 6x temperature and 8x wind downscaling against the same SNOTEL stations. (c) Download FuXi-CFD ONNX model (daisy1212/FuXi-CFD-model), run over 5-10 Colorado avalanche-path DEMs, qualitatively assess whether terrain-flow features (ridge acceleration, valley channeling, lee eddies) appear physically plausible. Establish baseline skill scores for each.",
+        "effort": "2 weeks",
+        "data_source": "HRRR (already in system), SNOTEL (already in system), StormCast/granite-wxc/FuXi-CFD weights from HuggingFace"
+      },
+      {
+        "step": 2,
+        "description": "Build the terrain feature encoder. Compute DEM-derived terrain descriptors for all SNOTEL station locations and a 30m grid over Colorado avalanche terrain: elevation, slope, aspect, plan/profile curvature, Sx upwind exposure index (at 8 cardinal directions), sky-view factor, topographic position index, and NLCD roughness/vegetation class. Use the same feature set documented in PeakWeather (MeteoSwiss) and DEVINE to ensure compatibility with pretrained models. Store as a static terrain feature tensor indexed by lat/lon.",
+        "effort": "1 week",
+        "data_source": "USGS 1/3 arc-second DEM (already available), NLCD land cover, PeakWeather topographic index definitions (GitHub MeteoSwiss/PeakWeather)"
+      },
+      {
+        "step": 3,
+        "description": "Download PeakWeather dataset and Swiss IMIS historical data. (a) Pull PeakWeather from HuggingFace (MeteoSwiss/PeakWeather): 302 stations, 10-min data, 8+ years, with topographic indices. (b) Pull IMIS historical data from EnviDat (DOI 10.16904/envidat.406) for the ~180 high-alpine stations. (c) Compute nearest-neighbor distance histograms for both networks to identify sub-5km clusters. (d) Also compute nearest-neighbor distances for SNOTEL + CAIC aggregated Colorado stations to quantify the density gap between source (Swiss) and target (Colorado) domains.",
+        "effort": "1 week",
+        "data_source": "HuggingFace MeteoSwiss/PeakWeather, EnviDat IMIS, SNOTEL AWDB API, CAIC stations.avalanche.state.co.us"
+      },
+      {
+        "step": 4,
+        "description": "Generate synthetic terrain-wind training data over Colorado avalanche terrain. (a) Install WindNinja (pip install windninjapy). (b) Run WindNinja's mass-conserving solver over 50-100 Colorado avalanche-path DEMs at 30m resolution for 16 wind directions x 5 wind speeds = 80 scenarios each, producing ~4,000-8,000 terrain-to-wind-field training pairs. (c) Download HuggingFace wind-cfd-trial dataset (~10,000 RANS CFD cases over ~1,000 real terrain locations). (d) Combine into a unified synthetic pretraining corpus with standardized terrain feature inputs and wind field outputs.",
+        "effort": "2 weeks",
+        "data_source": "WindNinja (public domain), HuggingFace souravsud/wind-cfd-trial, USGS DEMs for Colorado avalanche paths"
+      },
+      {
+        "step": 5,
+        "description": "Clone DEVINE and train the terrain downscaling head. (a) Clone github.com/louisletoumelin/wind_downscaling_cnn, inspect architecture and pretrained weights. (b) Extend the U-Net architecture from wind-only to multi-variable (wind + temperature + relative humidity) output, keeping the terrain encoder unchanged. (c) Pretrain on synthetic CFD data from Step 4 to learn general terrain-flow physics. (d) Fine-tune on PeakWeather + IMIS observations (Step 3) paired with ERA5 or HRRR-equivalent coarse input, learning the statistical terrain-weather relationship from dense Alpine stations. Add a hard mass-conservation constraint layer (divergence-free projection) on the wind output channels, following JMLR 24(365) Hard-Constrained Deep Learning pattern.",
+        "effort": "4 weeks",
+        "data_source": "Synthetic CFD corpus (Step 4), PeakWeather + IMIS (Step 3), ERA5 coarse fields"
+      },
+      {
+        "step": 6,
+        "description": "Integrate StormCast backbone with terrain downscaling head. (a) Apply LoRA adapters to the frozen StormCast backbone, fine-tuning only adapter parameters on Colorado HRRR data with SNOTEL station targets (following WeatherPEFT pattern, arXiv 2509.22020). (b) Connect StormCast's 3km output as input conditioning for the terrain downscaling head from Step 5. (c) Apply quantile-mapping domain alignment between Swiss Alpine and Colorado Rockies climate distributions (per RainShift protocol) before feeding Swiss-pretrained head weights into the Colorado pipeline. (d) Fine-tune the full pipeline end-to-end on SNOTEL + CAIC Colorado stations, using leave-one-station-out cross-validation for evaluation.",
+        "effort": "4 weeks",
+        "data_source": "StormCast weights (Step 1), terrain head weights (Step 5), SNOTEL + CAIC Colorado observations"
+      },
+      {
+        "step": 7,
+        "description": "Validate on held-out data and physics-consistency checks. (a) Leave-one-station-out cross-validation across all Colorado stations: compute RMSE, bias, and correlation for wind speed/direction, temperature, and precipitation at each held-out station. (b) Physics-consistency tests: verify mass conservation (divergence) of predicted wind fields, check that predicted temperature inversions match known cold-air-pooling terrain configurations, verify orographic precipitation enhancement ratios against PRISM climatology. (c) If WFIP2 Columbia Gorge data is accessible, evaluate whether the model reproduces documented gap-flow and mountain-wave phenomena as a terrain-physics-learning diagnostic. (d) Compare against baselines: raw HRRR, WindNinja physics solver, simple elevation-based lapse rate, and granite-wxc-downscaling.",
+        "effort": "2 weeks",
+        "data_source": "Held-out SNOTEL/CAIC stations, WFIP2 field campaign data, PRISM climatology"
+      },
+      {
+        "step": 8,
+        "description": "Deploy as Phase 2 micro-weather prediction module. (a) Integrate the trained two-stage model (StormCast backbone + terrain head) into the existing snowpack instability prediction service. (b) Generate predictions at arbitrary terrain locations (specific avalanche paths, ridgelines, valley floors) as inputs to the instability model, replacing or augmenting the current HRRR-only weather inputs. (c) Run parallel evaluation: compare instability predictions using old (HRRR-only) vs. new (terrain-downscaled) weather inputs against CAIC avalanche observations for one winter season. (d) Publish results — this would be among the first cross-range terrain-weather transfer learning evaluations and is publishable regardless of whether it improves operational skill.",
+        "effort": "4 weeks for integration, 1 winter season for parallel evaluation",
+        "data_source": "Trained model from Steps 5-6, existing snowpack instability service, CAIC avalanche observations"
+      }
+    ]
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Research"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "dense-datasets",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a28e590ea6bd34735",
+      "model": "claude-sonnet-5",
+      "state": "done",
+      "startedAt": 1789323814383,
+      "queuedAt": 1789323814364,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Dense mountain weather observation datasets for training a …",
+      "promptPreview": "Research: Find every publicly accessible dense mountain weather observation dataset suitable for training a terrain-weather physics model.\n\nSearch for:\n1. Swiss IMIS network data availability and access (SLF's 180+ high-elevation stations)\n2. Wind farm meteorological datasets in complex terrain (NREL, WindNinja, research wind farms)\n3. Research watersheds and instrumented basins with dense weather…",
+      "promptFramed": false,
+      "lastProgressAt": 1789324262922,
+      "tokens": 118673,
+      "toolCalls": 59,
+      "durationMs": 448534,
+      "resultPreview": "{\"datasets\":[{\"name\":\"Swiss IMIS Network (SLF)\",\"description\":\"Intercantonal Measurement and Information System: ~180-200 automatic high-alpine stations across the Swiss Alps and Jura, mostly above treeline (2000-3000m), near avalanche starting zones. 30-min measurement interval.\",\"accessibility\":\"open\",\"url\":\"https://measurement-api.slf.ch/ (live REST/OpenAPI); https://www.envidat.ch/dataset/imis…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "transfer-learning-meteo",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a7571313d06d0e5ca",
+      "model": "claude-sonnet-5",
+      "state": "done",
+      "startedAt": 1789323814384,
+      "queuedAt": 1789323814364,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Transfer learning and cross-region domain adaptation for mo…",
+      "promptPreview": "Research: Has transfer learning been applied to mountain meteorology or spatial weather downscaling? Find academic papers on training weather models in data-rich regions and deploying in data-sparse regions.\n\nSearch for:\n1. Transfer learning for weather prediction in complex terrain\n2. Cross-region spatial downscaling — train on dense networks, deploy on sparse\n3. Domain adaptation for meteorologi…",
+      "promptFramed": false,
+      "lastProgressAt": 1789323955671,
+      "tokens": 84538,
+      "toolCalls": 9,
+      "durationMs": 139490,
+      "resultPreview": "{\"datasets\":[{\"name\":\"RainShift benchmark\",\"description\":\"Benchmark/dataset (Harder et al., Mila/ECMWF) pairing coarse ESM/reanalysis fields with high-res precipitation targets across Global North and Global South regions, purpose-built to test geographic distribution shift in downscaling models.\",\"accessibility\":\"open\",\"url\":\"https://arxiv.org/html/2507.04930\",\"variables\":\"precipitation, geograph…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "wind-energy-models",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a54631b7c2c2abcc4",
+      "model": "claude-sonnet-5",
+      "state": "done",
+      "startedAt": 1789323814385,
+      "queuedAt": 1789323814364,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Wind energy terrain-weather models transferable to avalanch…",
+      "promptPreview": "Research: Wind energy terrain-weather models that could transfer to avalanche prediction. The wind energy industry has invested heavily in modeling wind in complex terrain.\n\nSearch for:\n1. WindNinja — USFS wind model for complex terrain. Open source? Pre-trained? API?\n2. WAsP (Wind Atlas Analysis and Application Program) — terrain wind modeling\n3. ML-based wind resource assessment in complex terra…",
+      "promptFramed": false,
+      "lastProgressAt": 1789323969294,
+      "tokens": 86911,
+      "toolCalls": 9,
+      "durationMs": 153112,
+      "resultPreview": "{\"datasets\":[{\"name\":\"NREL WIND Toolkit (WTK / WTK-LED)\",\"description\":\"WRF-model-derived wind resource dataset for the continental US: meteorological conditions (speed, direction, temperature, pressure, boundary layer height) at multiple hub heights for 2.4M+ sites (2007-2013), plus a newer high-resolution WTK-LED CONUS product (2019-2020, finer grid). Accessible via NREL Developer API (CSV) or b…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "physics-informed-nn",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a38ecb4ca8b15e29e",
+      "model": "claude-sonnet-5",
+      "state": "done",
+      "startedAt": 1789323814386,
+      "queuedAt": 1789323814364,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Physics-informed / physics-constrained ML for terrain-weath…",
+      "promptPreview": "Research: Physics-informed neural networks (PINNs) and physics-constrained ML for terrain-weather interactions. Models that encode conservation laws so they generalize across terrain.\n\nSearch for:\n1. Physics-informed neural networks for atmospheric science / meteorology\n2. Conservation-law-constrained weather models (mass, energy, momentum conservation in terrain flows)\n3. Neural operators for wea…",
+      "promptFramed": false,
+      "lastProgressAt": 1789324016719,
+      "tokens": 72968,
+      "toolCalls": 9,
+      "durationMs": 200537,
+      "resultPreview": "{\"datasets\":[{\"name\":\"Perdigão field campaign (complex-terrain turbulence)\",\"description\":\"6-week dataset of turbulence measurements from 184 sonic anemometers in complex terrain (Portugal), used to derive ML-improved TKE dissipation-rate representations for boundary-layer parameterization.\",\"accessibility\":\"open\",\"url\":\"https://gmd.copernicus.org/articles/13/4271/2020/\",\"variables\":\"3D sonic anem…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "pretrained-weather-models",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a80af2deb237e47a1",
+      "model": "claude-sonnet-5",
+      "state": "done",
+      "startedAt": 1789323814386,
+      "queuedAt": 1789323814364,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Pre-trained weather/climate models with downloadable weight…",
+      "promptPreview": "Research: Pre-trained weather and climate models with available weights that could be fine-tuned or used as feature extractors for terrain-scale prediction.\n\nSearch for:\n1. GraphCast (DeepMind) — weights available? Fine-tunable for local terrain?\n2. Pangu-Weather (Huawei) — weights available? Resolution? Terrain handling?\n3. FourCastNet (NVIDIA) — open weights? AFNO architecture reusable?\n4. Clima…",
+      "promptFramed": false,
+      "lastProgressAt": 1789324040966,
+      "tokens": 89954,
+      "toolCalls": 19,
+      "durationMs": 224784,
+      "resultPreview": "{\"datasets\":[{\"name\":\"ERA5 Reanalysis (ECMWF)\",\"description\":\"Global atmospheric reanalysis at 0.25° (~25-31km) resolution, 37 pressure levels, hourly from 1940-present. The dominant pretraining corpus for GraphCast, Pangu-Weather, FourCastNet, Aurora, AIFS, and NeuralGCM.\",\"accessibility\":\"open\",\"url\":\"https://cds.climate.copernicus.eu/\",\"density\":\"0.25° global grid, hourly\",\"variables\":\"surface …"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 6,
+      "label": "cross-domain-transfer",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a98ac20c3cc343711",
+      "model": "claude-sonnet-5",
+      "state": "done",
+      "startedAt": 1789323814387,
+      "queuedAt": 1789323814364,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Cross-domain applications of terrain-weather physics models",
+      "promptPreview": "Research: Cross-domain applications of terrain-weather models. What OTHER use cases benefit from the same terrain-weather physics model we'd build?\n\nSearch for:\n1. Wildfire weather prediction in complex terrain — uses same terrain-wind-temperature physics\n2. Hydroelectric inflow forecasting in mountain catchments — needs terrain-precipitation prediction\n3. Agricultural frost prediction in valleys …",
+      "promptFramed": false,
+      "lastProgressAt": 1789324013833,
+      "tokens": 88924,
+      "toolCalls": 17,
+      "durationMs": 197651,
+      "resultPreview": "{\"datasets\":[{\"name\":\"ERA5 / ERA5-Land Reanalysis (Copernicus CDS)\",\"description\":\"Global atmospheric reanalysis at ~9-31km used as the near-universal base input across every downscaling study found (hydro inflow, frost, wind, precipitation) — the common training substrate for terrain-weather ML.\",\"accessibility\":\"open\",\"url\":\"https://cds.climate.copernicus.eu\",\"variables\":\"2m temperature, wind co…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 7,
+      "label": "cross-domain-synthesis",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "aad1f03fa23ecb91a",
+      "model": "claude-opus-4-6[1m]",
+      "state": "done",
+      "startedAt": 1789324262943,
+      "queuedAt": 1789324262927,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Pair NASA/IBM Prithvi-EO (geospatial/land-cover foundation …",
+      "promptPreview": "You are synthesizing research from 6 parallel investigations into an actionable architecture for a cross-domain terrain-weather physics model.\n\nThe goal: Build or leverage a pre-trained model that understands how weather behaves in complex mountain terrain (wind channeling in valleys, temperature inversions, orographic precipitation, aspect-dependent radiation). Train on data-rich domains, fine-tu…",
+      "promptFramed": false,
+      "lastProgressAt": 1789324487760,
+      "tokens": 60899,
+      "toolCalls": 1,
+      "durationMs": 224817,
+      "resultPreview": "{\"feasibility\":{\"verdict\":\"promising\",\"rationale\":\"No paper was found doing the exact 'train on Swiss Alps data, deploy in North American mountains' transfer for general terrain-weather prediction — this is a genuine literature gap. However, three adjacent precedents validate the core hypothesis: (1) Swiss-trained avalanche RF models transferred to the Pyrenees with ~60-70% zero-shot agreement (Ba…"
+    }
+  ],
+  "totalTokens": 602867,
+  "totalToolCalls": 123
+}

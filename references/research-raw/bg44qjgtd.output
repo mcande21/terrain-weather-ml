@@ -1,0 +1,494 @@
+============================= test session starts ==============================
+collecting ... collected 33 items
+
+tests/test_evaluation.py::TestBinaryMetrics::test_binary_f1_perfect PASSED [  3%]
+tests/test_evaluation.py::TestBinaryMetrics::test_binary_f1_imperfect PASSED [  6%]
+tests/test_evaluation.py::TestBinaryMetrics::test_binary_f1_all_negative PASSED [  9%]
+tests/test_evaluation.py::TestOrdinalAccuracy::test_ordinal_exact_match PASSED [ 12%]
+tests/test_evaluation.py::TestOrdinalAccuracy::test_ordinal_within_one PASSED [ 15%]
+tests/test_evaluation.py::TestOrdinalAccuracy::test_ordinal_some_outside PASSED [ 18%]
+tests/test_evaluation.py::TestConfusionMatrix::test_confusion_matrix_shape PASSED [ 21%]
+tests/test_evaluation.py::TestConfusionMatrix::test_confusion_matrix_values PASSED [ 24%]
+tests/test_evaluation.py::TestFalseNegativeRate::test_false_negative_rate_perfect PASSED [ 27%]
+tests/test_evaluation.py::TestFalseNegativeRate::test_false_negative_rate_all_missed PASSED [ 30%]
+tests/test_evaluation.py::TestFalseNegativeRate::test_false_negative_rate_partial PASSED [ 33%]
+tests/test_evaluation.py::TestFalseNegativeRate::test_false_negative_rate_no_elevated PASSED [ 36%]
+tests/test_evaluation.py::TestHighDangerDetection::test_detection_rate_perfect PASSED [ 39%]
+tests/test_evaluation.py::TestHighDangerDetection::test_detection_rate_missed PASSED [ 42%]
+tests/test_evaluation.py::TestHighDangerDetection::test_detection_rate_no_high PASSED [ 45%]
+tests/test_evaluation.py::TestBrierScore::test_brier_score_perfect PASSED [ 48%]
+tests/test_evaluation.py::TestBrierScore::test_brier_score_worst PASSED  [ 51%]
+tests/test_evaluation.py::TestBrierScore::test_brier_score_value PASSED  [ 54%]
+tests/test_evaluation.py::TestClassDistribution::test_class_distribution_report PASSED [ 57%]
+tests/test_evaluation.py::TestPerElevationBandMetrics::test_per_band_breakdown PASSED [ 60%]
+tests/test_evaluation.py::TestStage1Evaluation::test_stage1_metrics PASSED [ 63%]
+tests/test_evaluation.py::TestStage1Evaluation::test_exact_match_ratio PASSED [ 66%]
+tests/test_evaluation.py::TestStage2Evaluation::test_stage2_metrics PASSED [ 69%]
+tests/test_evaluation.py::TestStage2Evaluation::test_stage2_macro_f1 PASSED [ 72%]
+tests/test_tracking.py::TestMLflowTracking::test_configure_tracking PASSED [ 75%]
+tests/test_tracking.py::TestMLflowTracking::test_log_training_run FAILED [ 78%]
+tests/test_tracking.py::TestMLflowTracking::test_log_artifacts FAILED    [ 81%]
+tests/test_tracking.py::TestMLflowTracking::test_experiment_creation FAILED [ 84%]
+tests/test_tracking.py::TestMLflowTracking::test_flatten_metrics PASSED  [ 87%]
+tests/test_train.py::TestTrainPipeline::test_run_training_pipeline FAILED [ 90%]
+tests/test_train.py::TestTrainPipeline::test_model_artifacts_saved FAILED [ 93%]
+tests/test_train.py::TestTrainPipeline::test_temporal_split_from_dataframe FAILED [ 96%]
+tests/test_train.py::TestTrainPipeline::test_class_distribution_in_results FAILED [100%]
+
+=================================== FAILURES ===================================
+___________________ TestMLflowTracking.test_log_training_run ___________________
+
+self = <tests.test_tracking.TestMLflowTracking object at 0x11178ee90>
+tmp_path = PosixPath('/private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_log_training_run0')
+
+    def test_log_training_run(self, tmp_path):
+        import mlflow
+    
+        from avalanche_ml.models.tracking import configure_tracking, log_training_run
+    
+        configure_tracking(str(tmp_path / "mlruns"))
+    
+        params = {"n_estimators": 500, "max_depth": 10}
+        metrics = {
+            "stage1_persistent_slab_f1": 0.85,
+            "stage2_binary_f1": 0.78,
+            "stage2_ordinal_accuracy": 0.92,
+        }
+>       run_id = log_training_run(
+            experiment_name="snowpack-instability-rf",
+            params=params,
+            metrics=metrics,
+            tags={"model_type": "rf", "stage": "two_stage"},
+        )
+
+tests/test_tracking.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/models/tracking.py:34: in log_training_run
+    mlflow.set_experiment(experiment_name)
+.venv/lib/python3.14/site-packages/mlflow/tracking/fluent.py:202: in set_experiment
+    client = TrackingServiceClient(_resolve_tracking_uri())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:98: in __init__
+    self.store
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:102: in store
+    return utils._get_store(self.tracking_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:270: in _get_store
+    return _tracking_store_registry.get_store(store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:45: in get_store
+    return self._get_store_with_resolved_uri(resolved_store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:56: in _get_store_with_resolved_uri
+    return builder(store_uri=resolved_store_uri, artifact_uri=artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:184: in _get_file_store
+    return FileStore(store_uri, store_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mlflow.store.tracking.file_store.FileStore object at 0x11c98b4d0>
+root_directory = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_log_training_run0/mlruns'
+artifact_root_uri = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_log_training_run0/mlruns'
+
+    def __init__(self, root_directory=None, artifact_root_uri=None):
+        """
+        Create a new FileStore with the given root directory and a given default artifact root URI.
+        """
+        super().__init__()
+        if not MLFLOW_ALLOW_FILE_STORE.get():
+>           raise MlflowException(
+                "The filesystem tracking backend (e.g., './mlruns') is in maintenance mode "
+                "and will not receive further updates. Please migrate to a "
+                "database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow "
+                "features. The `mlflow migrate-filestore` tool migrates your existing data "
+                "losslessly. See "
+                "https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store "
+                "for migration guidance. If the filesystem backend is required for your "
+                "workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.",
+                error_code=INVALID_PARAMETER_VALUE,
+            )
+E           mlflow.exceptions.MlflowException: The filesystem tracking backend (e.g., './mlruns') is in maintenance mode and will not receive further updates. Please migrate to a database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow features. The `mlflow migrate-filestore` tool migrates your existing data losslessly. See https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store for migration guidance. If the filesystem backend is required for your workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.
+
+.venv/lib/python3.14/site-packages/mlflow/store/tracking/file_store.py:225: MlflowException
+____________________ TestMLflowTracking.test_log_artifacts _____________________
+
+self = <tests.test_tracking.TestMLflowTracking object at 0x1117f4e90>
+tmp_path = PosixPath('/private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_log_artifacts0')
+
+    def test_log_artifacts(self, tmp_path):
+        import mlflow
+    
+        from avalanche_ml.models.tracking import configure_tracking, log_training_run
+    
+        configure_tracking(str(tmp_path / "mlruns"))
+    
+        model_file = tmp_path / "model.joblib"
+        model_file.write_text("fake model")
+    
+>       run_id = log_training_run(
+            experiment_name="snowpack-instability-rf",
+            params={"n_estimators": 100},
+            metrics={"f1": 0.5},
+            artifacts=[str(model_file)],
+        )
+
+tests/test_tracking.py:53: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/models/tracking.py:34: in log_training_run
+    mlflow.set_experiment(experiment_name)
+.venv/lib/python3.14/site-packages/mlflow/tracking/fluent.py:202: in set_experiment
+    client = TrackingServiceClient(_resolve_tracking_uri())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:98: in __init__
+    self.store
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:102: in store
+    return utils._get_store(self.tracking_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:270: in _get_store
+    return _tracking_store_registry.get_store(store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:45: in get_store
+    return self._get_store_with_resolved_uri(resolved_store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:56: in _get_store_with_resolved_uri
+    return builder(store_uri=resolved_store_uri, artifact_uri=artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:184: in _get_file_store
+    return FileStore(store_uri, store_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mlflow.store.tracking.file_store.FileStore object at 0x11caa0f50>
+root_directory = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_log_artifacts0/mlruns'
+artifact_root_uri = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_log_artifacts0/mlruns'
+
+    def __init__(self, root_directory=None, artifact_root_uri=None):
+        """
+        Create a new FileStore with the given root directory and a given default artifact root URI.
+        """
+        super().__init__()
+        if not MLFLOW_ALLOW_FILE_STORE.get():
+>           raise MlflowException(
+                "The filesystem tracking backend (e.g., './mlruns') is in maintenance mode "
+                "and will not receive further updates. Please migrate to a "
+                "database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow "
+                "features. The `mlflow migrate-filestore` tool migrates your existing data "
+                "losslessly. See "
+                "https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store "
+                "for migration guidance. If the filesystem backend is required for your "
+                "workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.",
+                error_code=INVALID_PARAMETER_VALUE,
+            )
+E           mlflow.exceptions.MlflowException: The filesystem tracking backend (e.g., './mlruns') is in maintenance mode and will not receive further updates. Please migrate to a database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow features. The `mlflow migrate-filestore` tool migrates your existing data losslessly. See https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store for migration guidance. If the filesystem backend is required for your workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.
+
+.venv/lib/python3.14/site-packages/mlflow/store/tracking/file_store.py:225: MlflowException
+_________________ TestMLflowTracking.test_experiment_creation __________________
+
+self = <tests.test_tracking.TestMLflowTracking object at 0x1117f4fc0>
+tmp_path = PosixPath('/private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_experiment_creation0')
+
+    def test_experiment_creation(self, tmp_path):
+        import mlflow
+    
+        from avalanche_ml.models.tracking import configure_tracking, log_training_run
+    
+        configure_tracking(str(tmp_path / "mlruns"))
+    
+>       log_training_run(
+            experiment_name="test-experiment-creation",
+            params={},
+            metrics={"acc": 0.9},
+        )
+
+tests/test_tracking.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/models/tracking.py:34: in log_training_run
+    mlflow.set_experiment(experiment_name)
+.venv/lib/python3.14/site-packages/mlflow/tracking/fluent.py:202: in set_experiment
+    client = TrackingServiceClient(_resolve_tracking_uri())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:98: in __init__
+    self.store
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:102: in store
+    return utils._get_store(self.tracking_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:270: in _get_store
+    return _tracking_store_registry.get_store(store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:45: in get_store
+    return self._get_store_with_resolved_uri(resolved_store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:56: in _get_store_with_resolved_uri
+    return builder(store_uri=resolved_store_uri, artifact_uri=artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:184: in _get_file_store
+    return FileStore(store_uri, store_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mlflow.store.tracking.file_store.FileStore object at 0x11caa1d10>
+root_directory = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_experiment_creation0/mlruns'
+artifact_root_uri = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_experiment_creation0/mlruns'
+
+    def __init__(self, root_directory=None, artifact_root_uri=None):
+        """
+        Create a new FileStore with the given root directory and a given default artifact root URI.
+        """
+        super().__init__()
+        if not MLFLOW_ALLOW_FILE_STORE.get():
+>           raise MlflowException(
+                "The filesystem tracking backend (e.g., './mlruns') is in maintenance mode "
+                "and will not receive further updates. Please migrate to a "
+                "database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow "
+                "features. The `mlflow migrate-filestore` tool migrates your existing data "
+                "losslessly. See "
+                "https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store "
+                "for migration guidance. If the filesystem backend is required for your "
+                "workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.",
+                error_code=INVALID_PARAMETER_VALUE,
+            )
+E           mlflow.exceptions.MlflowException: The filesystem tracking backend (e.g., './mlruns') is in maintenance mode and will not receive further updates. Please migrate to a database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow features. The `mlflow migrate-filestore` tool migrates your existing data losslessly. See https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store for migration guidance. If the filesystem backend is required for your workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.
+
+.venv/lib/python3.14/site-packages/mlflow/store/tracking/file_store.py:225: MlflowException
+_________________ TestTrainPipeline.test_run_training_pipeline _________________
+
+self = <tests.test_train.TestTrainPipeline object at 0x11178f110>
+tmp_path = PosixPath('/private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_run_training_pipeline0')
+
+    def test_run_training_pipeline(self, tmp_path):
+        from avalanche_ml.models.train import run_training_pipeline_from_dataframe
+    
+        data = _make_synthetic_training_data()
+>       results = run_training_pipeline_from_dataframe(
+            data,
+            mlflow_tracking_dir=str(tmp_path / "mlruns"),
+            model_output_dir=str(tmp_path / "models"),
+        )
+
+tests/test_train.py:69: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/models/train.py:139: in run_training_pipeline_from_dataframe
+    mlflow_run_id = log_training_run(
+src/avalanche_ml/models/tracking.py:34: in log_training_run
+    mlflow.set_experiment(experiment_name)
+.venv/lib/python3.14/site-packages/mlflow/tracking/fluent.py:202: in set_experiment
+    client = TrackingServiceClient(_resolve_tracking_uri())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:98: in __init__
+    self.store
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:102: in store
+    return utils._get_store(self.tracking_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:270: in _get_store
+    return _tracking_store_registry.get_store(store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:45: in get_store
+    return self._get_store_with_resolved_uri(resolved_store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:56: in _get_store_with_resolved_uri
+    return builder(store_uri=resolved_store_uri, artifact_uri=artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:184: in _get_file_store
+    return FileStore(store_uri, store_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mlflow.store.tracking.file_store.FileStore object at 0x12103b950>
+root_directory = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_run_training_pipeline0/mlruns'
+artifact_root_uri = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_run_training_pipeline0/mlruns'
+
+    def __init__(self, root_directory=None, artifact_root_uri=None):
+        """
+        Create a new FileStore with the given root directory and a given default artifact root URI.
+        """
+        super().__init__()
+        if not MLFLOW_ALLOW_FILE_STORE.get():
+>           raise MlflowException(
+                "The filesystem tracking backend (e.g., './mlruns') is in maintenance mode "
+                "and will not receive further updates. Please migrate to a "
+                "database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow "
+                "features. The `mlflow migrate-filestore` tool migrates your existing data "
+                "losslessly. See "
+                "https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store "
+                "for migration guidance. If the filesystem backend is required for your "
+                "workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.",
+                error_code=INVALID_PARAMETER_VALUE,
+            )
+E           mlflow.exceptions.MlflowException: The filesystem tracking backend (e.g., './mlruns') is in maintenance mode and will not receive further updates. Please migrate to a database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow features. The `mlflow migrate-filestore` tool migrates your existing data losslessly. See https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store for migration guidance. If the filesystem backend is required for your workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.
+
+.venv/lib/python3.14/site-packages/mlflow/store/tracking/file_store.py:225: MlflowException
+_________________ TestTrainPipeline.test_model_artifacts_saved _________________
+
+self = <tests.test_train.TestTrainPipeline object at 0x11178f250>
+tmp_path = PosixPath('/private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_model_artifacts_saved0')
+
+    def test_model_artifacts_saved(self, tmp_path):
+        from avalanche_ml.models.train import run_training_pipeline_from_dataframe
+    
+        data = _make_synthetic_training_data()
+>       run_training_pipeline_from_dataframe(
+            data,
+            mlflow_tracking_dir=str(tmp_path / "mlruns"),
+            model_output_dir=str(tmp_path / "models"),
+        )
+
+tests/test_train.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/models/train.py:139: in run_training_pipeline_from_dataframe
+    mlflow_run_id = log_training_run(
+src/avalanche_ml/models/tracking.py:34: in log_training_run
+    mlflow.set_experiment(experiment_name)
+.venv/lib/python3.14/site-packages/mlflow/tracking/fluent.py:202: in set_experiment
+    client = TrackingServiceClient(_resolve_tracking_uri())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:98: in __init__
+    self.store
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:102: in store
+    return utils._get_store(self.tracking_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:270: in _get_store
+    return _tracking_store_registry.get_store(store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:45: in get_store
+    return self._get_store_with_resolved_uri(resolved_store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:56: in _get_store_with_resolved_uri
+    return builder(store_uri=resolved_store_uri, artifact_uri=artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:184: in _get_file_store
+    return FileStore(store_uri, store_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mlflow.store.tracking.file_store.FileStore object at 0x1211210f0>
+root_directory = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_model_artifacts_saved0/mlruns'
+artifact_root_uri = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_model_artifacts_saved0/mlruns'
+
+    def __init__(self, root_directory=None, artifact_root_uri=None):
+        """
+        Create a new FileStore with the given root directory and a given default artifact root URI.
+        """
+        super().__init__()
+        if not MLFLOW_ALLOW_FILE_STORE.get():
+>           raise MlflowException(
+                "The filesystem tracking backend (e.g., './mlruns') is in maintenance mode "
+                "and will not receive further updates. Please migrate to a "
+                "database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow "
+                "features. The `mlflow migrate-filestore` tool migrates your existing data "
+                "losslessly. See "
+                "https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store "
+                "for migration guidance. If the filesystem backend is required for your "
+                "workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.",
+                error_code=INVALID_PARAMETER_VALUE,
+            )
+E           mlflow.exceptions.MlflowException: The filesystem tracking backend (e.g., './mlruns') is in maintenance mode and will not receive further updates. Please migrate to a database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow features. The `mlflow migrate-filestore` tool migrates your existing data losslessly. See https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store for migration guidance. If the filesystem backend is required for your workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.
+
+.venv/lib/python3.14/site-packages/mlflow/store/tracking/file_store.py:225: MlflowException
+_____________ TestTrainPipeline.test_temporal_split_from_dataframe _____________
+
+self = <tests.test_train.TestTrainPipeline object at 0x1117f4640>
+
+    def test_temporal_split_from_dataframe(self):
+        from avalanche_ml.models.train import temporal_split_dataframe
+    
+        data = _make_synthetic_training_data()
+        train, val, test = temporal_split_dataframe(data)
+    
+        assert len(train) > 0
+>       assert len(val) > 0 or len(test) > 0
+E       assert (0 > 0 or 0 > 0)
+E        +  where 0 = len(Empty DataFrame\nColumns: [temp_mean_24h, temp_min_24h, temp_max_24h, temp_std_24h, temp_range_24h, temp_trend_24h, precip_sum_24h, precip_max_24h, precip_days_24h, precip_intensity_24h, wind_mean_24h, wind_max_24h, wind_std_24h, wind_direction_mode_24h, swe_change_24h, snow_depth_change_24h, swe_rate_24h, new_snow_24h, temp_mean_48h, temp_min_48h, temp_max_48h, temp_std_48h, temp_range_48h, temp_trend_48h, precip_sum_48h, precip_max_48h, precip_days_48h, precip_intensity_48h, wind_mean_48h, wind_max_48h, wind_std_48h, wind_direction_mode_48h, swe_change_48h, snow_depth_change_48h, swe_rate_48h, new_snow_48h, temp_mean_72h, temp_min_72h, temp_max_72h, temp_std_72h, temp_range_72h, temp_trend_72h, precip_sum_72h, precip_max_72h, precip_days_72h, precip_intensity_72h, wind_mean_72h, wind_max_72h, wind_std_72h, wind_direction_mode_72h, swe_change_72h, snow_depth_change_72h, swe_rate_72h, new_snow_72h, temp_mean_96h, temp_min_96h, temp_max_96h, temp_std_96h, temp_range_96h, temp_trend_96h, precip_sum_96h, precip_max_96h, precip_days_96h, precip_intensity_96h, wind_mean_96h, wind_max_96h, wind_std_96h, wind_direction_mode_96h, swe_change_96h, snow_depth_change_96h, swe_rate_96h, new_snow_96h, temp_mean_120h, temp_min_120h, temp_max_120h, temp_std_120h, temp_range_120h, temp_trend_120h, precip_sum_120h, precip_max_120h, precip_days_120h, precip_intensity_120h, wind_mean_120h, wind_max_120h, wind_std_120h, wind_direction_mode_120h, swe_change_120h, snow_depth_change_120h, swe_rate_120h, new_snow_120h, temp_gradient_days, surface_hoar_index, wind_slab_loading, rain_on_snow_hours, rain_on_snow_amount, snow_depth_anomaly, early_season_flag, freeze_thaw_cycles, danger_level, persistent_slab, ...]\nIndex: []\n\n[0 rows x 106 columns])
+E        +  and   0 = len(Empty DataFrame\nColumns: [temp_mean_24h, temp_min_24h, temp_max_24h, temp_std_24h, temp_range_24h, temp_trend_24h, precip_sum_24h, precip_max_24h, precip_days_24h, precip_intensity_24h, wind_mean_24h, wind_max_24h, wind_std_24h, wind_direction_mode_24h, swe_change_24h, snow_depth_change_24h, swe_rate_24h, new_snow_24h, temp_mean_48h, temp_min_48h, temp_max_48h, temp_std_48h, temp_range_48h, temp_trend_48h, precip_sum_48h, precip_max_48h, precip_days_48h, precip_intensity_48h, wind_mean_48h, wind_max_48h, wind_std_48h, wind_direction_mode_48h, swe_change_48h, snow_depth_change_48h, swe_rate_48h, new_snow_48h, temp_mean_72h, temp_min_72h, temp_max_72h, temp_std_72h, temp_range_72h, temp_trend_72h, precip_sum_72h, precip_max_72h, precip_days_72h, precip_intensity_72h, wind_mean_72h, wind_max_72h, wind_std_72h, wind_direction_mode_72h, swe_change_72h, snow_depth_change_72h, swe_rate_72h, new_snow_72h, temp_mean_96h, temp_min_96h, temp_max_96h, temp_std_96h, temp_range_96h, temp_trend_96h, precip_sum_96h, precip_max_96h, precip_days_96h, precip_intensity_96h, wind_mean_96h, wind_max_96h, wind_std_96h, wind_direction_mode_96h, swe_change_96h, snow_depth_change_96h, swe_rate_96h, new_snow_96h, temp_mean_120h, temp_min_120h, temp_max_120h, temp_std_120h, temp_range_120h, temp_trend_120h, precip_sum_120h, precip_max_120h, precip_days_120h, precip_intensity_120h, wind_mean_120h, wind_max_120h, wind_std_120h, wind_direction_mode_120h, swe_change_120h, snow_depth_change_120h, swe_rate_120h, new_snow_120h, temp_gradient_days, surface_hoar_index, wind_slab_loading, rain_on_snow_hours, rain_on_snow_amount, snow_depth_anomaly, early_season_flag, freeze_thaw_cycles, danger_level, persistent_slab, ...]\nIndex: []\n\n[0 rows x 106 columns])
+
+tests/test_train.py:107: AssertionError
+_____________ TestTrainPipeline.test_class_distribution_in_results _____________
+
+self = <tests.test_train.TestTrainPipeline object at 0x1117f43e0>
+tmp_path = PosixPath('/private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_class_distribution_in_res0')
+
+    def test_class_distribution_in_results(self, tmp_path):
+        from avalanche_ml.models.train import run_training_pipeline_from_dataframe
+    
+        data = _make_synthetic_training_data()
+>       results = run_training_pipeline_from_dataframe(
+            data,
+            mlflow_tracking_dir=str(tmp_path / "mlruns"),
+            model_output_dir=str(tmp_path / "models"),
+        )
+
+tests/test_train.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/models/train.py:139: in run_training_pipeline_from_dataframe
+    mlflow_run_id = log_training_run(
+src/avalanche_ml/models/tracking.py:34: in log_training_run
+    mlflow.set_experiment(experiment_name)
+.venv/lib/python3.14/site-packages/mlflow/tracking/fluent.py:202: in set_experiment
+    client = TrackingServiceClient(_resolve_tracking_uri())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:98: in __init__
+    self.store
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/client.py:102: in store
+    return utils._get_store(self.tracking_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:270: in _get_store
+    return _tracking_store_registry.get_store(store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:45: in get_store
+    return self._get_store_with_resolved_uri(resolved_store_uri, artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/registry.py:56: in _get_store_with_resolved_uri
+    return builder(store_uri=resolved_store_uri, artifact_uri=artifact_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.14/site-packages/mlflow/tracking/_tracking_service/utils.py:184: in _get_file_store
+    return FileStore(store_uri, store_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <mlflow.store.tracking.file_store.FileStore object at 0x12106ef90>
+root_directory = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_class_distribution_in_res0/mlruns'
+artifact_root_uri = 'file:///private/var/folders/q2/l43s20994k17hdxk1bm26pb00000gn/T/pytest-of-cooperanderson/pytest-31/test_class_distribution_in_res0/mlruns'
+
+    def __init__(self, root_directory=None, artifact_root_uri=None):
+        """
+        Create a new FileStore with the given root directory and a given default artifact root URI.
+        """
+        super().__init__()
+        if not MLFLOW_ALLOW_FILE_STORE.get():
+>           raise MlflowException(
+                "The filesystem tracking backend (e.g., './mlruns') is in maintenance mode "
+                "and will not receive further updates. Please migrate to a "
+                "database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow "
+                "features. The `mlflow migrate-filestore` tool migrates your existing data "
+                "losslessly. See "
+                "https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store "
+                "for migration guidance. If the filesystem backend is required for your "
+                "workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.",
+                error_code=INVALID_PARAMETER_VALUE,
+            )
+E           mlflow.exceptions.MlflowException: The filesystem tracking backend (e.g., './mlruns') is in maintenance mode and will not receive further updates. Please migrate to a database backend (e.g., 'sqlite:///mlflow.db') to access the latest MLflow features. The `mlflow migrate-filestore` tool migrates your existing data losslessly. See https://mlflow.org/docs/latest/self-hosting/migrate-from-file-store for migration guidance. If the filesystem backend is required for your workflow, set `MLFLOW_ALLOW_FILE_STORE=true` to opt out of this exception.
+
+.venv/lib/python3.14/site-packages/mlflow/store/tracking/file_store.py:225: MlflowException
+=============================== warnings summary ===============================
+tests/test_train.py::TestTrainPipeline::test_run_training_pipeline
+  /Users/cooperanderson/work/personal/code/colorado-avalanche-ml/.venv/lib/python3.14/site-packages/shap/plots/colors/_colors.py:47: PendingDeprecationWarning: The set_bad function will be deprecated in a future version. Use cmap.with_extremes(bad=...) or Colormap(bad=...) instead.
+    red_blue.set_bad(gray_rgb.tolist(), 1.0)
+
+tests/test_train.py::TestTrainPipeline::test_run_training_pipeline
+  /Users/cooperanderson/work/personal/code/colorado-avalanche-ml/.venv/lib/python3.14/site-packages/shap/plots/colors/_colors.py:48: PendingDeprecationWarning: The set_over function will be deprecated in a future version. Use cmap.with_extremes(over=...) or Colormap(over=...) instead.
+    red_blue.set_over(gray_rgb.tolist(), 1.0)
+
+tests/test_train.py::TestTrainPipeline::test_run_training_pipeline
+  /Users/cooperanderson/work/personal/code/colorado-avalanche-ml/.venv/lib/python3.14/site-packages/shap/plots/colors/_colors.py:49: PendingDeprecationWarning: The set_under function will be deprecated in a future version. Use cmap.with_extremes(under=...) or Colormap(under=...) instead.
+    red_blue.set_under(gray_rgb.tolist(), 1.0)  # "under" is incorrectly used instead of "bad" in the scatter plot
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_tracking.py::TestMLflowTracking::test_log_training_run - ml...
+FAILED tests/test_tracking.py::TestMLflowTracking::test_log_artifacts - mlflo...
+FAILED tests/test_tracking.py::TestMLflowTracking::test_experiment_creation
+FAILED tests/test_train.py::TestTrainPipeline::test_run_training_pipeline - m...
+FAILED tests/test_train.py::TestTrainPipeline::test_model_artifacts_saved - m...
+FAILED tests/test_train.py::TestTrainPipeline::test_temporal_split_from_dataframe
+FAILED tests/test_train.py::TestTrainPipeline::test_class_distribution_in_results
+=================== 7 failed, 26 passed, 3 warnings in 7.11s ===================

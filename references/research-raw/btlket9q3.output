@@ -1,0 +1,1156 @@
+
+
+========== result_1.json ==========
+--------------------------------------------------------------------------------
+TITLE: WindNinja | US Forest Service Research and Development
+URL: https://research.fs.usda.gov/firelab/products/dataandtools/windninja
+HL: WindNinja is a computer program that computes spatially varying wind fields for wildland fire application.
+...
+Wind is one of the most influential environmental factors affecting wildland fire behavior. The complex terrain of fire-prone landscapes causes local changes in wind speed and direction that are not predicted well by standard weather models or expert judgment. WindNinja was developed to help fire managers predict these winds.
+...
+WindNinja is a computer program that computes spatially v
+--------------------------------------------------------------------------------
+TITLE: WindNinja Overview | US Forest Service Research and Development
+URL: https://research.fs.usda.gov/firelab/products/dataandtools/windninja-overview
+HL: WindNinja Overview | US Forest Service Research and Development Skip to main content
+
+Missoula Fire Sciences Laboratory
+
+T
+
+T
+
+T
+
+# WindNinja Overview
+
+WindNinja was developed by the USDA Forest Service, Rocky Mountain Research Station by their Fire, Fuel, Smoke Science Program at the Missoula Fire Sciences Laboratory by Jason Forthofer, Natalie Wagenbrenner, Kyle Shannon, Levi Malott, and Bret Butler. The WindNinja team continues to develop, evaluate, and maintain WindNinja and the WindNinja Mo
+--------------------------------------------------------------------------------
+TITLE: WindNinja update: Version 3.12.0 | US Forest Service Research and Development
+URL: https://research.fs.usda.gov/firelab/articles/windninja-update-version-3120
+HL: WindNinja update: Version 3.12.0 | US Forest Service Research and Development Skip to main content
+
+Missoula Fire Sciences Laboratory
+
+T
+
+T
+
+T
+
+Article
+
+by Natalie S. Wagenbrenner, PhD
+
+May 22, 2025
+
+2 min read
+
+Wildfire & Safety
+
+Share this page
+
+# WindNinja update: Version 3.12.0
+
+by Natalie S. Wagenbrenner, PhD
+
+May 22, 2025
+
+Article
+
+2 min read
+
+Wildfire & Safety
+
+As the world’s leading wildland fire research organization, the USDA Forest Service develops and maintains a number of applicatio
+--------------------------------------------------------------------------------
+TITLE: firelab/windninja
+URL: http://github.com/firelab/windninja
+HL: # Repository: firelab/windninja
+
+A diagnostic wind model developed for use in wildland fire modeling.
+
+- Stars: 158
+- Forks: 52
+- Watchers: 158
+- Open issues: 108
+- Primary language: C++
+- Languages: C++ (68.2%), JavaScript (18.1%), C (8.3%), CMake (2.7%), Python (1.0%), HTML (0.8%), Shell (0.3%), CSS (0.3%), Dockerfile, Go, Batchfile, Singularity
+- License: Other (NOASSERTION)
+- Default branch: master
+- Homepage: https://ninjastorm.firelab.org/windninja/
+- Created: 2014-08-21T20:36:33Z
+- Last p
+--------------------------------------------------------------------------------
+TITLE: LICENSE
+URL: https://github.com/firelab/windninja/blob/master/LICENSE
+HL: # LICENSE
+
+- Branch: master
+- Repository: firelab/windninja
+
+---
+
+THIS SOFTWARE WAS DEVELOPED AT THE ROCKY MOUNTAIN RESEARCH STATION (RMRS)
+MISSOULA FIRE SCIENCES LABORATORY BY EMPLOYEES OF THE FEDERAL GOVERNMENT 
+IN THE COURSE OF THEIR OFFICIAL DUTIES. PURSUANT TO TITLE 17 SECTION 105 
+OF THE UNITED STATES CODE, THIS SOFTWARE IS NOT SUBJECT TO COPYRIGHT 
+PROTECTION AND IS IN THE PUBLIC DOMAIN. RMRS MISSOULA FIRE SCIENCES 
+LABORATORY ASSUMES NO RESPONSIBILITY WHATSOEVER FOR ITS USE BY OTHER 
+PAR
+--------------------------------------------------------------------------------
+TITLE: WindNinja
+URL: https://firelab.org/project/windninja
+HL: **WindNinja is a computer program that computes spatially varying wind fields for wildland fire application.**[](https://firelab.org/sites/default/files/2022-07/WindNinja-3.8.0-win64.exe)
+...
+**See the[WindNinja project website](https://weather.firelab.org/windninja/)for more details.**
+...
+Wind is one of the most influential environmental factors affecting wildland fire behavior. The complex terrain of fire-prone landscapes causes local changes in wind speed and direction that are not predicted
+--------------------------------------------------------------------------------
+TITLE: WindNinja
+URL: https://ninjastorm.firelab.org/windninja/index.html
+HL: WindNinja
+
+# WINDNINJA
+
+A diagnostic wind model developed for use in wildland fire modeling.
+
+### WindNinja R&D Information
+
+research.fs.usda.gov/firelab
+
+"Over the years, wind shifts have caused untold damage to communities and claimed the lives of firefighters and civilians alike. Although the National Weather Service (NWS) provides regular forecasts of the weather across the country, it could never drill down to a small enough area to be useful for firefighters. So something more was needed, 
+--------------------------------------------------------------------------------
+TITLE: firelab/windninja: 3.11.2 | Zenodo
+URL: https://zenodo.org/records/14157304
+HL: firelab/windninja: 3.11.2 | Zenodo
+
+ Published November 13, 2024 | Version 3.11.2 Software Open 
+
+### Authors/Creators
+
+- Natalie Wagenbrenner 1 
+- Kyle Shannon 2 
+- tfinney9 3 
+- latwood
+- Jason Forthofer 1 
+- RuiyuZhang.SD
+- Hannah Gedlaman
+- Peter C Mehlitz 4 
+- lmnn3
+- Nicholas Kim 5 
+- greynathan
+- Stuart Brittain 6 
+- MelonDeLaMancha
+- Chris Marsh 7 
+- OfirGan
+- Sathwik Reddy
+- Johanna Strebl
+- Humberto Díaz 8 
+- Nicholas Kim
+- jeffreycunn
+- masonwillman
+- santiagoMonedero
+
+- 1. US Forest 
+
+
+========== result_2.json ==========
+--------------------------------------------------------------------------------
+TITLE: Wind Atlas Methodology
+URL: https://wasp.dtu.dk/software/wasp/wind-atlas-generation/wind-atlas-methodology
+HL: Wind Atlas Methodology
+
+# Wind Atlas Methodology 
+
+The central point in the wind transformation model of WAsP – the so-called Wind Atlas Methodology – is the concept of a Regional or Generalized Wind Climate, or Wind Atlas. This Generalized Wind Climate is the hypothetical wind climate for an ideal, featureless and completely flat terrain with a uniform surface roughness, assuming the same overall atmospheric conditions as those of the measuring position.
+
+The basic "machine" of WAsP is a flow m
+--------------------------------------------------------------------------------
+TITLE: Wind resource assessment using the WAsP software (DTU Wind Energy E-0135)
+URL: https://backend.orbit.dtu.dk/ws/files/140943898/Wind_resource_assessment_using_the_WAsP_software_DTU_Wind_Energy_E_0135_.pdf
+HL: Conventionally, wind resource assessment and wind farm calculations are based on wind data measured at or nearby the wind farm site. The WAsP software (Mortensen et al., 2014) is an implementation of the so-called wind atlas methodology (Troen and Petersen, 1989); this is shown schematically in Figure 3. WAsP analysis: from wind data to generalised wind climate
+...
+, which also
+...
+modelling and satellite imagery analysis. This
+...
+ø and DTU (Frank et al., 2
+...
+1; Badger et al., 2006; Hansen et
+--------------------------------------------------------------------------------
+TITLE: Wind Atlas Analysis and Application Program: WAsP 10 Help Facility
+URL: https://backend.orbit.dtu.dk/ws/files/116352660/WAsP_10_Help_Facility.pdf
+HL: WAsP is a PC-program for the vertical and horizontal extrapolation of wind climate statistics. It 
+contains several models to describe the wind flow over different terrains and close to sheltering 
+obstacles. Conceptually, the WAsP methodology consists of five main calculation blocks: 
+Analysis of raw wind data. This option enables an analysis of any time-series of wind 
+measurements to provide a statistical summary of the observed, site-specific wind climate. This part is 
+implemented in separa
+--------------------------------------------------------------------------------
+TITLE: WAsP Flow Model — PyWAsP 2.0
+URL: https://docs.wasp.dk/pywasp/latest/user_guide/wasp_flow_model.html
+HL: WAsP includes flow models for horizontal and vertical extrapolation of wind climates. The models includes effects on the flow from terrain inhomogeneity and from the structure of the atmospheric surface layer.
+...
+Generalization is the process of “removing” local terrain and surface layer effects from the observed wind climate and instead “generalizing” the wind climate to a number of “standard” conditions (of surface roughness and height above ground).
+...
+Downscaling is the reverse process whe
+--------------------------------------------------------------------------------
+TITLE: WAsP Flow Model — pywasp 0.7.0 documentation
+URL: https://docs.wasp.dk/pywasp/v0.7.0/user_guide/wasp_flow_model.html
+HL: WAsP includes flow models for horizontal and vertical extrapolation of wind climates. The models includes effects on the flow from terrain inhomogeneity and from the structure of the atmospheric surface layer.
+...
+Generalization is the process of “removing” local terrain and surface layer effects from the observed wind climate and instead “generalizing” the wind climate to a number of “standard” conditions (of surface roughness and height above ground).
+...
+Downscaling is the reverse process whe
+--------------------------------------------------------------------------------
+TITLE: Wind Climate Estimate
+URL: https://wasp.dtu.dk/software/wasp/wind-climate-estimate
+HL: Wind Climate Estimate
+
+Explore
+
+Share on
+
+# Wind Climate Estimate
+
+Using a regional wind climate calculated by WAsP or one obtained from another source – e.g. the European Wind Atlas or one of the many wind atlases now available – WAsP can predict the wind climate at any specific site and height by performing the inverse calculation as is used to generate the regional wind climate. By introducing descriptions of the terrain around the predicted site, the WAsP models can predict the actual, expec
+--------------------------------------------------------------------------------
+TITLE: Topography — PyWAsP 2.0
+URL: https://docs.wasp.dk/pywasp/latest/user_guide/topography.html
+HL: Topographic information is an important input to WAsP’s flow models. Specifically, WAsP’s terrain model takes as input maps of surface elevation, surface roughness, and optionally displacement height.
+...
+In PyWAsP, instead of dealing with surface roughness maps and displacement height maps as completely separate layers, we deal with them as land cover maps, where patches of land are associated with specific land cover classes, each having specific surface characteristics (i.e. the surface rough
+--------------------------------------------------------------------------------
+TITLE: Getting Started with WAsP 9
+URL: https://www.wasp.dk/-/media/sites/wasp/wasp-support/getting-started-with-wasp-9.pdf
+HL: Abstract (max. 2000 char.): The Wind Atlas Analysis and Application Program (WAsP) is a PC-program for horizontal and vertical extrapolation of wind data. The program contains a complete set of models to calculate the effects on the wind of sheltering obstacles, surface roughness changes and terrain height variations. The analysis part consists of a transformation of an observed wind climate (speed and direction distributions) to a wind atlas data set. The wind atlas data set can subsequently be
+--------------------------------------------------------------------------------
+TITLE: Classical resource assessment step-by-step — PyWAsP 2.0
+URL: https://docs.wasp.dk/pywasp/latest/tutorials/tutorial1_nb.html
+HL: Using`pywasp`, you can analyse the recorded wind data, correcting for the recording site effects to produce a site-independent characterization of the local wind climate. This site-independent characterization of the local wind climate is called a wind atlas data set or generalised wind climate. You can also use`pywasp` to apply site effects to generalised wind climate data to produce a site-specific interpretation of the local wind climate.
+...
+Providing a prediction in the Waspdale case will t
+--------------------------------------------------------------------------------
+TITLE: From WAsP to PyWAsP — PyWAsP 2.0
+URL: https://docs.wasp.dk/pywasp/latest/getting_started/from_wasp_to_pywasp.html
+HL: The WAsP graphical user interface (GUI) for Windows has been around since it was first released in the 1990’s. Working with WAsP through PyWAsP is obviously very different than through “WAsP GUI”, but the goal of PyWAsP is to make it seamless to work on projects in both environments.
+...
+Providing I/O for all relevant WAsP file formats
+...
+Ensuring consistent calculations through the shared Fortran-based WAsP library
+...
+Using familiar terminology where possible
+...
+The following table maps WAsP
+
+
+========== result_3.json ==========
+--------------------------------------------------------------------------------
+TITLE: Transformer-based neural operators for 3D wind field prediction over complex mountainous terrain | Communications Physics
+URL: https://www.nature.com/articles/s42005-026-02770-w
+HL: Transformer-based neural operators for 3D wind field prediction over complex mountainous terrain | Communications Physics
+...
+# Transformer-based neural operators for 3D wind field prediction over complex mountainous terrain
+...
+Accurate prediction of three-dimensional wind fields over complex mountainous terrain is essential for renewable energy deployment and regional weather modeling. Existing computational fluid dynamics simulations are accurate but expensive and require laborious mesh gener
+--------------------------------------------------------------------------------
+TITLE: Citation (Version of Record): Sheehan, H. M., Traiger, E., Poole, D. J., & Landberg, L. (2022). Predicting Linearised Wind Resource Grids using Neural Networks. Journal of Wind Engineering and Industrial Aerodynamics, 229, Article 105123. https://doi.org/10.1016/j.jweia.2022.105123
+URL: https://research-information.bris.ac.uk/ws/files/341783725/1_s2.0_S0167610522002227_main.pdf
+HL: Keywords:Wind Resource AssessmentMachine LearningGrid-Kernel Neural NetworksDeep Neural NetworksConvolutional Neural NetworksWAsP
+...
+Modelling the flow over terrain is a key element of wind resource assessments within the wind energyindustry. Existing flow modelling methods range from fast, low fidelity analytical models to time-consumingand computationally expensive high-fidelity Computational Fluid Dynamics (CFD) software. In this work, aGrid-Kernel Neural Network approach has been developed 
+--------------------------------------------------------------------------------
+TITLE: Reconstructing fine-scale 3D wind fields with terrain-informed machine learning
+URL: https://doi.org/10.1038/s41467-026-70562-5
+HL: # Reconstructing fine-scale 3D wind fields with terrain-informed machine learning
+...
+Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimen
+--------------------------------------------------------------------------------
+TITLE: Terrain-aware Deep Learning for Wind Energy Applications: From Kilometer-scale Forecasts to Fine Wind Fields
+URL: https://doi.org/10.48550/arxiv.2505.12732
+HL: High-resolution wind information is essential for wind energy planning and power forecasting, particularly in regions with complex terrain. However, most AI-based weather forecasting models operate at kilometer-scale resolution, constrained by the reanalysis datasets they are trained on. Here we introduce FuXi-CFD, an AI-based downscaling framework designed to generate detailed three-dimensional wind fields at 30-meter horizontal resolution, using only coarseresolution atmospheric inputs. The mo
+--------------------------------------------------------------------------------
+TITLE: Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications
+URL: https://www.nature.com/articles/s41467-026-70562-5
+HL: Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coa
+--------------------------------------------------------------------------------
+TITLE: WES - Machine-learning-based estimate of the wind speed over complex terrain using the long short-term memory (LSTM) recurrent neural network
+URL: https://wes.copernicus.org/articles/9/1431/2024/
+HL: WES - Machine-learning-based estimate of the wind speed over complex terrain using the long short-term memory (LSTM) recurrent neural network
+...
+# Machine-learning-based estimate of the wind speed over complex terrain using the long short-term memory (LSTM) recurrent neural network
+...
+Accurate estimation of the wind speed profile is crucial for a range of activities such as wind energy and aviation. The power law and the logarithmic-based profiles have been widely used as universal formulas to
+--------------------------------------------------------------------------------
+TITLE: Complex terrains and wind power: enhancing forecasting accuracy through CNNs and DeepSHAP analysis
+URL: https://www.frontiersin.org/journals/energy-research/articles/10.3389/fenrg.2023.1328899/full
+HL: Accurate prediction of wind power generation in regions characterised by complex terrain is a critical gap in renewable energy research. To address this challenge, the present study articulates a novel methodological framework using Convolutional Neural Networks (CNNs) to improve wind power forecasting in such geographically diverse areas. The core research question is to investigate the extent to which terrain complexity affects forecast accuracy. To this end, DeepSHAP—an advanced interpretabil
+--------------------------------------------------------------------------------
+TITLE: Frontiers | Wind power output prediction in complex terrain based on modal decomposition attentional convolutional network
+URL: https://www.frontiersin.org/journals/energy-research/articles/10.3389/fenrg.2023.1236597/full
+HL: Frontiers | Wind power output prediction in complex terrain based on modal decomposition attentional convolutional network
+...
+# Wind power output prediction in complex terrain based on modal decomposition attentional convolutional network
+...
+In this work, modal decomposition is employed to generate more data for matching scenarios with more complex topography for predicting wind power output in the case of complex terrain. The existing literature shows that a single wind power output forecast 
+--------------------------------------------------------------------------------
+TITLE: A Systematic Review of Wind Energy Forecasting Models Based on Deep Neural Networks
+URL: https://www.mdpi.com/2674-032X/5/4/29
+HL: The present study focuses on wind power forecasting (WPF) models based on deep neural networks (DNNs), aiming to evaluate current approaches, identify gaps, and provide insights into their importance for the integration of Renewable Energy Sources (RESs). The systematic review was conducted following the methodology of Kitchenham and Charters, including peer-reviewed articles from 2020 to 2024 that focused on WPF using deep learning (DL) techniques. Searches were conducted in the ACM Digital Lib
+--------------------------------------------------------------------------------
+TITLE: TerraWind: A Deep Learning‐Based Near‐Surface Winds Downscaling Model for Complex Terrain Region
+URL: https://doi.org/10.1029/2024gl112124
+HL: Wind downscaling is crucial for refining coarse-scale wind estimates, improving local-scale predictions, and supporting various applications like risk assessment and planning. Dynamic downscaling models demand extensive computational resources and time, leading to a shift toward more efficient statistical downscaling, whereas it often overlooks inter-variable and inter-station spatial correlations. Addressing this, we propose TerraWind, a deep learning-based downscaling method for complex terrai
+
+
+========== result_4.json ==========
+--------------------------------------------------------------------------------
+TITLE: WES - A numerical study of the influence of terrain on wakes, blockage, wind farm efficiency, and turbine efficiency
+URL: https://wes.copernicus.org/articles/11/2695/2026/
+HL: This study investigates the interplay of terrain, blockage, and wake effects using Reynolds-Averaged Navier–Stokes (RANS) simulations of 35 different combinations of terrain, wind farm layout, and atmospheric conditions. The terrain includes two idealized solitary ridgelines, an idealized valley, and flat ground. The wind farms comprise one or two rows of closely spaced turbines parallel to the terrain feature. We simulate these idealized wind farms in conventionally neutral boundary layers of d
+--------------------------------------------------------------------------------
+TITLE: CFD wind farm evaluation in complex terrain under free and wake induced flow conditions
+URL: https://doi.org/10.1088/1742-6596/2767/9/092099
+HL: # CFD wind farm evaluation in complex terrain under free and wake induced flow conditions
+
+Journal of Physics Conference Series. Published: 2024-06-01. 0 citations.
+
+## Abstract
+
+Abstract Massive deployment of wind energy is critical to achieving the renewable energy production targets. This requires the development and improvement of models and tools for the optimal exploitation of high altitude and complex terrain sites for wind energy installations. Predicting the wind resource assessment of 
+--------------------------------------------------------------------------------
+TITLE: Modeling wake effects in large wind farms in complex terrain: the problem, the methods and the issues
+URL: https://oa.upm.es/21267/1/INVE_MEM_2012_144228.pdf
+HL: the flow in complex terrain requires modeling that is based on computational fluid dynamics (CFD), Reynolds-averaged
+...
+Project is dual: (i) to evaluate the performance of CFD models in large wind farm applications in complex terrain and (ii) to
+...
+F = 0.5 pUr 2 eiCT A (8) In Equation (8), p is the air density, i/ref is the reference wind speed for the thrust coefficient calculation, Cj = Cj-(t/ref) is the thrust coefficient and A is the surface area of the rotor disk. The rotor disk of each W
+--------------------------------------------------------------------------------
+TITLE: Analysis and validation of CFD wind farm models in complex terrain. Effects induced by topography and wind turbines
+URL: http://oa.upm.es/21053/1/INVE_MEM_2010_144249.pdf
+HL: # Analysis and validation of CFD wind farm models in complex terrain. Effects induced by topography and wind turbines
+...
+Wind farms have been extensively simulated through engineering models for the estimation of wind speed and power deficits inside wind farms. These models were designed initially for a few wind turbines located in flat terrain. Other models based on the parabolic approximation of Navier Stokes equations were developed, making more realistic and feasible the operational resolut
+--------------------------------------------------------------------------------
+TITLE: Assessment of Wind over Complex Terrain Considering the Effects of Topography, Atmospheric Stability and Turbine Wakes
+URL: https://www.mdpi.com/2073-4433/15/6/723
+HL: This study proposes a microscale flow model to estimate mean wind speed, fluctuating wind speed and wind direction over complex terrain considering the effects of topography, atmospheric stability, and turbine wakes. Firstly, the effect of topography is considered using Computational Fluid Dynamics (CFD). Next, a mesoscale model is presented to account for the effect of atmospheric stability. The effect of turbine wakes on the mean and fluctuating wind speeds are then represented by an advanced 
+--------------------------------------------------------------------------------
+TITLE: Validation of a CFD model of wind turbine wakes with terrain effects
+URL: https://www.sciencedirect.com/science/article/abs/pii/S0167610513001827
+HL: * •A comprehensive CFD study of modelling wind turbine wakes in complex terrain.
+...
+* •The Virtual Blade model is used along with the[Reynolds Stress Model](https://www.sciencedirect.com/topics/engineering/reynolds-stress-model).
+* •Validation with single wake and hillow measurements shows satisfactory results.
+* •The CFD method is validated with wind farm measurements and compared with WAsP.
+...
+[Wind turbine](https://www.sciencedirect.com/topics/engineering/wind-turbine)wakes and the neutral 
+--------------------------------------------------------------------------------
+TITLE: CFD Simulations of Flows in a Wind Farm in Complex Terrain and Comparisons to Measurements
+URL: https://www.mdpi.com/2076-3417/8/5/788
+HL: This article describes Computational Fluid Dynamics (CFD) simulations of flows in a wind farm in complex terrain in Shaanxi, China and the comparisons of the computational results with utility scale field measurements. The CFD simulations performed in the study are using either a Reynolds-Averaged Navier–Stokes (RANS) or Large-Eddy Simulation (LES) solver. The RANS method together with an Actuator Disc (AD) approach is employed to predict the performance of the 25 wind turbines in the farm, whil
+--------------------------------------------------------------------------------
+TITLE: Meso- to micro-scale modeling of atmospheric stability effects on wind turbine wake behavior in complex terrain
+URL: https://doi.org/10.5194/wes-2021-36
+HL: Most detailed modeling and simulation studies of wind turbine wakes have considered flat terrain scenarios. Wind turbines, however, are commonly sited in mountainous or hilly terrain to take advantage of accelerating flow over ridgelines. In addition to topographic acceleration, other turbulent flow phenomena commonly occur in complex terrain, and often depend upon the thermal stratification of the atmospheric boundary layer. Enhanced understanding of wind turbine wake interaction with these ter
+--------------------------------------------------------------------------------
+TITLE: A novel wake model for wind farm design on complex terrains
+URL: https://doi.org/10.1016/j.jweia.2017.12.016
+HL: A numerical wake model that is capable of simulating wind turbine wake effects over complex terrains is proposed in this work. Currently, full-scale computational fluid dynamics (CFD) simulations are required to simulate wake effects over complex terrains. Due to their high computational cost, it is difficult to apply expensive CFD simulations in the wind farm design process as optimization algorithms often require large number of solution evaluations. The proposed wake model solves a simplified
+
+
+========== result_5.json ==========
+--------------------------------------------------------------------------------
+TITLE: Transformer-based neural operators for 3D wind field prediction over complex mountainous terrain | Communications Physics
+URL: https://www.nature.com/articles/s42005-026-02770-w
+HL: Transformer-based neural operators for 3D wind field prediction over complex mountainous terrain | Communications Physics
+...
+# Transformer-based neural operators for 3D wind field prediction over complex mountainous terrain
+...
+Accurate prediction of three-dimensional wind fields over complex mountainous terrain is essential for renewable energy deployment and regional weather modeling. Existing computational fluid dynamics simulations are accurate but expensive and require laborious mesh gener
+--------------------------------------------------------------------------------
+TITLE: Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications | Springer Nature Link
+URL: https://link.springer.com/article/10.1038/s41467-026-70562-5
+HL: Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coa
+--------------------------------------------------------------------------------
+TITLE: Terrain-aware Deep Learning for Wind Energy Applications: From Kilometer-scale Forecasts to Fine Wind Fields
+URL: https://doi.org/10.48550/arxiv.2505.12732
+HL: High-resolution wind information is essential for wind energy planning and power forecasting, particularly in regions with complex terrain. However, most AI-based weather forecasting models operate at kilometer-scale resolution, constrained by the reanalysis datasets they are trained on. Here we introduce FuXi-CFD, an AI-based downscaling framework designed to generate detailed three-dimensional wind fields at 30-meter horizontal resolution, using only coarseresolution atmospheric inputs. The mo
+--------------------------------------------------------------------------------
+TITLE: Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications
+URL: https://www.nature.com/articles/s41467-026-70562-5
+HL: Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coa
+--------------------------------------------------------------------------------
+TITLE: A novel non-dimensional multiple operating conditions physics-informed neural networks for wind turbine wake and power prediction in complex terrains - ScienceDirect
+URL: https://www.sciencedirect.com/science/article/abs/pii/S0360544226014076
+HL: An ND-MOC-PINN wake model for complex terrain is proposed, based on a physics-data hybrid framework.
+...
+Non-dimensional treatment is applied to the physical equations and supervised data
+...
+improving prediction accuracy.
+...
+The training domain is reshaped into a 5D hypercube
+...
+enabling wake predictions under different operating conditions.
+...
+With the continuous advancement of computing technologies, data-driven approaches represented by machine learning and deep learning have gradually be
+--------------------------------------------------------------------------------
+TITLE: Investigating the usability of physics informed machine learning approaches for wind farm planning
+URL: https://doi.org/10.23967/eccomas.2024.227
+HL: Determining wind energy yield and predicting wind farm performance is challenging due to the uncertain behavior of wind and the need for multiple CFD simulations across various scenarios and parameters, such as tree height, roughness, and wind direction. These simulations are computationally expensive and time-consuming, making Monte-Carlo methods impractical for extensive site assessments. This work explores the feasibility of using two types of neural networks-data-driven and physics-informed-
+--------------------------------------------------------------------------------
+TITLE: Multi-turbine turbulent wake simulation using physics-informed neural networks
+URL: https://doi.org/10.1063/5.0322331
+HL: In real-world fluid dynamics, turbulence is prevalent, from swirling coffee in a cup to galaxy formation. Physics-informed neural networks (PINNs) are pivotal in scientific machine learning and have been applied to engineering turbulence problems; however, they encounter challenges due to the chaotic and computationally intense nature of turbulence simulations. We introduce a PINN model for simulating turbulent wakes in multi-turbine configurations using a hybrid physics-data training strategy. 
+--------------------------------------------------------------------------------
+TITLE: A Framework of Data Assimilation for Wind Flow Fields by Physics-informed Neural Networks
+URL: https://arxiv.org/html/2401.17001v2
+HL: pursuit of global carbon neutrality [1]. The efficiency of energy capture from wind turbines is greatly influenced by factors such as design, site selection, and operational control, especially due to the complexity of turbulence within the atmospheric boundary layer [2, 3]. To efficiently capture energy from the upstream inflow of wind turbines, wind speed measurement technologies are undergoing continuous evolution. A prime example of this is light detection and ranging (LiDAR) [4], which has 
+--------------------------------------------------------------------------------
+TITLE: A new power prediction method for wind farm in complex terrain based on CFD and machine learning
+URL: https://doi.org/10.1016/j.jweia.2026.106435
+HL: # A new power prediction method for wind farm in complex terrain based on CFD and machine learning
+...
+- Li Li, Yongqian Liu, Yongping Yang, Shuang Han, Yimei Wang. A physical approach of the short-term wind power prediction based on CFD pre-calculated flow fields. Journal of Hydrodynamics. 2013;25(1):56-61. doi:10.1016/s1001-6058(13)60338-8.
+...
+- Orkun Temel, Laurent Bricteux, Jeroen van Beeck. Coupled WRF-OpenFOAM study of wind flow over complex terrain. Journal of Wind Engineering and Indust
+--------------------------------------------------------------------------------
+TITLE: Wind field prediction for mountainous terrain based on CFD method and surrogate model
+URL: https://doi.org/10.1117/12.3106153
+HL: # Wind field prediction for mountainous terrain based on CFD method and surrogate model
+
+Published: 2026-02-15. 0 citations.
+
+## Authors
+
+- Jinyu Wang: h-index 0; 0 citations
+- Zhe Li: h-index 0; 0 citations
+- Yun Liang: h-index 0; 0 citations
+- Ming Lu: h-index 0; 0 citations
+- XianGang Yang: h-index 0; 0 citations
+- Yongli Zhong: h-index 9; 237 citations
+
+## Topics
+
+- Wind and Air Flow Studies
+- Meteorological Phenomena and Simulations
+- Wind Energy Research and Development
+
+
+========== result_6.json ==========
+--------------------------------------------------------------------------------
+TITLE: Wind Integration National Dataset Toolkit
+ | High-Performance Computing | NLR
+URL: https://www.nrel.gov/hpc/wind-dataset.html
+HL: Wind Integration National Dataset Toolkit | High-Performance Computing | NLR
+
+# Wind Integration National Dataset Toolkit
+
+The Wind Integration National Dataset (WIND) Toolkit can be accessed from NLR's high-performance computing system.
+
+Learn about the WIND Toolkit.
+
+## Data Development
+
+This wind resource data for North America was produced using the Weather Research and Forecasting Model (WRF). The WRF model was initialized with the European Centre for Medium Range Weather Forecasts Interim 
+--------------------------------------------------------------------------------
+TITLE: The Wind Integration National Dataset (WIND) Toolkit
+URL: https://www.sciencedirect.com/science/article/abs/pii/S0306261915004237
+HL: Regional wind integration studies in the United States require detailed wind[power output](https://www.sciencedirect.com/topics/engineering/power-output)data at many locations to perform simulations of how the[power system](https://www.sciencedirect.com/topics/engineering/power-engineering)will operate under high-penetration scenarios. The wind data sets that serve as inputs into the study must realistically reflect the ramping characteristics, spatial and temporal correlations, and capacity fac
+--------------------------------------------------------------------------------
+TITLE: Wind Integration National Dataset Toolkits
+ | Grid Modernization | NLR
+URL: https://www.nlr.gov/grid/wind-toolkit
+HL: The WIND Toolkit, which was created through the collaborative efforts of NLR and 3TIER, includes instantaneous meteorological conditions from computer model output and calculated turbine power for more than 126,000 sites in
+...
+continental United States for the years 2007–2013. It features three datasets:
+...
+Because of the size of the full WIND Toolkit, only the following data subsets are available for user access and download. These sets are tailored to the needs of common applications.
+...
+Th
+--------------------------------------------------------------------------------
+TITLE: Wind Toolkit Data V2
+          API
+        |
+      NLR: Developer Network
+URL: https://developer.nlr.gov/docs/wind/wind-toolkit/wtk-download/
+HL: # Wind Toolkit Data V2 (/api/wind-toolkit/v2/
+...
+k-download)
+...
+Collect and download, as CSV, a configurable set of data fields from a national collection of wind stations. The Wind Integration National Dataset (WIND) Toolkit is an update and expansion of the Eastern and Western Wind Datasets, and is intended to support the next generation of integration studies. The WIND Toolkit includes meteorological conditions at multiple hub heights for more than 2,488,136 sites in the continental United 
+--------------------------------------------------------------------------------
+TITLE: Wind Toolkit Data Downloads
+          API
+        |
+      NLR: Developer Network
+URL: https://developer.nlr.gov/docs/wind/wind-toolkit/
+HL: Freely available downloads of Wind Integration National Dataset Toolkit.
+...
+The Wind Integration National Dataset (WIND) Toolkit is an update and expansion of the Eastern Integration Data Set and Western Wind Integration Data Set. It supports the next generation of wind integration studies. The WIND Toolkit includes meteorological conditions and turbine power for more than 126,000 sites in the continental United States for the years 2007—2013. Read more at https://www.nlr.gov/grid/wind-toolkit
+
+--------------------------------------------------------------------------------
+TITLE: WTK-LED CONUS (60-minute)
+          API
+        |
+      NLR: Developer Network
+URL: https://developer.nrel.gov/docs/wind/wind-toolkit/wtk-led-conus-download/
+HL: # WTK-LED CONUS (60-minute) (/api/wind-toolkit/v2/wind/wtk-led-conus-download)
+...
+Collect and download, as CSV, a configurable set of data fields from a national collection of wind stations. This data represents wind-speed, temperature, direction, and air pressure values at multiple heights above the surface for the years 2019 and 2020.
+...
+The complete library of wind data can be accessed in bulk at https://data.openei.org/s3_viewer?bucket=nrel-pds-wtk.
+...
+Options: boundary_layer_height, fric
+--------------------------------------------------------------------------------
+TITLE: Data Download Guide
+          API
+        |
+      NLR: Developer Network
+URL: https://developer.nlr.gov/docs/wind/wind-toolkit/guide/
+HL: We often receive requests from users interested in downloading larger segments of the data than are supported by the API. It is important to understand that these datasets are large. Currently our storage archive contains hundreds of terabytes of data and is constantly growing! In order to reliably serve dynamic segments of a dataset of this size to a growing community of users we have calculated the maximum capacity our server hardware can sustain. We use this physical capacity to determine our
+--------------------------------------------------------------------------------
+TITLE: WIND Toolkit Download — SAM Help
+URL: https://natlabrockies.github.io/SAM/doc/window-reference/win_wind_toolkit_download.html
+HL: WIND Toolkit Download — SAM Help
+
+# WIND Toolkit Download#
+
+The WIND Toolkit Download window allows you to download a weather file with wind resource data for locations covered by the NLR WIND Toolkit. See Wind Resource for a description of the toolkit.
+
+To download a weather file from the NLR WIND Toolkit:
+
+1. Choose the Street address or zip code or Location coordinates (deg) option and type a latitude and longitude, street address, or zip code for the wind turbine or wind farm location.
+2. Ch
+--------------------------------------------------------------------------------
+TITLE: Overview and Meteorological Validation of the Wind Integration National Dataset toolkit
+      -  National Laboratory of the Rockies
+URL: https://research-hub.nrel.gov/en/publications/overview-and-meteorological-validation-of-the-wind-integration-na/
+HL: Overview and Meteorological Validation of the Wind Integration National Dataset toolkit - National Laboratory of the Rockies
+
+# Overview and Meteorological Validation of the Wind Integration National Dataset toolkit
+
+- , Andrew Clifton
+- National Wind Technology Center
+- Power Systems Engineering
+
+- 3TIER
+
+Research output: NLR › Technical Report
+
+## Abstract
+
+The Wind Integration National Dataset (WIND) Toolkit described in this report constitutes a state-of-the-art national wind resource datase
+
+
+========== result_7.json ==========
+--------------------------------------------------------------------------------
+TITLE: daisy1212/FuXi-CFD-model · Hugging Face
+URL: https://huggingface.co/daisy1212/FuXi-CFD-model
+HL: daisy1212/FuXi-CFD-model · Hugging Face
+
+## Overview 
+
+This repository accompanies the paper:
+
+Reconstructing fine-scale 3D wind fields with terrain-informed machine learning
+
+It provides the pre-trained FuXi-CFD model used in the study, exported in ONNX format, together with a complete inference example.
+
+Version: v1.0 Framework: ONNX (runtime inference) 
+
+## Model Description 
+
+FuXi-CFD is a terrain-informed deep learning model designed to reconstruct fine-scale three-dimensional wind fields f
+--------------------------------------------------------------------------------
+TITLE: Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications | Springer Nature Link
+URL: https://link.springer.com/article/10.1038/s41467-026-70562-5
+HL: Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coa
+--------------------------------------------------------------------------------
+TITLE: Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning
+URL: https://journals.ametsoc.org/view/journals/aies/2/1/AIES-D-22-0034.1.pdf
+HL: ABSTRACT: Estimating the impact of wind-driven snow transport requires modeling wind fields with a lower grid spac ing than the spacing on the order of 1 or a few kilometers used in the current numerical weather prediction (NWP) systems. In this context, we introduce a new strategy to downscale wind fields from NWP systems to decametric scales, using high resolution (30 m) topographic information. Our method (named “DEVINE”) is leveraged on a convolutional neural net work (CNN), trained to repli
+--------------------------------------------------------------------------------
+TITLE: Terrain-aware Deep Learning for Wind Energy Applications: From Kilometer-scale Forecasts to Fine Wind Fields
+URL: https://arxiv.org/html/2505.12732v1
+HL: High-resolution wind information is essential for wind energy planning and power forecasting, particularly in regions with complex terrain. However, most AI-based weather forecasting models operate at kilometer-scale resolution, constrained by the reanalysis datasets they are trained on. Here we introduce FuXi-CFD, an AI-based downscaling framework designed to generate detailed three-dimensional wind fields at 30-meter horizontal resolution, using only coarse-resolution atmospheric inputs. The m
+--------------------------------------------------------------------------------
+TITLE: Reconstructing fine-scale 3D wind fields with terrain-informed machine learning - PMC
+URL: https://pmc.ncbi.nlm.nih.gov/articles/PMC13103448/
+HL: Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coa
+--------------------------------------------------------------------------------
+TITLE: Deep Learning Algorithms for Wind Speed Prediction in Complex Terrain Using Meteorological Data
+URL: https://doi.org/10.3390/atmos17010028
+HL: As core components of power grids, overhead transmission lines must traverse mountains and rivers, particularly in complex terrain where traditional wind speed prediction methods exhibit significant shortcomings in capturing sudden wind speed changes and spatial structural characteristics. The present study proposes a deep learning-based complex terrain wind speed prediction algorithm model utilizing meteorological data with the objective of enhancing the precision of wind speed variation predic
+--------------------------------------------------------------------------------
+TITLE: Deep Learning Algorithms for Wind Speed Prediction in Complex Terrain Using Meteorological Data
+URL: https://www.mdpi.com/2073-4433/17/1/28
+HL: As core components of power grids, overhead transmission lines must traverse mountains and rivers, particularly in complex terrain where traditional wind speed prediction methods exhibit significant shortcomings in capturing sudden wind speed changes and spatial structural characteristics. The present study proposes a deep learning-based complex terrain wind speed prediction algorithm model utilizing meteorological data with the objective of enhancing the precision of wind speed variation predic
+--------------------------------------------------------------------------------
+TITLE: TerraWind: A Deep Learning‐Based Near‐Surface Winds Downscaling Model for Complex Terrain Region
+URL: https://doi.org/10.1029/2024gl112124
+HL: Wind downscaling is crucial for refining
+...
+estimates, improving local
+...
+, and supporting various applications like risk assessment and planning
+...
+Dynamic downscaling models demand extensive computational resources and time, leading to a
+...
+toward more efficient statistical downscaling,
+...
+often overlooks inter-variable and inter-station spatial correlations
+...
+Addressing this, we propose TerraWind
+...
+a deep learning-based downscaling method for complex terrain regions. TerraWind
+...
+an
+--------------------------------------------------------------------------------
+TITLE: WES - Machine-learning-based estimate of the wind speed over complex terrain using the long short-term memory (LSTM) recurrent neural network
+URL: https://wes.copernicus.org/articles/9/1431/2024/
+HL: Accurate estimation of the wind speed profile is crucial for a range of activities such as wind energy and aviation. The power law and the logarithmic-based profiles have been widely used as universal formulas to extrapolate the wind speed profile. However, these traditional methods have limitations in capturing the complexity of the wind flow, mainly over complex terrain. In recent years, the machine-learning techniques have emerged as a promising tool for estimating the wind speed profiles. In
+--------------------------------------------------------------------------------
+TITLE: Estimation of Ground Wind Speed in Complex Terrain Using Deep Learning
+URL: https://www.jstage.jst.go.jp/article/taiki/59/6/59_590605/_article/-char/en
+HL: Estimation of Ground Wind Speed in Complex Terrain Using Deep Learning
+
+Journal of Japan Society for Atmospheric Environment / Taiki Kankyo Gakkaishi
+
+Online ISSN : 2185-4335 Print ISSN : 1341-4178 ISSN-L : 1341-4178
+
+- Journal home
+- All issues
+- About the journal
+
+- J-STAGE home
+- /
+- Journal of Japan Society for A ...
+- /
+- Volume 59 (2024) Issue 6
+- /
+- Article overview
+
+Original Paper
+
+Estimation of Ground Wind Speed in Complex Terrain Using Deep Learning
+
+Author information
+
+Faculty of Sci
+
+
+========== result_8.json ==========
+--------------------------------------------------------------------------------
+TITLE: wind-python/windpowerlib
+URL: https://github.com/wind-python/windpowerlib
+HL: # wind-python/windpowerlib
+...
+The windpowerlib is a library to model the output of wind turbines and farms.
+...
+- Stars: 390
+- Forks: 113
+- Watchers: 390
+- Open issues: 23
+- License: MIT License
+- Homepage: https://oemof.org/
+- Default branch: dev
+- Created: 2016-08-26T13:50:35Z
+...
+- Jupyter Notebook
+- Python
+...
+- energy
+- model
+- modelling
+- power
+- wind
+...
+The windpowerlib is a library that provides a set of functions and classes to calculate the power output of wind turbines. It was origi
+--------------------------------------------------------------------------------
+TITLE: windpowerlib v0.2.2
+URL: https://pypi.org/project/windpowerlib
+HL: Creating time series of wind power plants.
+...
+- Author: oemof developer group
+- Author email: windpowerlib@rl-institut.de
+- License: MIT
+- Homepage: http://github.com/wind-python/windpowerlib
+- Package URL: https://pypi.org/project/windpowerlib/
+...
+The windpowerlib is a library that provides a set of functions and classes to calculate the power output of wind turbines. It was originally part of the 
+`feedinlib `_ (windpower and photovoltaic) but was taken out to build up a community concentrat
+--------------------------------------------------------------------------------
+TITLE: Welcome to the windpowerlib documentation! ¶
+URL: https://windpowerlib.readthedocs.io/
+HL: Welcome to the windpowerlib documentation! — windpowerlib documentation --
+
+# Welcome to the windpowerlib documentation!¶
+
+Contents:
+
+Getting started
+
+- License (MIT)
+- Citing the windpowerlib
+- Contributing
+- Wind turbine data
+- Examples and basic usage
+- Installation
+- Documentation
+- Introduction
+
+Examples
+
+- TurbineClusterModelChain example
+- ModelChain example
+
+Model description
+
+- The modelchains
+- Smoothing of power curves
+- Wake losses
+- Power output calculations
+- Height correction and 
+--------------------------------------------------------------------------------
+TITLE: 
+URL: https://windpowerlib.readthedocs.io/en/stable/getting_started.html
+HL: The windpowerlib is a library that provides a set of functions and classes to calculate the power output of wind turbines. It was originally part of the feedinlib (windpower and photovoltaic) but was taken out to build up a community concentrating on wind power models.
+...
+If you have a working Python 3 environment, use pypi to install the latest windpowerlib version:
+...
+pip install windpowerlib
+...
+The windpowerlib is designed for Python 3 and tested on Python >= 3.10. We highly recommend to u
+--------------------------------------------------------------------------------
+TITLE: Welcome to the windpowerlib documentation! — windpowerlib  documentation
+URL: https://windpowerlib.readthedocs.io/en/stable/index.html
+HL: Welcome to the windpowerlib documentation! — windpowerlib documentation
+
+# Welcome to the windpowerlib documentation!¶
+
+Contents:
+
+- Getting started
+
+- Introduction
+- Documentation
+- Installation
+- Examples and basic usage
+- Wind turbine data
+- Contributing
+- Citing the windpowerlib
+- License (MIT)
+- Examples
+
+- ModelChain example
+- TurbineClusterModelChain example
+- Model description
+
+- Wind power plants
+- Height correction and conversion of weather data
+- Power output calculations
+- Wake losse
+--------------------------------------------------------------------------------
+TITLE: windpowerlib - a python library to model wind power plants | Zenodo
+URL: https://zenodo.org/records/3403360
+HL: windpowerlib - a python library to model wind power plants | Zenodo
+
+ Published September 9, 2019 | Version v0.2.0 Software Open 
+
+### Authors/Creators
+
+- Sabine Haas 1 
+- Birgit Schachler 1 
+- Uwe Krien 2 
+
+- 1. Reiner Lemoine Institut 
+- 2. Universität Bremen 
+
+## Description
+
+The windpowerlib is a library that provides a set of functions and classes to calculate the power output of wind turbines. It was founded to build up a community concentrating on wind power models.
+
+For a quick start see
+--------------------------------------------------------------------------------
+TITLE: Welcome to the windpowerlib documentation! — windpowerlib  documentation
+URL: https://windpowerlib.readthedocs.io/en/latest/
+HL: - Docs »
+- Welcome to the windpowerlib documentation!
+- Edit on GitHub
+
+---
+
+# Welcome to the windpowerlib documentation
+
+Contents:
+
+- Getting started Introduction Documentation Installation Examples and basic usage Wind turbine data Contributing Citing the windpowerlib License (MIT)
+- Examples ModelChain example TurbineClusterModelChain example
+- Model description Wind power plants Height correction and conversion of weather data Power output calculations Wake losses Smoothing of power curves T
+
+
+========== result_9.json ==========
+--------------------------------------------------------------------------------
+TITLE: Direction‐Informed Deep Learning With Topographic Fusion for 10m Wind Downscaling
+URL: https://doi.org/10.1029/2025ea004991
+HL: High-resolution wind field forecasting can enhance the utilization of wind energy and plays a crucial role in meteorological disaster prediction and air quality assessment. We present a novel deep learning method incorporating a direction-preserving normalization method based on total wind speed, a wind direction integrated loss function, and differential terrain elevation data processing. This approach achieves downscaling of wind fields over the North China region from 0.25°×0.25°to 0.1°×0.1°.
+--------------------------------------------------------------------------------
+TITLE: Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning
+URL: https://doi.org/10.1175/aies-d-22-0034.1
+HL: Estimating the impact of wind-driven snow transport requires modeling wind fields with a lower grid spacing than the spacing on the order of 1 or a few kilometers used in the current numerical weather prediction (NWP) systems. In this context, we introduce a new strategy to downscale wind fields from NWP systems to decametric scales, using highresolution (30 m) topographic information. Our method (named "DEVINE") is leveraged on a convolutional neural network (CNN), trained to replicate the beha
+--------------------------------------------------------------------------------
+TITLE: Wind‐Topo: Downscaling near‐surface wind fields to high‐resolution topography in highly complex terrain with deep learning - Dujardin - 2022 - Quarterly Journal of the Royal Meteorological Society - Wiley Online Library
+URL: https://rmets.onlinelibrary.wiley.com/doi/10.1002/qj.4265
+HL: Predicting wind flow in highly complex terrain like the Alps is a challenge for all models. When physical processes need to be resolved in a spatially explicit manner, grids with high horizontal resolution of a few hundred meters are often required and drastically limit, in many cases, the extent and duration of the simulations. Many surface process models, like the simulation of heterogeneous snow cover across a season, however, need long time series on large domains as inputs. Statistical down
+--------------------------------------------------------------------------------
+TITLE: Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications
+URL: https://www.nature.com/articles/s41467-026-70562-5
+HL: Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coa
+--------------------------------------------------------------------------------
+TITLE: A comparative study of convolutional neural network models for wind field downscaling - Höhlein - 2020 - Meteorological Applications - Wiley Online Library
+URL: https://rmets.onlinelibrary.wiley.com/doi/10.1002/met.1961
+HL: We analyze the applicability of convolutional neural network (CNN) architectures for downscaling of short-range forecasts of near-surface winds on extended spatial domains. Short-range wind forecasts (at the 100 m level) from European Centre for Medium Range Weather Forecasts ERA5 reanalysis initial conditions at 31 km horizontal resolution are downscaled to mimic high resolution (HRES) (deterministic) short-range forecasts at 9 km resolution. We evaluate the downscaling quality of four exemplar
+--------------------------------------------------------------------------------
+TITLE: A two-folds deep learning strategy to correct and downscale winds over mountains
+URL: https://doi.org/10.5194/npg-2023-10
+HL: Assessing wind fields at a local scale in mountainous terrain has long been a scientific challenge partly because of the complex interaction between large-scale flows and local topography. Traditionally, the operational applications that require high resolution wind forcings rely on downscaled outputs of numerical weather predictions systems. Downscaling models either proceed from a function that links large scale wind fields to local observations (hence including a corrective step), or use oper
+--------------------------------------------------------------------------------
+TITLE: Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning
+URL: https://journals.ametsoc.org/view/journals/aies/2/1/AIES-D-22-0034.1.pdf
+HL: ABSTRACT: Estimating the impact of wind-driven snow transport requires modeling wind fields with a lower grid spac ing than the spacing on the order of 1 or a few kilometers used in the current numerical weather prediction (NWP) systems. In this context, we introduce a new strategy to downscale wind fields from NWP systems to decametric scales, using high resolution (30 m) topographic information. Our method (named “DEVINE”) is leveraged on a convolutional neural net work (CNN), trained to repli
+--------------------------------------------------------------------------------
+TITLE: Intelligent Super‐Resolution of Wind Fields: A Terrain‐Aware Approach for 25 km to 1 km Downscaling
+URL: https://doi.org/10.1029/2025jd045875
+HL: # Intelligent Super‐Resolution of Wind Fields: A Terrain‐Aware Approach for 25 km to 1 km Downscaling
+...
+Abstract High‐resolution kilometer‐scale wind fields are essential for wind energy assessment and extreme weather analysis. However, current downscaling methods still have huge biases in complex terrain. In this study, we propose Terrain‐Aware Vision Transformer (TA‐ViT), a novel deep learning framework for wind field downscaling from 25 to 1 km, which integrates dual‐branch patch embedding,
+--------------------------------------------------------------------------------
+TITLE: Terrain-aware Deep Learning for Wind Energy Applications: From Kilometer-scale Forecasts to Fine Wind Fields
+URL: https://arxiv.org/html/2505.12732v1
+HL: High-resolution wind information is essential for wind energy planning and power forecasting, particularly in regions with complex terrain. However, most AI-based weather forecasting models operate at kilometer-scale resolution, constrained by the reanalysis datasets they are trained on. Here we introduce FuXi-CFD, an AI-based downscaling framework designed to generate detailed three-dimensional wind fields at 30-meter horizontal resolution, using only coarse-resolution atmospheric inputs. The m
+--------------------------------------------------------------------------------
+TITLE: Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning
+URL: https://journals.ametsoc.org/view/journals/aies/2/1/AIES-D-22-0034.1.xml
+HL: Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning in: Artificial Intelligence for the Earth Systems Volume 2 Issue 1 (2023)[Jump to Content](#mainContent)
+...
+298
+...
+441
+...
+* [a.ARPS simulations](#d4
+...
+148816e445)
+* [b.AROME simulations](#d42148816e631)
+* [c
+...
+](#d4214881
+...
+e654)
+...
+* [3.Method](#d42148816e718)
+* [a.Topographic descriptors](#d42148816e724)
+* [b.Fully convolutional neural networks](#d42148816e929)
+* [c.DEVINE downscaling model](#d42148816e971)
+
+
+========== result_10.json ==========
+--------------------------------------------------------------------------------
+TITLE: A deep learning approach to downscale and correct wind fields in complex terrain Louis le Toumelin et al. Wind-driven transport of snow particles (referred to as drifting snow) impacts the spatial variability of mountain snowpacks, with direct consequences for hydrology and avalanche hazard. Estimating such consequences requires modeling wind fields at a higher resolution than the current kilometric horizontal resolution used in the numerical weather prediction (NWP) systems.
+URL: https://inarch.usask.ca/documents/2022_workshop/louis_le_toumelin_abstract.pdf
+HL: A deep learning approach to downscale and correct wind fields in complex terrain Louis le Toumelin et al. Wind-driven transport of snow particles (referred to as drifting snow) impacts the spatial variability of mountain snowpacks, with direct consequences for hydrology and avalanche hazard. Estimating such consequences requires modeling wind fields at a higher resolution than the current kilometric horizontal resolution used in the numerical weather prediction (NWP) systems.
+
+In this context, w
+--------------------------------------------------------------------------------
+TITLE: Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning
+URL: https://doi.org/10.1175/aies-d-22-0034.1
+HL: Estimating the impact of wind-driven snow transport requires modeling wind fields with a lower grid spacing than the spacing on the order of 1 or a few kilometers used in the current numerical weather prediction (NWP) systems. In this context, we introduce a new strategy to downscale wind fields from NWP systems to decametric scales, using highresolution (30 m) topographic information. Our method (named "DEVINE") is leveraged on a convolutional neural network (CNN), trained to replicate the beha
+--------------------------------------------------------------------------------
+TITLE: Downscaling of surface wind forecasts using convolutional neural networks
+URL: https://doi.org/10.5194/npg-30-553-2023
+HL: # Downscaling of surface wind forecasts using convolutional neural networks
+...
+Abstract. Near-surface winds over complex terrain generally feature a large variability at the local scale. Forecasting these winds requires high-resolution numerical weather prediction (NWP) models, which drastically increase the duration of simulations and hinder them in running on a routine basis. Nevertheless, downscaling methods can help in forecasting such wind flows at limited numerical cost. In this study, we
+--------------------------------------------------------------------------------
+TITLE: GMD - SNOWstorm (v1.0) – a deep-learning based model for near-surface winds and drifting snow in mountain environments
+URL: https://gmd.copernicus.org/articles/19/6497/2026/
+HL: To bridge this gap, we introduce SNOWstorm – the snow drift sublimation and transport model. It is designed as a deep-learning based emulator model, that is trained on data from high-resolution (Δ x=50 m) numerical simulations in semi-idealized conditions, to be applicable for winter-time conditions in glaciated mountain regions in mid- to high latitudes. The model can be driven with input of standard atmospheric variables from coarse- to meso-scale numerical models and predicts near-surface win
+--------------------------------------------------------------------------------
+TITLE: Welcome to Fourier-Land: Deep-Learning based downscaling of near-surface winds and drifting snow using WRF simulations over synthetic topographies
+URL: https://doi.org/10.5194/egusphere-egu24-8087
+HL: # Welcome to Fourier-Land: Deep-Learning based downscaling of near-surface winds and drifting snow using WRF simulations over synthetic topographies
+
+Published: 2024-03-08. 0 citations.
+
+## Abstract
+
+Redistribution of snow by the wind has been shown to greatly influence local snow accumulation in alpine terrain. Due to the small-scale nature of this process, previous studies either concentrated on short case studies over small areas or relied on highly simplified wind fields. To bridge the gap t
+--------------------------------------------------------------------------------
+TITLE: SNOWstorm (v1.0) – a deep-learning based model for near-surface winds and drifting snow in mountain environments
+URL: https://doi.org/10.5194/gmd-19-6497-2026
+HL: numerical simulations, inhibiting the application for long-term studies. To bridge this gap, we introduce SNOWstorm -the snow drift sublimation and transport model. It is designed as a deep-learning based emulator model, that is trained on data from high-resolution ( x = 50 m) numerical simulations in semi-idealized conditions, to be applicable for winter-time conditions in glaciated mountain regions in mid-to high latitudes. The model can be driven with input of standard atmospheric variables f
+--------------------------------------------------------------------------------
+TITLE: Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning
+URL: https://journals.ametsoc.org/view/journals/aies/2/1/AIES-D-22-0034.1.xml
+HL: Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning in: Artificial Intelligence for the Earth Systems Volume 2 Issue 1 (2023)[Jump to Content](#mainContent)
+...
+* [Abstract](#d42148816e229)
+* [Significance Statement](#d42148816e238)
+* [1.Introduction](#d42148816e298)
+* [2.Data](#d42148816e441)
+* [a.ARPS simulations](#d42148816e445)
+* [b.AROME simulations](#d42148816e631)
+* [c.Observations](#d42148816e654)
+* [3.Method](#d42148816e718)
+* [a.Topographic descriptors](#d4214
+--------------------------------------------------------------------------------
+TITLE: WindSeer: real-time volumetric wind prediction over complex terrain aboard a small uncrewed aerial vehicle | Nature Communications
+URL: https://www.nature.com/articles/s41467-024-47778-4
+HL: Real-time high-resolution wind predictions are beneficial for various applications including safe crewed and uncrewed aviation. Current weather models require too much compute and lack the necessary predictive capabilities as they are valid only at the scale of multiple kilometers and hours – much lower spatial and temporal resolutions than these applications require. Our work demonstrates the ability to predict low-altitude time-averaged wind fields in real time on limited-compute devices, from
+--------------------------------------------------------------------------------
+TITLE: Toward the development of deep-learning analyses for snow avalanche releases in mountain regions
+URL: https://oulurepo.oulu.fi/handle/10024/33332
+HL: Hyppää sisältöön
+
+OuluREPO – Oulun yliopiston julkaisuarkisto / University of Oulu repository
+
+Näytä viite 
+
+- OuluREPO etusivu
+- Oulun yliopisto
+- Avoin saatavuus
+- Näytä viite
+- OuluREPO etusivu 
+- Oulun yliopisto 
+- Avoin saatavuus
+- Näytä viite
+
+Hae OuluREPOsta
+
+Tämä kokoelma
+
+JavaScript is disabled for your browser. Some features of this site may not work without it.
+
+# Toward the development of deep-learning analyses for snow avalanche releases in mountain regions
+
+##### Chen, Yunzhi; Chen
+--------------------------------------------------------------------------------
+TITLE: ADA-Net: Avalanche Differential Attention Network With Covariance Correlation Differential Transformer for Multimodal Snow Avalanche Susceptibility Mapping
+URL: https://doi.org/10.1109/tgrs.2026.3676659
+HL: # ADA-Net: Avalanche Differential Attention Network With Covariance Correlation Differential Transformer for Multimodal Snow Avalanche Susceptibility Mapping
+
+IEEE Transactions on Geoscience and Remote Sensing. Published: 2026-01-01. 0 citations.
+
+## Abstract
+
+Multimodal data integration plays a critical role in accurately mapping snow avalanche susceptibility, yet existing models struggle to capture the complex nonlinear interactions among optical imagery, SAR backscatter, snowpack measurements
+
+
+========== result_11.json ==========
+--------------------------------------------------------------------------------
+TITLE: firelab/windninja
+URL: http://github.com/firelab/windninja
+HL: # Repository: firelab/windninja
+
+A diagnostic wind model developed for use in wildland fire modeling.
+
+- Stars: 158
+- Forks: 52
+- Watchers: 158
+- Open issues: 108
+- Primary language: C++
+- Languages: C++ (68.2%), JavaScript (18.1%), C (8.3%), CMake (2.7%), Python (1.0%), HTML (0.8%), Shell (0.3%), CSS (0.3%), Dockerfile, Go, Batchfile, Singularity
+- License: Other (NOASSERTION)
+- Default branch: master
+- Homepage: https://ninjastorm.firelab.org/windninja/
+- Created: 2014-08-21T20:36:33Z
+- Last p
+--------------------------------------------------------------------------------
+TITLE: Development and evaluation of a Reynolds-Averaged Navier–Stokes solver in WindNinja for operational wildland fire applications
+URL: https://www.fs.usda.gov/rm/pubs_journals/2019/rmrs_2019_wagenbrenner_n001.pdf
+HL: Received: 25 September 2019; Accepted: 30 October 2019; Published: 1 November
+...
+2019 Abstract: An open
+...
+computational fluid dynamics (CFD) solver has been incorporated into the WindNinja modeling framework. WindNinja is widely used by wildland fire managers, as well as researchers and practitioners in other
+...
+, such as wind energy, wind erosion, and search and rescue. Here, we describe the CFD solver and evaluate its performance against the Wind
+...
+conservation of mass (COM) solver, and 
+--------------------------------------------------------------------------------
+TITLE: WindNinja
+URL: https://firelab.github.io/windninja/internal/whatis/solver.html
+HL: WindNinja
+
+# WindNinja Solvers
+
+## Conservation of Mass
+
+---
+
+- Minimizes change in initial wind field while conserving mass
+- Finite element method
+- Steady-state
+- Incompressible
+
+## Conservation of Mass/Momentum
+
+---
+
+- Solver for incompressible turbulent flow
+- Finite volume method
+- k-epsilon for turbulence
+- Incompressible
+- Semi-implicit method (simpleFoam)
+
+## Computational Domain
+
+---
+
+- Native Solver:Native Mesher
+- OpenFOAM solver: blockMesh, snappyHexMesh, extrudeMesh
+- Terrain Follo
+--------------------------------------------------------------------------------
+TITLE: WindNinja
+URL: https://firelab.github.io/windninja/faq/
+HL: installer from firelab
+...
+save it to your computer
+...
+the installation instructions
+...
+, use the
+...
+WindWizard is no longer available. There is now an optional conservation of mass and momentum solver in WindNinja which replaces the functionality of WindWizard.
+...
+The physics in the WindWizard solver were based on proprietary software that required users to purchase a license. Because this severely hampered usability, WindWizard is no longer available. Instead, WindNinja has been upgraded t
+--------------------------------------------------------------------------------
+TITLE: windninjapy v0.0.3
+URL: https://pypi.org/project/windninjapy/
+HL: Python bindings for the WindNinja wind simulation library
+...
+- Changelog: https://github.com/laflamme-fire-lab/windninjapy/blob/main/CHANGELOG.md
+- Documentation: https://windninjapy.readthedocs.io/
+- Homepage: https://github.com/laflamme-fire-lab/windninjapy
+- Issues: https://github.com/laflamme-fire-lab/windninjapy/issues
+- Repository: https://github.com/laflamme-fire-lab/windninjapy.git
+...
+Python bindings for the [WindNinja](https://github.com/firelab/windninja) wind simulation library.
+...
+--------------------------------------------------------------------------------
+TITLE: windninjapy v0.0.3
+URL: https://pypi.org/project/windninjapy/0.0.3/
+HL: Python bindings for the WindNinja wind simulation library
+...
+- Changelog: https://github.com/laflamme-fire-lab/windninjapy/blob/main/CHANGELOG.md
+- Documentation: https://windninjapy.readthedocs.io/
+- Homepage: https://github.com/laflamme-fire-lab/windninjapy
+- Issues: https://github.com/laflamme-fire-lab/windninjapy/issues
+- Repository: https://github.com/laflamme-fire-lab/windninjapy.git
+...
+Python bindings for the [WindNinja](https://github.com/firelab/windninja) wind simulation library.
+...
+--------------------------------------------------------------------------------
+TITLE: gagreene/WindNinja
+URL: https://github.com/gagreene/WindNinja/
+HL: # Repository: gagreene/WindNinja
+...
+Python code to run WindNinja through the CLI
+...
+# WindNinja CLI Python Module
+...
+This Python module provides a command-line interface to WindNinja, a tool for simulating wind flow over complex terrain. The module includes classes and functions for configuring and running WindNinja simulations, generating station files, and handling WindNinja output.
+...
+- [Methods](#methods)
+ - [verifyInputs](#verifyinputs)
+ - [getParams](#getparams)
+ - [writeCFG](#writecfg
+--------------------------------------------------------------------------------
+TITLE: WindNinja
+URL: https://firelab.org/project/windninja
+HL: WindNinja is a computer program that computes spatially varying wind fields for wildland fire and other applications requiring high resolution wind prediction in complex terrain. It was developed to be used by emergency responders within their typical operational constraints of fast simulation times (seconds), low CPU requirements (single processor laptops), and low technical expertise. WindNinja can be run in three different modes depending on the application and available inputs. The first mod
+--------------------------------------------------------------------------------
+TITLE: WindNinja: A diagnostic wind model developed for use in wildland fire modeling
+URL: https://ninjastorm.firelab.org/windninjaapi/
+HL: WindNinja: A diagnostic wind model developed for use in wildland fire modeling
+
+A diagnostic wind model developed for use in wildland fire modeling 
+
+FAQ: https://ninjastorm.firelab.org/windninja/faq.html
+
+## User Documentation
+
+WindNinja Tutorials
+
+
+========== result_12.json ==========
+--------------------------------------------------------------------------------
+TITLE: GMD - SNOWstorm (v1.0) – a deep-learning based model for near-surface winds and drifting snow in mountain environments
+URL: https://gmd.copernicus.org/articles/19/6497/2026/
+HL: To bridge this gap, we introduce SNOWstorm – the snow drift sublimation and transport model. It is designed as a deep-learning based emulator model, that is trained on data from high-resolution (Δ x=50 m) numerical simulations in semi-idealized conditions, to be applicable for winter-time conditions in glaciated mountain regions in mid- to high latitudes. The model can be driven with input of standard atmospheric variables from coarse- to meso-scale numerical models and predicts near-surface win
+--------------------------------------------------------------------------------
+TITLE: arXiv.org e-Print archive
+URL: https://arxiv.org/
+HL: - Nuclear Experiment (nucl-ex new, recent, search) 
+- Nuclear Theory (nucl-th new, recent, search) 
+- Physics (physics new, recent, search) includes: Accelerator Physics; Applied Physics; Atmospheric and Oceanic Physics; Atomic and Molecular Clusters; Atomic Physics; Biological Physics; Chemical Physics; Classical Physics; Computational Physics; Data Analysis, Statistics and Probability; Fluid Dynamics; General Physics; Geophysics; History and Philosophy of Physics; Instrumentation and Detectors
+--------------------------------------------------------------------------------
+TITLE: Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning
+URL: https://doi.org/10.1175/aies-d-22-0034.1
+HL: Estimating the impact of wind-driven snow transport requires modeling wind fields with a lower grid spacing than the spacing on the order of 1 or a few kilometers used in the current numerical weather prediction (NWP) systems. In this context, we introduce a new strategy to downscale wind fields from NWP systems to decametric scales, using highresolution (30 m) topographic information. Our method (named "DEVINE") is leveraged on a convolutional neural network (CNN), trained to replicate the beha
+--------------------------------------------------------------------------------
+TITLE: Welcome to Fourier-Land: Deep-Learning based downscaling of near-surface winds and drifting snow using WRF simulations over synthetic topographies
+URL: https://doi.org/10.5194/egusphere-egu24-8087
+HL: # Welcome to Fourier-Land: Deep-Learning based downscaling of near-surface winds and drifting snow using WRF simulations over synthetic topographies
+
+Published: 2024-03-08. 0 citations.
+
+## Abstract
+
+Redistribution of snow by the wind has been shown to greatly influence local snow accumulation in alpine terrain. Due to the small-scale nature of this process, previous studies either concentrated on short case studies over small areas or relied on highly simplified wind fields. To bridge the gap t
+--------------------------------------------------------------------------------
+TITLE: From the Swiss Alps to the Pyrenees: Evaluating the transferability of machine learning models for avalanche forecasting
+URL: https://doi.org/10.1016/j.coldregions.2026.104884
+HL: Avalanche forecasting is crucial for ensuring safety and mobility in snow-covered mountainous regions worldwide. While traditional avalanche forecasts relied solely on human expertise, machine learning models have been developed in recent years and are already operational in Switzerland. Such models can rapidly assimilate large amounts of complex data, providing objective and high-resolution predictions of the avalanche danger level and avalanche activity, assisting forecasters with a “second op
+--------------------------------------------------------------------------------
+TITLE: Transfer Learning Model for Avalanche Forecasting of Data-Deficient Regions
+URL: https://doi.org/10.1007/978-981-96-8987-3_46
+HL: # Transfer Learning Model for Avalanche Forecasting of Data-Deficient Regions
+...
+- Alexei Pozdnoukhov, Ross S. Purves, Mikhaïl Kanevski. Applying machine learning methods to avalanche forecasting.
+...
+of Glaciology. 2008;49:107-113. doi:10.3189/
+...
+2756
+...
+08787814870.
+...
+- Michael Lehning, Perry Bartelt, Bob Brown, Tom Russi, Urs Stöckli, Martin Zimmerli. snowpack model calculations for avalanche warning based upon a new network of weather and snow stations. Cold Regions Science and Technol
+--------------------------------------------------------------------------------
+TITLE: Frontiers | Two-stage classification of avalanche problems and danger levels across elevation bands in Colorado
+URL: https://www.frontiersin.org/journals/earth-science/articles/10.3389/feart.2026.1764442/full
+HL: -risk zones
+...
+feature-rich avalanche forecasting frameworks. We propose a two-stage machine
+...
+classification framework that first
+...
+Slab Problem, Persistent Slab
+...
+The framework is trained
+...
+evaluated on a dataset
+...
+Operational avalanche forecasts, however, are inherently structured around avalanche problems, which describe the dominant failure mechanisms, followed by an integrated danger rating reflecting likelihood and consequence (Statham et al., 2018). Existing machine-learning s
+--------------------------------------------------------------------------------
+TITLE: TC - Combining modelled snowpack stability with machine learning to predict avalanche activity
+URL: https://tc.copernicus.org/articles/17/2245/2023/
+HL: and snow cover simulations is critical in mountainous areas to support operational forecasting. Several numerical and statistical methods have tried to address this issue. However, it remains unclear how combining snow physics, mechanical analysis of snow profiles and observed avalanche data improves
+...
+On this basis, this paper aims to determine whether combining machine learning on avalanche data and mechanical stability analysis of snow profiles helps predict avalanche activity. In particula
+--------------------------------------------------------------------------------
+TITLE: Calculation of Snowdrift Distribution over Complex Topography to Improve the Accuracy of Snow Avalanche Warning Systems
+URL: https://doi.org/10.2151/sola.2022-012
+HL: Snow avalanches cause substantial damage to not only the traffic facilities but in the various aspects of human activities in the snowy region. Komatsu and Nishimura (2020) developed a simple snow-cover model (SSCM), which only requires surface air temperature and precipitation as input data, to evaluate snow avalanche hazards. The SSCM can reproduce, within reasonable accuracy, changes in snowpack properties and snow avalanche incidents. However, it was revealed that the effect of wind over com

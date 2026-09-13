@@ -1,0 +1,31 @@
+================================================================================
+HIERARCHICAL LSTM TRAINING ON REAL DATA
+================================================================================
+Features: 98 (weather=90, physics=8)
+
+Loading all data into memory...
+  Loaded 251367 rows in 0.4s
+  Train: 182257, Val: 34326, Test: 34784
+
+Computing normalization stats from training data...
+
+Building datasets (max_train=30000, max_val=10000)...
+  Built in 0.8s
+  Train: 30000, Val: 10000, Test: 25762
+
+Batches: train=469, val=157, test=403
+Timing a single batch...
+Model parameters: 259,611
+  Single batch: 0.07s -> est epoch: 33s
+
+================================================================================
+TRAINING
+================================================================================
+  Epoch   1: train=0.7987 val=0.8414 lr=1.00e-03 (106.9s) *
+  Epoch   2: train=0.7480 val=0.8171 lr=1.00e-03 (106.4s) *
+  Epoch   3: train=0.7364 val=0.8369 lr=1.00e-03 (106.5s)
+  Epoch   4: train=0.7266 val=0.8353 lr=1.00e-03 (106.0s)
+  Epoch   5: train=0.7182 val=0.8039 lr=1.00e-03 (105.8s) *
+  Epoch   6: train=0.7092 val=0.8306 lr=1.00e-03 (105.5s)
+
+[exited with code 143]

@@ -1,0 +1,18 @@
+[
+  {
+    "name": "README.md",
+    "path": "README.md",
+    "sha": "f0df0ada19d2815890d7397d454386285ad37e9a",
+    "size": 7063,
+    "url": "https://api.github.com/repos/NationalAvalancheCenter/Avalanche.org-Public-API-Docs/contents/README.md?ref=main",
+    "html_url": "https://github.com/NationalAvalancheCenter/Avalanche.org-Public-API-Docs/blob/main/README.md",
+    "git_url": "https://api.github.com/repos/NationalAvalancheCenter/Avalanche.org-Public-API-Docs/git/blobs/f0df0ada19d2815890d7397d454386285ad37e9a",
+    "download_url": "https://raw.githubusercontent.com/NationalAvalancheCenter/Avalanche.org-Public-API-Docs/main/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/NationalAvalancheCenter/Avalanche.org-Public-API-Docs/contents/README.md?ref=main",
+      "git": "https://api.github.com/repos/NationalAvalancheCenter/Avalanche.org-Public-API-Docs/git/blobs/f0df0ada19d2815890d7397d454386285ad37e9a",
+      "html": "https://github.com/NationalAvalancheCenter/Avalanche.org-Public-API-Docs/blob/main/README.md"
+    }
+  }
+]

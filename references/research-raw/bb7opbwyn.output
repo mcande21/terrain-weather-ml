@@ -1,0 +1,1503 @@
+====================================================================================================
+FILE: q1_graphcast.json
+
+--- graphcast_demo.ipynb
+https://github.com/google-deepmind/graphcast/blob/main/graphcast_demo.ipynb
+  > "cell_type":
+...
+"# GraphCast\n",
+ "\n",
+ "This colab lets you run several versions of GraphCast.\n",
+ "\n",
+ "The model weights, normalization statistics, and example inputs are available on [Google Cloud Bucket](https://console.cloud.google.com/storage/browser/dm_graphcast).\n",
+ "\n",
+ "A Colab runtime with TPU/GPU acceleration will substantially speed up generating predictions and computing the loss/gradients. If you're using a CPU-only runtime, you can switch using the menu \"Runtime > Chan
+
+--- google-deepmind/weathernext
+https://github.com/google-deepmind/graphcast
+  > It also contains code for prior generation models
+[GraphCast](https://deepmind.google/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/)
+and
+[GenCast](https://deepmind.google/blog/gencast-predicts-weather-and-the-risks-of-extreme-conditions-with-sota-accuracy/).
+...
+* [WeatherNext Graph](docs/weathernext1_graph/README.md): Deterministic
+ medium-range weather forecasting using graph neural networks. Published as
+ GraphCast.
+...
+This repository provides
+...
+to run th
+
+--- GraphCast: AI model for faster and more accurate global weather forecasting — Google DeepMind
+https://deepmind.google/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/
+  > GraphCast takes a significant step forward in AI for weather prediction, offering more accurate and efficient forecasts, and opening paths to support decision-making critical to the needs of our industries and societies. And, by open sourcing the model code for GraphCast, we are enabling scientists and forecasters around the world to benefit billions of people in their everyday lives. GraphCast is already being used by weather agencies, including ECMWF, which is running a live experiment of our 
+
+--- docs/weathernext1_graph/README.md
+https://github.com/google-deepmind/weathernext/blob/main/docs/weathernext1_graph/README.md
+  > ## WeatherNext 1 Graph (GraphCast)
+...
+This model was published as [GraphCast: Learning skillful medium-range global
+weather forecasting](https://www.science.org/doi/10.1126/science.adi2336). File
+and checkpoint names retain the original "GraphCast" naming for backward
+compatibility.
+...
+This package provides three pretrained models:
+...
+1. `GraphCast`, the high-resolution model used in the GraphCast paper (0.25
+ degree resolution, 37 pressure levels), trained on ERA5 data from 1979 to
+ 2017,
+..
+
+--- How to train a model by myself · Issue #69 · google-deepmind/graphcast
+https://github.com/google-deepmind/graphcast/issues/69
+  > # Issue: google-deepmind/graphcast #69
+
+- Repository: google-deepmind/graphcast | 7K stars | Python
+
+## How to train a model by myself
+
+- Author: [@Trek-on](https://github.com/Trek-on)
+- State: closed (completed)
+- Created: 2024-04-18T10:46:07Z
+- Updated: 2024-07-17T09:45:27Z
+- Closed: 2024-05-18T14:24:58Z
+- Closed by: [@alvarosg](https://github.com/alvarosg)
+
+Hello, I have a few questions that I would like to ask you:
+
+1. Open source code only provides prediction and fine-tuning code, without p
+
+--- How to fine-tune graphcast？ · Issue #43 · google-deepmind/graphcast
+https://github.com/google-deepmind/graphcast/issues/43
+  > > I managed to get it working with a few modifications to the example notebook code. Here are the changes I made (ignoring all unchanged code from the example):
+> 
+> ```python
+> import optax
+> 
+> # modify the gradients function signature
+> def grads_fn(
+...
+, state, inputs, targets,
+...
+_config):
+> def _aux(params, state, i, t, f):
+...
+, diagnostics), next_
+...
+_fn.apply(params, state, jax.
+...
+.PRNGKey(0),
+...
+config, task_config, i, t, f
+...
+, (diagnostics, next_state)
+> (loss, (diagnostics, n
+
+--- README.md
+https://github.com/csubich/graphcast/blob/graphcast_train/README.md
+  > # graphcast_train: training infrastructure for GraphCast
+...
+This repository implements the training code used for [(Subich 2024)](https://arxiv.org/abs/2408.14587), which fine-tuned GraphCast on the analyses of the Canadian Global Determinstic Prediction system at ¼°, over the same 37 pressure levels as the "headline" GraphCast model.
+...
+[Lam 2022](https://arxiv.org/abs/2212.12794) did not provide the training infrastructure needed to effectively train GraphCast, nor is the code otherwise incl
+
+--- GraphCast for weather forecasting — NVIDIA PhysicsNeMo Framework
+https://docs.nvidia.com/physicsnemo/26.05/physicsnemo/examples/weather/graphcast/README.html
+  > A re-implementation of the DeepMind’s GraphCast model in PhysicsNeMo.
+...
+GraphCast is
+...
+neural network-based
+...
+gressive model. It is trained on historical weather data from ECMWF’s ERA5 reanalysis archive. GraphCast generates predictions at 6-hour time steps for a set of surface and atmospheric variables. This prediction covers a 0.25-degree latitude-longitude grid, providing approximately 25 x 25 kilometer resolution at
+...
+is trained on
+...
+channel subset of
+...
+analysis data on single
+..
+
+--- GitHub - google-deepmind/weathernext · GitHub
+https://github.com/google-deepmind/weathernext
+  > This repo contains the code for WeatherNext 2 (WN2), the global, medium-range
+atmospheric and cyclone forecasting model developed by Google DeepMind and
+Google Research.
+...
+It also contains code for prior generation models
+[GraphCast](https://deepmind.google/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/)
+and
+[GenCast](https://deepmind.google/blog/gencast-predicts-weather-and-the-risks-of-extreme-conditions-with-sota-accuracy/).
+...
+* [WeatherNext Graph](https:
+
+--- google-deepmind/weathernext
+https://github.com/google-deepmind/graphcast?tab=readme-ov-file
+  > It also contains code for prior generation models
+[GraphCast](https://deepmind.google/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/)
+and
+[GenCast](https://deepmind.google/blog/gencast-predicts-weather-and-the-risks-of-extreme-conditions-with-sota-accuracy/).
+...
+* [WeatherNext Graph](docs/weathernext1_graph/README.md): Deterministic
+ medium-range weather forecasting using graph neural networks. Published as
+ GraphCast.
+...
+This repository provides
+...
+to run th
+====================================================================================================
+FILE: q2_pangu.json
+
+--- 198808xc/Pangu-Weather
+https://github.com/198808xc/Pangu-Weather
+  > Resources including pseudocode, pre-trained models, and inference code are released here.
+...
+#### Downloading trained models
+...
+Please download the four pre-trained models (~1.1GB each) from Google drive or Baidu netdisk:
+...
+The 1-hour model (pangu_weather_1.onnx): [Google drive](https://drive.google.com/file/d/1fg5jkiN_5dHzKb-5H9Aw4MOmfILmeY-S/view?usp=share_link)/[Baidu netdisk](https://pan.baidu.com/s/1M7SAigVsCSH8hpw6DE8TDQ?pwd=ie0h)
+...
+The 3-hour model (pangu_weather_3.onnx): [Google dr
+
+--- GitHub - 198808xc/Pangu-Weather at bf7834f827bcd7b45ffadf7c79366a745d8d70e2 · GitHub
+https://github.com/198808xc/Pangu-Weather/tree/bf7834f827bcd7b45ffadf7c79366a745d8d70e2
+  > This is the official repository for the Pangu-Weather paper.
+...
+Pangu-Weather: A 3D High-Resolution Model for Fast and Accurate Global Weather Forecast, arXiv preprint: 2211.02556, 2022.
+...
+Resources including pseudocode, pre-trained models, and inference code are released.
+...
+│   │
+...
+input_surface
+...
+│   │
+...
+input_upper
+...
+## Global weather
+...
+#### Downloading trained models
+...
+Please download the four pre-trained models (~1.1GB each) from the Google drive:
+...
+The 1-hour model: mode
+
+--- Constant Masks | 198808xc/Pangu-Weather | DeepWiki
+https://deepwiki.com/198808xc/Pangu-Weather/5.1-constant-masks
+  > Constant Masks | 1
+...
+8808
+...
+-Weather |
+...
+- constant_masks/land_mask.npy
+- constant_masks/soil_type.npy
+- constant_masks/topography.npy
+...
+This document describes the geographical constant mask files used in the Pangu-Weather system. These masks provide essential geographical context data that enhances the accuracy of weather forecasting models by incorporating information about land/sea boundaries, soil characteristics, and terrain elevation. Unlike the dynamic weather data inputs, these 
+
+--- Pangu Weather for Global Weather Forecasting — NVIDIA PhysicsNeMo Framework
+https://docs.nvidia.com/physicsnemo/26.08/physicsnemo/examples/weather/pangu_weather/README.html
+  > Pangu Weather for Global Weather Forecasting — NVIDIA PhysicsNeMo Framework
+
+# Pangu Weather for Global Weather Forecasting#
+
+A re-implementation of Pangu-Weather: A 3D High-Resolution Model for Fast and Accurate Global Weather Forecast in PhysicsNeMo.
+
+## Problem Overview#
+
+Pangu-Weather is a transformer-based model that provides global weather forecasts at 0.25° resolution. The model uses a unique architecture that processes both surface-level and upper-air variables, along with static geograp
+
+--- ecmwf-lab/ai-models-panguweather
+https://github.com/ecmwf-lab/ai-models-panguweather
+  > # ecmwf-lab/ai-models-panguweather
+
+- Stars: 116
+- Forks: 38
+- Watchers: 116
+- Open issues: 2
+- License: Apache License 2.0
+- Default branch: main
+- Created: 2023-05-12T06:40:56Z
+
+## Languages
+
+- Python
+
+## Top Contributors
+
+- b8raoult (29 contributions)
+- floriankrb (1 contributions)
+
+---
+
+## README
+
+# ai-models-panguweather
+
+`ai-models-panguweather` is an [ai-models](https://github.com/ecmwf-lab/ai-models) plugin to run [Huawei's Pangu-Weather](https://github.com/198808xc/Pangu-Weather).
+
+Pang
+
+--- 198808xc/Pangu-Weather | DeepWiki
+https://deepwiki.com/198808xc/Pangu-Weather
+  > 198808xc/Pangu-Weather | DeepWiki
+...
+- constant_masks/land_mask.npy
+- constant_masks/soil_type.npy
+- constant_masks/topography.npy
+- inference_cpu.py
+- inference_gpu.py
+- inference_iterative.py
+- requirements_cpu.txt
+- requirements_gpu.txt
+...
+This document provides a technical overview of the Pangu-Weather system, a specialized weather forecasting framework that utilizes pre-trained deep learning models for numerical weather prediction. It covers the system's architecture, main components, and
+
+--- physicsnemo/examples/weather/pangu_weather at main · NVIDIA/physicsnemo · GitHub
+https://github.com/NVIDIA/physicsnemo/tree/main/examples/weather/pangu_weather
+  > physicsnemo/examples/weather/pangu_weather at main · NVIDIA/physicsnemo · GitHub
+
+/ physicsnemo Public
+
+## Files
+
+main
+
+# pangu_weather
+
+View commit history for this file.
+
+main
+
+# pangu_weather
+
+Top
+
+Last commit message
+
+Last commit date
+
+View all files
+
+| Name | Name |
+| --- | --- |
+| .. |
+
+## README.md
+
+# Pangu Weather for Global Weather Forecasting
+
+A re-implementation of Pangu-Weather: A 3D High-Resolution Model for Fast and Accurate Global Weather Forecast in PhysicsNeMo.
+
+## Problem Overv
+
+--- OneScience-Group/Pangu_Weather · Hugging Face
+https://huggingface.co/OneScience-Group/Pangu_Weather
+  > OneScience-Group/Pangu_Weather · Hugging Face
+
+# Model Introduction 
+
+Pangu-Weather is a global medium-range weather forecast model proposed by Huawei Cloud, capable of rapidly predicting surface variables and multi-pressure-level upper-air variables.
+
+Paper: Accurate medium-range global weather forecasting with 3D neural networks https://www.nature.com/articles/s41586-023-06185-3
+
+# Model Description 
+
+Pangu-Weather is based on a 3D Earth-Specific Transformer architecture, trained on ERA5 data,
+
+--- Helmholtz-AI-Energy/pangu_weather
+https://github.com/Helmholtz-AI-Energy/pangu_weather
+  > This repository implements the Pangu-Weather model [1] based on the official pseudocode [2] in `pytorch` with support for batch sizes > 1.
+...
+angu-Weather
+...
+statistics, constant_maps, and const_h
+...
+# load pretrained weights from path to the given torch device
+pangu_weather_model.load_pretrained_weights(path, device)
+```
+...
+# load pretrained weights from path to the given torch device
+pangu_weather_backbone.load_pretrained_weights(path, device)
+...
+In addition to tests on random data and we
+
+--- GitHub - 198808xc/Pangu-Weather at 240731f9f889e5a3290547dea62cce83b054ceb7 · GitHub
+https://github.com/198808xc/Pangu-Weather/tree/240731f9f889e5a3290547dea62cce83b054ceb7
+  > This is the official repository for the Pangu-Weather paper.
+...
+Pangu-Weather: A 3D High-Resolution Model for Fast and Accurate Global Weather Forecast, arXiv preprint: 2211.02556, 2022.
+...
+Resources including pseudocode, pre-trained models, and inference code are released.
+...
+## Global weather
+...
+#### Downloading trained models
+...
+Please download the four pre-trained models (~1.1GB each) from the Google drive:
+...
+The 1-hour model: model_jit_cpu_1.onnx The 3-hour model: model_jit_cpu_3.onn
+====================================================================================================
+FILE: q3_fourcastnet.json
+
+--- NVlabs/FourCastNet
+https://github.com/NVlabs/FourCastNet
+  > Initial public release of code, data, and model weights for FourCastNet
+...
+This repository contains the code used for "FourCastNet: A Global Data-driven High-resolution Weather Model using Adaptive Fourier Neural Operators" \[[paper](https://arxiv.org/abs/2202.11214)\]
+...
+FourCastNet is based on the vision transformer architecture with Adaptive Fourier Neural Operator (AFNO) attention proposed in Guibas-Mardani et al. \[[paper](https://openreview.net/pdf?id=EXHG-A3jlM)\], \[[code](https://gith
+
+--- NVIDIA NIM for Earth-2 FourCastNet — NVIDIA NIM for Earth-2 FourCastNet
+https://docs.nvidia.com/nim/earth-2/fourcastnet/latest/index.html
+  > NVIDIA NIM for Earth-2 FourCastNet — NVIDIA NIM for Earth-2 FourCastNet
+
+# NVIDIA NIM for Earth-2 FourCastNet#
+
+Earth-2 FourCastNet
+
+- Overview
+
+- References
+- Advantages of NIMs
+- Release Notes
+
+- Release 2.0.0
+
+- Summary
+- Key Features
+- Notes and Limitations
+- Prerequisites
+
+- Support Matrix
+
+- Model Support
+- Hardware Support
+
+- Optimized Configuration
+- Non-optimized Configuration
+- Software
+- NGC Account
+- Client Side Python Dependencies
+- Next Steps
+- Quickstart Guide
+
+- Workflow Overview
+
+--- Earth-2 FourCastNet | NVIDIA NGC
+https://catalog.ngc.nvidia.com/orgs/nim/nvidia/containers/fourcastnet/-
+  > Earth-2 FourCastNet | NVIDIA NGC
+...
+FCN)
+...
+medium-range
+...
+6 hours with predictive stability
+...
+a year of simulated time
+...
+1,460
+...
+), while retaining physically plausible
+...
+. The multivariant forecast
+...
+and atmospheric variables such as wind speed,
+...
+The latest version (v2.0.0) uses FourCastNet 3, which advances global weather modeling by implementing a scalable, geometric machine learning approach to probabilistic ensemble forecasting. FourCastNet 3 delivers forecasting accuracy 
+
+--- Quickstart Guide for NVIDIA Earth-2 FourCastNet NIM — NVIDIA NIM for Earth-2 FourCastNet
+https://docs.nvidia.com/nim/earth-2/fourcastnet/latest/quickstart-guide.html
+  > 1. Deployment: Pull and launch the FourCastNet NIM container, which hosts the pre-trained model and provides an HTTP API for inference.
+...
+2. Data Preparation: Fetch and format an initial atmospheric state from a public data source. This guide uses Earth2Studio to download ERA5 data and serialize it into a NumPy array file.
+...
+3. Inference: Send the initial state
+...
+the NIM’s `/v1/infer` endpoint. FourCastNet generates a time series forecast and streams results back as NumPy arrays
+...
+The co
+
+--- nvidia/fourcastnet1 · Hugging Face
+https://huggingface.co/nvidia/fourcastnet1
+  > nvidia/fourcastnet1 · Hugging Face
+...
+# Earth-
+...
+FourCastNet, short for Fourier Forecasting Neural Network, is a global data-driven weather forecasting model that provides accurate short to medium-range global predictions. FourCastNet accurately forecasts high-resolution, fast-timescale variables such as the surface wind speed, precipitation, and atmospheric water vapor. FourCastNet uses the the Adaptive Fourier Neural Operator (AFNO) archiecture. This particular neural network architecture i
+
+--- README.md · nvidia/fourcastnet1 at main
+https://huggingface.co/nvidia/fourcastnet1/blob/main/README.md
+  > README.md · nvidia/fourcastnet1 at main
+...
+Download with hf CLI
+...
+Copy download link
+...
+5.5 kB
+...
+# Earth-2 Checkpoints: FourCastNet
+...
+FourCastNet, short for Fourier Forecasting Neural Network, is a global data-driven weather forecasting model that provides accurate short to medium-range global predictions. FourCastNet accurately forecasts high-resolution, fast-timescale variables such as the surface wind speed, precipitation, and atmospheric water vapor. FourCastNet uses the the Adaptive
+
+--- nvidia/fourcastnet3 · Hugging Face
+https://huggingface.co/nvidia/fourcastnet3
+  > nvidia/fourcastnet3 · Hugging Face
+...
+FourCastNet 3 advances global weather modeling by implementing a scalable, geometric machine learning (ML) approach to probabilistic ensemble forecasting. The approach is designed to respect spherical geometry and to accurately model the spatially correlated probabilistic nature of the problem, resulting in stable spectra and realistic dynamics across multiple scales. FourCastNet 3 delivers forecasting accuracy that surpasses leading conventional ensemble m
+
+--- Earth-2 FourCastNet SFNO | NVIDIA NGC
+https://catalog.ngc.nvidia.com/orgs/nim/nvidia/models/earth2-sfno-era5-73ch/-
+  > Earth-2 FourCastNet SFNO | NVIDIA NGC
+...
+Earth-2 FourCastNet SFNO
+...
+FourCastNet V2 model for predicting atmospheric dynamics.
+...
+Note: You can gain access to hundreds more GPU-optimized artifacts by creating a free NGC account.
+...
+FourCastNet V2 uses Spherical Fourier Neural Operator (SFNO) to predict a collection of surface and atmospheric variables such as wind speed, temperature and pressure and is applied to forecasting global atmospheric dynamics.
+...
+This model is ready for commercial
+
+--- Adaptive Fourier Neural Operator (AFNO) for weather forecasting — NVIDIA PhysicsNeMo Framework
+https://docs.nvidia.com/physicsnemo/latest/physicsnemo/examples/weather/fcn_afno/README.html
+  > Adaptive Fourier Neural Operator (AFNO) for weather forecasting — NVIDIA PhysicsNeMo Framework
+...
+This repository contains the code used for FourCastNet: A Global Data-driven High-resolution Weather Model using Adaptive Fourier Neural Operators
+...
+FourCastNet, short for Fourier Forecasting Neural Network, is a global data-driven weather forecasting model that provides accurate short to medium-range global predictions at 0.25∘ resolution. FourCastNet accurately forecasts high-resolution, fast-t
+
+--- OneScience-Group/FourCastNet · Hugging Face
+https://huggingface.co/OneScience-Group/FourCastNet
+  > OneScience-Group/FourCastNet · Hugging Face
+...
+FourCastNet (Fourier Forecasting Neural Network) is a global weather forecast model based on AFNO (Adaptive Fourier Neural Operator), jointly developed by NVIDIA and multiple top-tier academic institutions.
+...
+FourCastNet is a global high-resolution weather forecast model based on the Adaptive Fourier Neural Operator, suitable for short-to-medium-range global weather forecast research.
+...
+### Download the Model Package
+...
+```bash
+hf download --m
+====================================================================================================
+FILE: q4_climax.json
+
+--- microsoft/ClimaX
+https://github.com/microsoft/climax
+  > # microsoft/ClimaX
+
+Foundation model for weather & climate
+
+- Stars: 701
+- Forks: 108
+- Watchers: 701
+- Open issues: 11
+- License: MIT License
+- Homepage: https://microsoft.github.io/ClimaX/
+- Default branch: main
+- Created: 2022-12-08T17:43:46Z
+
+## Languages
+
+- Dockerfile
+- Python
+
+## Top Contributors
+
+- rejuvyesh (21 contributions)
+- tung-nd (10 contributions)
+- microsoftopensource (5 contributions)
+- brandstetter-johannes (2 contributions)
+- KikiCS (1 contributions)
+- zzz0906 (1 contributions
+
+--- ClimaX: A foundation model for weather and climate - Microsoft Research
+https://www.microsoft.com/en-us/research/publication/climax-a-foundation-model-for-weather-and-climate/
+  > ClimaX: A foundation model for weather and climate - Microsoft Research
+
+# ClimaX: A foundation model for weather and climate
+
+- Tung Nguyen , 
+- Johannes Brandstetter , 
+- Ashish Kapoor , 
+- Jayesh K. Gupta , 
+- Aditya Grover
+
+ ICML 2023 | July 2023
+
+Most state-of-the-art approaches for weather and climate modeling are based on physics-informed numerical models of the atmosphere. These approaches aim to model the non-linear dynamics and complex interactions between multiple variables, which are
+
+--- docs/usage.md
+https://github.com/microsoft/ClimaX/blob/main/docs/usage.md
+  > ### Pretrained checkpoints
+...
+We provide two pretrained checkpoints, one was pretrained on [5.625deg](https://huggingface.co/tungnd/climax/resolve/main/5.625deg.ckpt) data, and the other was pretrained on [1.40625deg](https://huggingface.co/tungnd/climax/resolve/main/1.40625deg.ckpt) data. Both checkpoints were pretrained using all 5 CMIP6 datasets.
+...
+**Usage:** We can load the checkpoint by passing the checkpoint url to the training script. See below for examples.
+...
+```bash
+python src/clim
+
+--- Usage - ClimaX
+https://microsoft.github.io/ClimaX/usage/
+  > ### Pretrained checkpoints¤
+...
+We provide two pretrained checkpoints, one was pretrained on 5.625deg data, and the other was pretrained on 1.40625deg data. Both checkpoints were pretrained using all 5 CMIP6 datasets.
+...
+Usage: We can load the checkpoint by passing the checkpoint url to the training script. See below for examples.
+...
+une ClimaX for global forecasting, use
+...
+```
+python src/climax/global_forecast/train.py
+...
+config <path/to/config>
+...
+```
+
+ For example, to finetune ClimaX on
+
+--- microsoft/ClimaX · Hugging Face
+https://huggingface.co/microsoft/ClimaX
+  > microsoft/ClimaX · Hugging Face
+
+README.md exists but content is empty.
+
+Downloads last month
+
+-
+
+Downloads are not tracked for this model.
+
+How to track
+
+Inference Providers NEW
+
+This model isn't deployed by any Inference Provider.🙋 Ask for provider support
+
+--- Global Forecasting - ClimaX
+https://microsoft.github.io/ClimaX/reference/global_forecast/
+  > Lightning module for global forecasting with the ClimaX model.
+...
+| Name | Type | Description | Default |
+| --- | --- | --- | --- |
+| `net` | `ClimaX` | ClimaX model. | required |
+| `pretrained_path` | `str` | Path to pre-trained checkpoint. | `''` |
+| `lr` | `float` | Learning rate. | `0.0005` |
+| `beta_1` | `float` | Beta 1 for AdamW. | `0.9` |
+| `beta_2` | `float` | Beta 2 for AdamW. | `0.99` |
+| `weight_decay` | `float` | Weight decay for AdamW. | `1e-05` |
+| `warmup_epochs` | `int` | Numbe
+
+--- microsoft/ClimaX
+https://github.com/microsoft/ClimaX
+  > # microsoft/ClimaX
+
+Foundation model for weather & climate
+
+- Stars: 701
+- Forks: 108
+- Watchers: 701
+- Open issues: 11
+- License: MIT License
+- Homepage: https://microsoft.github.io/ClimaX/
+- Default branch: main
+- Created: 2022-12-08T17:43:46Z
+
+## Languages
+
+- Dockerfile
+- Python
+
+## Top Contributors
+
+- rejuvyesh (21 contributions)
+- tung-nd (10 contributions)
+- microsoftopensource (5 contributions)
+- brandstetter-johannes (2 contributions)
+- KikiCS (1 contributions)
+- zzz0906 (1 contributions
+
+--- microsoft/ClimaX at main
+https://huggingface.co/microsoft/ClimaX/tree/main
+  > microsoft/ClimaX at main
+
+Upload 2 files
+
+1f77f8e almost 3 years ago
+
+Safe
+
+Safe
+
+pickle
+
+#### Detected Pickle imports (3)
+
+- "torch._utils._rebuild_tensor_v2",
+- "torch.FloatStorage",
+- "collections.OrderedDict"
+
+What is a pickle import?
+
+Safe
+
+pickle
+
+#### Detected Pickle imports (3)
+
+- "torch.FloatStorage",
+- "torch._utils._rebuild_tensor_v2",
+- "collections.OrderedDict"
+
+What is a pickle import?
+
+Safe
+
+--- ClimaX - ClimaX
+https://microsoft.github.io/ClimaX/
+  > ClimaX - ClimaX
+
+# ClimaX
+
+ 
+
+# What is ClimaX?
+
+ ▶️ ClimaX is the first foundation model for weather and climate science. ▶️ Simple, flexible, and easy to use. ▶️ Ample examples for the workflow to apply to various downstream tasks ranging from weather forecasting to climate downscaling. ▶️ Supports efficient scalable distributed training, powered by PyTorch Lightning. 
+
+# Citation
+
+```
+@article{nguyen2023climax,
+              title={ClimaX: A foundation model for weather and climate},
+        
+
+--- ClimaX: A foundation model for weather and climate
+https://arxiv.org/abs/2301.10343
+  > Tung Nguyen Affiliation: UCLA Johannes Brandstetter Affiliation: Microsoft Ashish Kapoor Affiliation: Scaled Foundations Jayesh K. Gupta Note: Equal contributions as last authors, listed reverse alphabetically Affiliation: Microsoft Aditya Grover00footnotemark: 0 Corresponding author: tungnd@cs.ucla.edu, johannesb@microsoft.com, ashish.kapoor@gmail.com, jkg@cs.stanford.edu, adityag@cs.ucla.edu Affiliation: UCLA
+...
+Most state-of-the-art approaches for weather and climate modeling are based on ph
+====================================================================================================
+FILE: q5_aurora.json
+
+--- microsoft/aurora · Hugging Face
+https://huggingface.co/microsoft/aurora
+  > microsoft/aurora · Hugging Face
+
+# Aurora: A Foundation Model for the Earth System
+
+This repository contains model weights for various versions of Aurora.
+
+Please see the GitHub repository for more information.
+
+Link to the paper.
+
+Cite us as follows:
+
+```
+@article{bodnar2025aurora,
+    title = {A Foundation Model for the Earth System},
+    author = {Cristian Bodnar and Wessel P. Bruinsma and Ana Lucic and Megan Stanley and Anna Allen and Johannes Brandstetter and Patrick Garvan and Maik Riecher
+
+--- Available Models — Aurora: A Foundation Model of the Atmosphere
+https://microsoft.github.io/aurora/models.html
+  > Weights for models are made available through our HuggingFace repository `microsoft/aurora`. We now describe the available models in turn.
+...
+Aurora 0.25° Pretrained requires static variables from ERA5. For convenience, these are also available in the HuggingFace repository.
+...
+Aurora 0.25° Fine-Tuned requires static variables from ERA5. For convenience, these are also available in
+...
+HuggingFace repository.
+...
+Aurora 0.25° 12-Hour Pretrained requires static variables from ERA5. For convenie
+
+--- microsoft/aurora
+https://github.com/microsoft/aurora
+  > # microsoft/aurora
+...
+Implementation of the Aurora model for Earth system forecasting
+...
+- Stars: 956
+- Forks: 152
+- Watchers: 956
+- Open issues: 63
+- License: Other
+- Homepage: https://microsoft.github.io/aurora
+- Default branch: main
+- Created: 2024-07-15T14:23:39Z
+...
+## README
+...
+# Aurora: A Foundation Model for the Earth System
+...
+[![CI](https://github.com/microsoft/
+...
+/actions/workflows/ci.yaml/badge.svg)](
+...
+.com/
+...
+[![Documentation](https://img.shields.io/badge/docs-latest-blue
+
+--- Usage — Aurora: A Foundation Model of the Atmosphere
+https://microsoft.github.io/aurora/usage.html
+  > Usage — Aurora: A Foundation Model of the Atmosphere
+...
+For the latest official release, install the `pip` package:
+...
+```
+pip install microsoft-aurora
+...
+Or install from conda-forge with `conda` / `mamba`:
+...
+You can also install directly from GitHub:
+...
+```
+git clone https://github.com/microsoft/aurora.git
+cd aurora
+
+```
+...
+Instead of loading the default checkpoint, you can also load another checkpoint by specifying a checkpoint file in a HuggingFace repository. For example, we could use
+
+--- microsoft-aurora v2.0.0
+https://pypi.org/project/microsoft-aurora/
+  > # microsoft-aurora v2.0.0
+...
+Implementation of the Aurora model
+...
+- License: MIT License
+...
+Implementation of the Aurora model.
+ 
+ Copyright (
+...
+) Microsoft Corporation.
+...
+, merge,
+...
+- Python: >=3.10
+- Package URL: https://pypi.org/project/microsoft-aurora/
+...
+- repository: https://github.com/microsoft/aurora
+...
+# Aurora: A Foundation Model for the Earth System
+...
+[![CI](https://github.com/microsoft/Aurora/actions/workflows/ci.yaml/badge.svg)](https://github.com/microsoft/Aurora/act
+
+--- Aurora: A Foundation Model for the Earth System — Aurora: A Foundation Model of the Atmosphere
+https://microsoft.github.io/aurora/intro.html
+  > Aurora: A Foundation Model for the Earth System — Aurora: A Foundation Model of the Atmosphere
+
+# Aurora: A Foundation Model for the Earth System#
+
+Welcome to the documentation of Aurora! Here you will detailed instructions for using the model. If you just want to see the model in action, you can skip to a full-fledged example that runs the model on ERA5. For details on how exactly the model works, please see the paper.
+
+Aurora is a machine learning model that can predict atmospheric variables, 
+
+--- README.md
+https://github.com/microsoft/aurora/blob/main/README.md
+  > - Branch: main
+- Repository: microsoft/aurora
+...
+# Aurora: A Foundation Model for the Earth System
+...
+.com/
+...
+/workflows/ci.yaml/badge.svg
+...
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://microsoft.github.io/aurora)
+[![Paper](https://img.shields.io/badge/arXiv-2405.13063-blue)](https://arxiv.org/abs/2405.13063)
+...
+://zenodo.org/badge/8
+...
+898759
+...
+.svg)](
+...
+org/10.5
+...
+81/zenodo.14983583)
+...
+Implementation of the Aurora model for Earth system forecast
+====================================================================================================
+FILE: q6_gencast.json
+
+--- GitHub - google-deepmind/weathernext · GitHub
+https://github.com/google-deepmind/weathernext
+  > This repo contains the code for WeatherNext 2 (WN2), the global, medium-range
+atmospheric and cyclone forecasting model developed by Google DeepMind and
+Google Research.
+...
+It also contains code for prior generation models
+[GraphCast](https://deepmind.google/blog/graphcast-ai-model-for-faster-and-more-accurate-global-weather-forecasting/)
+and
+[GenCast](https://deepmind.google/blog/gencast-predicts-weather-and-the-risks-of-extreme-conditions-with-sota-accuracy/).
+...
+serves as the
+...
+WeatherNex
+
+--- README.md
+https://github.com/google-deepmind/weathernext/blob/08cf7362/README.md
+  > # Google DeepMind GraphCast and GenCast
+...
+This package contains example code to run and train the weather models used in the research papers [GraphCast](https://www.science.org/doi/10.1126/science.adi2336) and [GenCast](https://arxiv.org/abs/2312.15796).
+...
+It also provides pretrained model weights, normalization statistics and example input data on [Google Cloud Bucket](https://console.cloud.google.com/storage/browser/dm_graphcast).
+...
+## GenCast: Diffusion-based ensemble forecasting for me
+
+--- neuralgcm/neuralgcm
+https://github.com/google-research/neuralgcm
+  > # neuralgcm/neuralgcm
+
+Hybrid ML + physics model of the Earth's atmosphere
+
+- Stars: 999
+- Forks: 131
+- Watchers: 999
+- Open issues: 67
+- License: Apache License 2.0
+- Homepage: https://neuralgcm.readthedocs.io
+- Default branch: main
+- Created: 2024-02-05T16:18:12Z
+
+## Languages
+
+- Python
+
+## Top Contributors
+
+- kochkov92 (312 contributions)
+- shoyer (168 contributions)
+- yaniyuval (44 contributions)
+- langmore (7 contributions)
+- cgarciae (3 contributions)
+- QEDady (2 contributions)
+- ilopezgp 
+
+--- Neural general circulation models for weather and climate | Nature
+https://www.nature.com/articles/s41586-024-07744-y
+  > General circulation models (GCMs) are the foundation of weather and climate prediction 1, 2. GCMs are physics-based simulators that combine a numerical solver for large-scale dynamics with tuned representations for small-scale processes such as cloud formation. Recently, machine-learning models trained on reanalysis data have achieved comparable or better skill than GCMs for deterministic weather forecasting 3, 4. However, these models have not demonstrated improved ensemble forecasts, or shown 
+
+--- GenCast: Diffusion-based ensemble forecasting for medium-range weather
+https://arxiv.org/html/2312.15796
+  > Weather forecasts are fundamentally uncertain, so predicting the range of probable weather scenarios is crucial for important decisions, from warning the public about hazardous weather, to planning renewable energy use. Here, we introduce GenCast, a probabilistic weather model with greater skill and speed than the top operational medium-range weather forecast in the world, the European Centre for Medium-Range Forecasts (ECMWF)’s ensemble forecast, ENS. Unlike traditional approaches, which are ba
+
+--- GenCast predicts weather and the risks of extreme conditions with state-of-the-art accuracy — Google DeepMind
+https://deepmind.google/blog/gencast-predicts-weather-and-the-risks-of-extreme-conditions-with-sota-accuracy/
+  > the model predicts a range of
+...
+with a fuller picture of
+...
+Today, in a paper published in Nature, we present GenCast, our new high resolution (0.25°) AI ensemble model. GenCast provides better forecasts of both day-to-day weather and extreme events than the top operational system, the European Centre for Medium-Range Weather Forecasts’ (ECMWF) ENS, up to 15 days in advance. We’ll be releasing our model’s code, weights, and forecasts, to support the wider weather forecasting community.
+...
+Ge
+
+--- docs/checkpoints.md
+https://github.com/neuralgcm/neuralgcm/blob/main/docs/checkpoints.md
+  > # docs/checkpoints.md
+
+- Branch: main
+- Repository: neuralgcm/neuralgcm
+
+---
+
+# Pre-trained model checkpoints
+
+A collection of pre-trained model checkpoints are available for download [on Google Cloud Storage](https://console.cloud.google.com/storage/browser/neuralgcm/models) at `gs://neuralgcm/models/`. All checkpoints are distributed by Google under the Creative Commons [Attribution-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/) license.
+
+| Reference | Model Nam
+
+--- 
+https://neuralgcm.readthedocs.io/en/latest/inference%5Fdemo.html
+  > # Forecasting quick start[¶](#forecasting-quick-start "Link to this heading")
+...
+This notebook uses ERA5 data and pretrained NeuralGCM model to make a weather forecast.
+...
+The forecast is made in 3 steps:
+...
+1. Slice of ERA5 data is regridded to model resolution
+2. NeuralGCM model state is initialized and rolled out
+3. Predictions and reference trajectory are combined for visualization
+...
+## Load a pre-trained NeuralGCM model[¶](#load-a-pre-trained-neuralgcm-model "Link to this heading")
+...
+
+--- Neural general circulation models for weather and climate
+https://research.google/pubs/neural-general-circulation-models-for-weather-and-climate/
+  > Neural general circulation models for weather and climate
+
+# Neural general circulation models for weather and climate
+
+ Dmitrii Kochkov 
+
+ Janni Yuval 
+
+ Ian Langmore 
+
+ Peter Norgaard 
+
+ Jamie Smith 
+
+ Griffin Mooers 
+
+ Milan Kloewer 
+
+ James Lottes 
+
+ Stephan Rasp 
+
+ Peter Dueben 
+
+ Samuel Hatfield 
+
+ Peter Battaglia 
+
+ Alvaro Sanchez 
+
+ Matthew Willson 
+
+ Michael Brenner 
+
+ Stephan Hoyer 
+
+ Nature, 632 (2024), pp. 1060-1066 
+
+## Abstract
+
+ General circulation models (GCMs) are the foundation
+
+--- GenCast: learning skillful ensemble forecasting of medium-range weather — Google DeepMind
+https://deepmind.google/research/publications/68149/
+  > GenCast: learning skillful ensemble forecasting of medium-range weather — Google DeepMind
+
+December 25, 2023
+
+## Abstract
+
+A probabilistic weather forecast is critical for decision-making, from the everyday to preparation for extreme events. Forecasts of the joint distribution of weather trajectories via spatio-temporally coherent ensembles have further importance: they provide a powerful tool for decision-making in complex and high-impact domains including energy system planning, transportation
+====================================================================================================
+FILE: q7_prithvi.json
+
+--- ibm-nasa-geospatial/Prithvi-WxC-1.0-2300M · Hugging Face
+https://huggingface.co/ibm-nasa-geospatial/Prithvi-WxC-1.0-2300M
+  > ibm-nasa-geospatial/Prithvi-WxC-1.0-2300M · Hugging Face
+
+NASA and IBM have teamed up to create an AI Foundation Model for Weather and Climate - Prithvi WxC, using MERRA-2 data. By embracing the principles of open science, both organizations are actively contributing to the global mission of promoting knowledge sharing and accelerating innovations in addressing critical environmental challenges. With Hugging Face’s platform, they simplify model training and deployment, making it accessible for o
+
+--- Prithvi WxC: Foundation Model for Weather and Climate
+https://arxiv.org/html/2409.13598
+  > , Rohit Lal
+...
+Silva6, Jorge
+...
+Jones1, Simon Pfreundsch
+...
+4, Amy
+...
+, Valentine An
+...
+, Campbell Watson
+...
+Research; 2Earth System
+...
+in Huntsville,
+...
+, USA; 3Department
+...
+Earth System Science, Stanford University, Stanford, USA; 4Department
+...
+Goddard
+...
+Flight Center, USA; 7
+...
+Triggered by the realization that AI emulators can rival the performance of traditional numerical weather prediction models running on HPC systems, there is now an increasing number of large AI models th
+
+--- IBM and NASA’s versatile AI model for weather and climate - IBM Research
+https://research.ibm.com/blog/foundation-model-weather-climate
+  > # Introducing Prithvi WxC, a new general-purpose AI model for weather and climate
+...
+In collaboration with NASA, IBM is releasing an open-source foundation model that can be customized for a variety of weather and climate-related applications — and run on a desktop computer.
+...
+In collaboration with NASA, IBM wanted to build more than just another AI forecasting model. Instead, the goal was to push things forward with a general-purpose AI model that could be customized for a range of practical
+
+--- ibm-nasa-geospatial (IBM-NASA Prithvi Models Family)
+https://huggingface.co/ibm-nasa-geospatial
+  > ibm-nasa-geospatial (IBM-NASA Prithvi Models Family)
+...
+IBM and NASA have teamed up to create a family of AI foundation models for Earth called Prithvi. These geospatial foundation models make AI accessible for open science users, startups, and enterprises by simplifying model training and deployment.
+...
+Three foundation models have been released to date: Prithvi-EO-1.0 and Prithvi-EO-2.0 which uses earth observation data from NASA’s Harmonized Landsat and Sentinel-2 (HLS), and Prithvi-WxC-1.0
+
+--- NASA-IMPACT/Prithvi-WxC
+https://github.com/NASA-IMPACT/Prithvi-WxC
+  > Implementation of the Prithvi WxC Foundation Model and Downstream Tasks
+...
+# Prithvi WxC: Foundation model for weather and climate
+...
+This repository contains the code of the Prithvi WxC foundation model as well as basic zero-shot examples for testing and illustration. For fine-tuning applications please refer to task-specific repositories listed [below](https://github.com/NASA-IMPACT/Prithvi-WxC?tab=readme-ov-file#fine-tuning-applications).
+...
+## Fine-tuning applications
+...
+We have fine-tun
+
+--- Exploring Prithvi WXC Adaptation from MERRA2 to ERA5 for AGU 2025 - IBM Research
+https://research.ibm.com/publications/exploring-prithvi-wxc-adaptation-from-merra2-to-era5
+  > Exploring Prithvi WXC Adaptation from MERRA2 to ERA5 for AGU 2025 - IBM Research
+
+15 Dec 2025
+
+## Abstract
+
+Recent advances in AI-based weather modeling have given rise to large-scale “weather foundation” models pretrained on large amounts of weather data. In this study, we investigate whether the Prithvi weather foundation model pretraining on 40 years of MERRA2 data, characterized by a resolution of 0.5° × 0.625° facilitates adaptation to ERA5, which has a finer resolution of 0.25° × 0.25°. We
+
+--- Prithvi WxC: A Weather and Climate Foundation Model for AGU 2024 - IBM Research
+https://research.ibm.com/publications/prithvi-wxc-a-weather-and-climate-foundation-model
+  > Prithvi WxC: A Weather and Climate Foundation Model for AGU 2024 - IBM Research
+
+09 Dec 2024
+
+## Abstract
+
+Deep learning is progressively revolutionizing weather applications by generating highly accurate forecasts with lower computational costs compared to numerical weather prediction. Unlike traditional physics-based methods, deep learning models for weather applications do not directly simulate the underlying physics. The models, instead, tend to learn high-level features via probability dist
+====================================================================================================
+FILE: q8_hf.json
+
+--- ibm-nasa-geospatial/Prithvi-WxC-1.0-2300M · Hugging Face
+https://huggingface.co/ibm-nasa-geospatial/Prithvi-WxC-1.0-2300M
+  > ibm-nasa-geospatial/Prithvi-WxC-1.0-2300M · Hugging Face
+
+NASA and IBM have teamed up to create an AI Foundation Model for Weather and Climate - Prithvi WxC, using MERRA-2 data. By embracing the principles of open science, both organizations are actively contributing to the global mission of promoting knowledge sharing and accelerating innovations in addressing critical environmental challenges. With Hugging Face’s platform, they simplify model training and deployment, making it accessible for o
+
+--- ecmwf/aifs-single-1.0 · Hugging Face
+https://huggingface.co/ecmwf/aifs-single-1.0
+  > ecmwf/aifs-single-1.0 · Hugging Face
+...
+# AIFS Single - v1.0
+...
+Intelligence Forecasting System (
+...
+supersedes the existing experimental version
+...
+2.1
+...
+single. The new version
+...
+, brings changes to
+...
+Single model,
+...
+- Developed by: ECMWF
+- Model type: Encoder-processor-decoder model
+- License: These model weights are published under a Creative Commons Attribution 4.0 International (CC BY 4.0). To view a copy of this licence, visit https://creativecommons.org/licenses/by/4.0/. The 
+
+--- ecmwf/aifs-single-2.0 · Hugging Face
+https://huggingface.co/ecmwf/aifs-single-2.0
+  > To generate a forecast using the AIFS Single v2 model, follow the notebook example.
+...
+The notebook demonstrates:
+
+- installing packages and imports
+- retrieving initial conditions from ECMWF Open Data
+- loading the pretrained checkpoint
+- running inference with anemoi-inference
+- visualising the forecast
+...
+- Developed by: ECMWF
+- Model type: Encoder-processor-decoder model
+- License: Inference model weights are published under a Creative Commons Attribution 4.0 International (CC BY 4.0). To 
+
+--- ecmwf/aifs-ens-2.0 · Hugging Face
+https://huggingface.co/ecmwf/aifs-ens-2.0
+  > To generate a forecast using the AIFS ENS v2 model, follow the notebook example.
+...
+notebook demonstrates:
+...
+- installing packages and imports
+- retrieving initial conditions from ECMWF Open Data
+- loading the pretrained checkpoint
+- running inference with anemoi-inference
+- visualising the forecast
+...
+- Developed by: ECMWF
+- Model type: Encoder-processor-decoder model
+- License: Inference model weights are published under a Creative Commons Attribution 4.0 International (CC BY 4.0). To view
+
+--- nvidia/atlas-era5 · Hugging Face
+https://huggingface.co/nvidia/atlas-era5
+  > ## Description: 
+
+Atlas is a medium-range weather generative AI model that autoregressively predicts ERA5 variables on a global 0.25 degree latitude-longitude grid.
+...
+### Use Case:
+...
+Global medium-range ensemble weather forecasting
+
+### Release Date: 
+
+Hugging Face: 01/26/2026 via https://huggingface.co/nvidia/atlas-era5
+...
+## Model Version(s): 
+
+Model Version: v1 
+
+# Training, Testing, and Evaluation Datasets: 
+
+Note: The initial model development used the years 1980-2016 as a train set, w
+
+--- nvidia/stormcast-v1-era5-hrrr · Hugging Face
+https://huggingface.co/nvidia/stormcast-v1-era5-hrrr
+  > nvidia/stormcast-v1-era5-hrrr · Hugging Face
+...
+# Earth-2 Checkpoints: StormCast-V1-ERA5-HRRR
+...
+StormCast V1 is a mesoscale machine learning AI model that autoregressively predicts 99 state variables at km scale using a 1-hour time step, with dense vertical resolution in the atmosphere boundary layer.
+...
+For training recipes see NVIDIA PhysicsNeMo, for inference see NVIDIA Earth2Studio
+...
+Downloads last month 304
+...
+## Collections including nvidia/stormcast-v1-era5-hrrr
+...
+CollectionFrame
+====================================================================================================
+FILE: q9_weatherbench.json
+
+--- google-research/weatherbench2
+https://github.com/google-research/weatherbench2
+  > A benchmark for the next generation of data-driven global weather models.
+...
+# WeatherBench 2 - A benchmark for the next generation of data
+...
+driven global weather models
+...
+WeatherBench 2 is a framework for evaluating and comparing data-driven and traditional numerical weather forecasting models. WeatherBench consists of:
+...
+- Publicly available, cloud-optimized ground truth and baseline datasets. For a complete list, see [this page](https://weatherbench2.readthedocs.io/en/latest/data-guid
+
+--- WeatherBench 2: A Benchmark for the Next Generation of Data‐Driven Global Weather Models
+https://doi.org/10.1029/2023ms004019
+  > Abstract WeatherBench 2 is an update to the global, medium‐range (1–14 days) weather forecasting benchmark proposed by (Rasp et al., 2020, https://doi.org/10.1029/2020ms002203 ), designed with the aim to accelerate progress in data‐driven weather modeling. WeatherBench 2 consists of an open‐source evaluation framework, publicly available training, ground truth and baseline data as well as a continuously updated website with the latest metrics and state‐of‐the‐art models: https://sites.research.g
+
+--- WeatherBench 2: A benchmark for the next generation of data-driven global weather models
+https://research.google/pubs/weatherbench-2-a-benchmark-for-the-next-generation-of-data-driven-global-weather-models/
+  > WeatherBench 2: A benchmark for the next generation of data-driven global weather models
+
+# WeatherBench 2: A benchmark for the next generation of data-driven global weather models
+
+ Stephan Rasp 
+
+ Stephan Hoyer 
+
+ Alex Merose 
+
+ Ian Langmore 
+
+ Peter Battaglia 
+
+ Tyler Russell 
+
+ Alvaro Sanchez 
+
+ Vivian Yang 
+
+ Rob Carver 
+
+ Shreya Agrawal 
+
+ Matthew Chantry 
+
+ Zied Ben Bouallegue 
+
+ Peter Dueben 
+
+ Carla Bromberg 
+
+ Jared Sisk 
+
+ Luke Barrington 
+
+ Aaron Bell 
+
+ Fei Sha 
+
+ arXiv (2023) (to a
+
+--- 
+https://weatherbench2.readthedocs.io/en/latest/?badge=latest
+  > - Why WeatherBench?
+- View page source
+
+---
+
+# Why WeatherBench?
+
+WeatherBench 2 is a framework for evaluating and comparing data-driven and traditional numerical weather forecasting models. WeatherBench consists of:
+
+- Publicly available, cloud-optimized ground truth and baseline datasets. For a complete list, see this page.
+- Open-source evaluation code. See this quick-start to explore the basic functionality or the API docs for more detail. Since high-resolution forecast files can be large, 
+
+--- WeatherBench 2 - WeatherBench
+http://sites.research.google/gr/weatherbench/
+  > ) has seen rapid progress
+...
+. WeatherBench
+...
+-based weather forecasting models in a like-for-like fashion.
+...
+This website contains up-to-date scores of many state-of-the-art global weather models with a focus on medium-range (1-15 day) prediction. In addition, the WeatherBench framework consists of our recently updated WeatherBench-X evaluation code and publicly available, cloud-optimized ground-truth and baseline datasets, including a comprehensive copy of the ERA5 dataset used for traini
+
+--- 
+https://weatherbench2.readthedocs.io/en/latest/index.html
+  > * [](#)
+* Why WeatherBench?
+* [ View page source](https://weatherbench2.readthedocs.io/en/latest/%5Fsources/index.md.txt)
+
+---
+
+![image](https://weatherbench2.readthedocs.io/en/latest/_images/wb2-logo-wide.png)
+
+# Why WeatherBench?[](#why-weatherbench "Permalink to this heading")
+
+WeatherBench 2 is a framework for evaluating and comparing data-driven and traditional numerical weather forecasting models. WeatherBench consists of:
+
+* Publicly available, cloud-optimized ground truth and baseline d
+
+--- Why WeatherBench?
+https://weatherbench2.readthedocs.io/en/latest/
+  > - Why WeatherBench?
+- View page source
+
+---
+
+# Why WeatherBench?
+
+WeatherBench 2 is a framework for evaluating and comparing data-driven and traditional numerical weather forecasting models. WeatherBench consists of:
+
+- Publicly available, cloud-optimized ground truth and baseline datasets. For a complete list, see this page.
+- Open-source evaluation code. See this quick-start to explore the basic functionality or the API docs for more detail. Since high-resolution forecast files can be large, 
+====================================================================================================
+FILE: q10_finetune.json
+
+--- From Global to Local: Efficient Regional Weather Downscaling with Global Weather Foundation Model
+https://arxiv.org/html/2607.03279
+  > Accurate regional weather prediction requires resolving fine-scale structure while remaining consistent with global dynamics. Traditional limited area models rely on computationally expensive simulations, while many learning-based approaches frame the problem as super-resolution, overlooking statistical and physical mismatches across scales. We propose a foundation-model-driven downscaling framework that learns regional refinements of global forecasts by augmenting a pretrained weather model bac
+
+--- From Global to Local: Efficient Regional Weather Downscaling with Global Weather Foundation Model
+https://arxiv.org/html/2607.03279v1
+  > Accurate regional weather prediction requires resolving fine-scale structure while remaining consistent with global dynamics. Traditional limited area models rely on computationally expensive simulations, while many learning-based approaches frame the problem as super-resolution, overlooking statistical and physical mismatches across scales. We propose a foundation-model-driven downscaling framework that learns regional refinements of global forecasts by augmenting a pretrained weather model bac
+
+--- Local Off‐Grid Weather Forecasting With Multi‐Modal Earth Observation Data
+https://doi.org/10.1029/2025ms005207
+  > Abstract Urgent applications like wildfire management and renewable energy generation require precise, localized weather forecasts near the Earth's surface. However, forecasts produced by machine learning models or numerical weather prediction systems are typically generated on large‐scale regular grids, where direct downscaling fails to capture fine‐grained, near‐surface weather patterns. In this work, we propose a multi‐modal transformer model trained end‐to‐end to downscale gridded forecasts 
+
+--- Task-Adaptive Parameter-Efficient Fine-Tuning for Weather Foundation Models
+https://arxiv.org/html/2509.22020
+  > This limitation has spurred interest in Weather Foundation Models (WFMs), large-scale pre-trained models that leverage massive data to acquire generalized representations of atmospheric processes (Nguyen et al., 2023a; Bodnar et al., 2025; Schmude et al., 2024; Zhao et al., 2024). Fine-tuning is then applied to transfer the pre-trained model’s knowledge, enabling it to achieve promising performance on downstream tasks. Nevertheless, as the scale of these models increases (Bodnar et al., 2025; Sc
+
+--- TASK-ADAPTIVE PARAMETER-EFFICIENT FINE TUNING FOR WEATHER FOUNDATION MODELS
+https://proceedings.iclr.cc/paper_files/paper/2026/file/4e6219cc3913fd508dbd7f3f6d90cd4e-Paper-Conference.pdf
+  > . In light of these challenges, Parameter-Efficient Fine-Tuning (PEFT) techniques prevalent in natu ral language processing and computer vision have shown great promise (Hu et al., 2022; Jia et al., 2022; Zhang et al., 2025), which seeks to potentially match or even exceed the performance of full fine-tuning with a minimal number of trainable parameters updates. These methods not only facil itate more effective adaptation to novel tasks but also preserve the pre-existing knowledge within the fou
+
+--- Partial recovery of meter-scale surface weather
+https://arxiv.org/html/2602.23146
+  > We show that a substantial portion of micro-weather is statistically recoverable by combining large-scale atmospheric forcing with static land surface characteristics. We train a multimodal deep learning model on ERA5 reanalysis and high-resolution satellite data to predict observations at 11,000 weather stations across the contiguous United States. Then, at inference time, we generate spatially continuous near-surface micro-weather fields at 10 m resolution. We evaluate against millions of held
+
+--- Earth observation embeddings are effective sub-grid descriptors for probabilistic weather downscaling
+https://arxiv.org/html/2608.12271
+  > ’s sub-
+...
+In 45’s ConvCNP, the sub-grid signal enters through a hand-crafted topographic descriptor specific to the station via three scalars summarising elevation and terrain position. Terrain, however, is only one axis of the near-surface state, as land cover, canopy structure, surface roughness, soil moisture, water and built structure all modulate how a point departs from its coarse-cell mean. Earth-observation (EO) geospatial foundation models complement this hand-crafted enumeration with
+
+--- Sparse Local Implicit Image Function for sub-km Weather Downscaling
+https://arxiv.org/html/2510.20228v1
+  > We introduce SpLIIF to generate implicit neural representations and enable arbitrary downscaling of weather variables. We train a model from sparse weather stations and topography over Japan and evaluate in- and out-of-distribution accuracy predicting temperature and wind, comparing it to both an interpolation baseline and CorrDiff. We find the model to be up to 50% better than both CorrDiff and the baseline at downscaling temperature, and around 10-20% better for wind.
+...
+To bridge this gap, w
+
+--- Observation-Guided Meteorological Field Downscaling at Station Scale: A Benchmark and a New Method
+https://doi.org/10.48550/arxiv.2401.11960
+  > To address the aforementioned issues, our paper first constructs a benchmark for downscaling meteorological fields, guided by multi-source, multi-scale, and multi-modal observational data. Our goal is to downscale low-resolution meteorological fields to the scale of arbitrary scatter points. Specifically, the paper selects ERA5 reanalysis data [30] as the meteorological field data to be downscaled. For observational data, we utilize remote sensing images from the new generation geostationary met
+====================================================================================================
+FILE: q11_downscaling.json
+
+--- A super-resolution framework for downscaling machine learning weather prediction toward 1-km air temperature | npj Climate and Atmospheric Science
+https://www.nature.com/articles/s41612-026-01328-5
+  > Artificial intelligence has improved the accuracy and efficiency of weather forecasting, surpassing traditional numerical weather prediction models. However, the coarse spatial resolution of global weather forecasting systems limits their ability to capture fine-scale surface heterogeneity and localized extremes, particularly in regions with complex terrain or urban heat island effects. Here, we introduce SR-Weather, a deep learning-based super-resolution framework that converts coarse 0.25° for
+
+--- AirCast-SR: A Foundation Model for Kilometer-Scale Atmospheric Super-Resolution via Latent Consistency Diffusion
+https://arxiv.org/html/2605.26130v1
+  > ###### Abstract
+
+ † Equal contribution (co-first authors). ∗ Corresponding author: manmeet.singh@wku.edu Kilometer-scale weather prediction is computationally prohibitive for traditional numerical weather prediction (NWP) models, restricting fine-grained forecasts to a small set of operational systems run on supercomputing infrastructure. Here we introduce AirCast-SR, a diffusion-based foundation model that downscales global AI weather forecasts from $0.25 °0.25\text{\,}\mathrm{\SIUnitSymbolDegr
+
+--- Residual corrective diffusion modeling for km-scale atmospheric downscaling
+https://doi.org/10.1038/s43247-025-02042-5
+  > State of the art for weather and climate hazard prediction requires expensive km-scale numerical simulations. Here, a generative diffusion model is explored for downscaling global inputs to km-scale, as a cost-effective alternative. The model is trained to predict 2 km data from an operational regional weather model over Taiwan, conditioned on a 25 km reanalysis. To address the large resolution ratio, different physics and synthesize new channels, we employ a two-step approach. A deterministic m
+
+--- Reconstructing fine-scale 3D wind fields with terrain-informed machine learning | Nature Communications
+https://www.nature.com/articles/s41467-026-70562-5
+  > Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coa
+
+--- Terrain-aware Deep Learning for Wind Energy Applications: From Kilometer-scale Forecasts to Fine Wind Fields
+https://arxiv.org/html/2505.12732v1
+  > High-resolution wind information is essential for wind energy planning and power forecasting, particularly in regions with complex terrain. However, most AI-based weather forecasting models operate at kilometer-scale resolution, constrained by the reanalysis datasets they are trained on. Here we introduce FuXi-CFD, an AI-based downscaling framework designed to generate detailed three-dimensional wind fields at 30-meter horizontal resolution, using only coarse-resolution atmospheric inputs. The m
+
+--- Deep-Learning-Based Gridded Downscaling of Surface Meteorological Variables in Complex Terrain. Part II: Daily Precipitation
+https://journals.ametsoc.org/downloadpdf/view/journals/apme/59/12/jamc-d-20-0058.1.pdf
+  > ABSTRACT: Statistical downscaling (SD) derives localized information from larger-scale numerical models. Convolutional neural networks (CNNs) have learning and generalization abilities that can enhance the downscaling of gridded data (Part I of this study experimented with 2-m temperature). In this research, we adapt a semantic-segmentation CNN, called UNet, to the downscaling of daily precipitation in western North America, from the low resolution (LR) of 0.258 to the high resolution (HR) of 4-
+
+--- Reconstructing fine-scale 3D wind fields with terrain-informed machine learning
+https://doi.org/10.1038/s41467-026-70562-5
+  > Fine-scale near-surface wind field prediction is essential for a wide range of applications. However, most operational and AI-based weather models operate at kilometer-scale resolution, where terrain-induced wind features such as slope jets, flow deflection, and recirculation are systematically averaged out. Here we introduce FuXi-CFD, a machine learning-based framework designed to generate detailed three-dimensional (3D) near-surface wind fields at 30-meter horizontal resolution, using only coa
+
+--- Sparse Local Implicit Image Function for sub-km Weather Downscaling
+https://arxiv.org/html/2510.20228v1
+  > We introduce SpLIIF to generate implicit neural representations and enable arbitrary downscaling of weather variables. We train a model from sparse weather stations and topography over Japan and evaluate in- and out-of-distribution accuracy predicting temperature and wind, comparing it to both an interpolation baseline and CorrDiff. We find the model to be up to 50% better than both CorrDiff and the baseline at downscaling temperature, and around 10-20% better for wind.
+...
+To bridge this gap, w
+
+--- Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning
+https://journals.ametsoc.org/view/journals/aies/2/1/AIES-D-22-0034.1.xml
+  > Emulating the Adaptation of Wind Fields to Complex Terrain with Deep Learning in: Artificial Intelligence for the Earth Systems Volume 2 Issue 1 (2023)[Jump to Content](#mainContent)
+...
+* [Abstract](#d4
+...
+148816e229)
+...
+* [Significance Statement](#d
+...
+238
+...
+* [1
+...
+488
+...
+e298)
+...
+* [2.Data](#d4
+...
+148816e441)
+...
+* [a.ARPS simulations](#d42148816e445)
+* [b.AROME simulations](#d42148816e631)
+* [c.Observations](#d42148816e654)
+...
+* [3.Method](#d42148816e718)
+* [a.Topographic descript
+
+--- NPG - A two-fold deep-learning strategy to correct and downscale winds over mountains
+https://npg.copernicus.org/articles/31/75/2024/
+  > Assessing wind fields at a local scale in mountainous terrain has long been a scientific challenge, partly because of the complex interaction between large-scale flows and local topography. Traditionally, the operational applications that require high-resolution wind forcings rely on downscaled outputs of numerical weather prediction systems. Downscaling models either proceed from a function that links large-scale wind fields to local observations (hence including a corrective step) or use opera
+====================================================================================================
+FILE: q12_earth2.json
+
+--- Earth-2 FourCastNet 3 | NVIDIA NGC
+https://catalog.ngc.nvidia.com/orgs/nvidia/earth-2/models/fourcastnet3/-
+  > FourCastNet 3
+...
+This model is ready for commercial/non-commercial use.
+...
+### License/Terms of Use:
+...
+Apache 2.0 license
+...
+NVIDIA believes Trustworthy AI is a shared responsibility and we have established policies and practices to enable development for a wide array of AI applications. When downloaded or used in accordance with our terms of service, developers should work with their internal model team to ensure this model meets requirements for the relevant industry and use case and addr
+
+--- Earth-2 FourCastNet | NVIDIA NGC
+https://catalog.ngc.nvidia.com/orgs/nim/nvidia/containers/fourcastnet/-
+  > The container components are ready for commercial/non-commercial use.
+...
+## License/Terms of Use
+...
+The NIM container is governed by the NVIDIA AI Product Agreement; and the use of this model is governed by the NVIDIA AI Foundation Models Community License.
+...
+The following models are housed within the Earth-2 FourCastNet NIM Container (depending on container version).
+...
+| Model Name & Link | Use Case | How to Pull the Model |
+| --- | --- | --- |
+| FourCastNet 3 (v2.0.0+) | Ensemble Global 
+
+--- NVIDIA Launches Earth-2 Family of Open Models — the World’s First Fully Open, Accelerated Set of Models and Tools for AI Weather | NVIDIA Blog
+https://blogs.nvidia.com/blog/nvidia-earth-2-open-models/
+  > - Earth-2 CorrDiff, which uses a generative AI architecture called CorrDiff to downscale coarse-resolution, continental-scale predictions to high-resolution, regional-scale weather fields — providing the fine-grain resolution needed for local forecasting up to 500x faster than traditional methods. 
+- Earth-2 FourCastNet3, which delivers high forecasting accuracy for various weather variables, such as wind, temperature and humidity, surpassing leading conventional ensemble models and rivaling top
+
+--- Nvidia launches Earth-2 open AI weather forecast models and tools - SiliconANGLE
+https://siliconangle.com/2026/01/26/nvidia-launches-earth-2-open-ai-weather-forecast-models-tools/
+  > Earth-2 CorrDiff can downscale continental predictions into high-resolution, regional weather for fine-grain local forecasting. FourCastNet3 can deliver high-accuracy forecasting for various weather variables such as wind, temperature and humidity, surpassing leading conventional models, producing answers at 60 times faster speeds.
+...
+Nvidia said the full-featured open-model family and tools for training capabilities for diagnostics will be licensed for commercial and noncommercial use. They wi
+
+--- Earth-2 FourCastNet 3 | NVIDIA NGC
+https://catalog.ngc.nvidia.com/orgs/nvidia/earth-2/models/fourcastnet3/0.1.0
+  > FourCastNet 3
+...
+This model is ready for commercial/non-commercial use.
+...
+### License/Terms of Use:
+...
+Apache 2.0 license
+...
+NVIDIA believes Trustworthy AI is a shared responsibility and we have established policies and practices to enable development for a wide array of AI applications. When downloaded or used in accordance with our terms of service, developers should work with their internal model team to ensure this model meets requirements for the relevant industry and use case and addr
+
+--- README.md · nvidia/fourcastnet3 at main
+https://huggingface.co/nvidia/fourcastnet3/blob/main/README.md
+  > ```
+license: apache-2.0
+
+```
+...
+# Earth-2 Checkpoints: FourCastNet 3
+...
+This model is ready for commercial/non-commercial use.
+...
+### License/Terms of Use:
+...
+NVIDIA believes Trustworthy AI is a shared responsibility and we have established policies and practices to enable development for a wide array of AI applications. When downloaded or used in accordance with our terms of service, developers should work with their internal model team to ensure this model meets requirements for the releva
+
+--- Earth-2 FourCastNet SFNO | NVIDIA NGC
+https://catalog.ngc.nvidia.com/orgs/nim/nvidia/models/earth2-sfno-era5-73ch/-
+  > This model is ready for commercial use.
+...
+NVIDIA believes Trustworthy AI is a shared responsibility and we have established policies and practices to enable development for a wide array of AI applications. When downloaded or used in
+...
+with our terms of service, developers should work with their supporting model team to ensure this model meets
+...
+for the relevant industry and use case and addresses unforeseen product misuse. For more detailed information on ethical considerations for this mo
+
+--- fourcastnet Model by NVIDIA | NVIDIA NIM
+https://build.nvidia.com/nvidia/fourcastnet/modelcard
+  > +science)
+...
+FourCastNet2 uses Spherical Fourier Neural Operator (SFNO) to predict a collection of surface and atmospheric variables such as wind speed, temperature and pressure and is applied to forecasting global atmospheric dynamics.
+...
+FourCastNet is a data-driven model that provides accurate short to medium-range global predictions at a time-step size of 6 hours with predictive stability for over a year of simulated time (1,460 steps), while retaining physically plausible dynamics.
+...
+Th
+
+--- NVIDIA Open Models License
+https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/
+  > Open Model License Agreement (
+...
+, You and NVIDIA Corporation and
+...
+provides to You under this Agreement.
+...
+“ party” and collectively the
+...
+NVIDIA models released under this Agreement are intended to be used permissively and enable the further development of AI technologies. Subject to the terms of this Agreement, NVIDIA confirms that:
+...
+- Models are commercially usable.
+- You are free to create and distribute Derivative Models.
+- NVIDIA does not claim ownership to any outputs generate
+
+--- NVIDIA Open Model License Agreement This NVIDIA Open Model License Agreement (the “Agreement”) is a legal agreement between the Legal Entity You represent, or if no entity is identified, You and NVIDIA Corporation and its Affiliates (“NVIDIA”) and governs Your use of the Models that NVIDIA provides to You under this Agreement. NVIDIA and You are each a “party” and collectively the “parties.” NVIDIA models released under this Agreement are intended to be used permissively and enable the further development of AI technologies. Subject to the terms of this Agreement, NVIDIA confirms that:
+https://www.nvidia.com/content/dam/en-zz/Solutions/license-agreements/enterprise-software/nvidia-open-model-license-agreements-24-10-2025.pdf
+  > , you agree to be bound by this Agreement. 1. Definitions. The following definitions apply to this Agreement: 1.1. “Derivative Model” means all (a) modifications to the Model, (b) works based on the Model, and (c) any other derivative works of the Model. An output is not a Derivative Model. 1.2. “Legal Entity” means the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, “control” me

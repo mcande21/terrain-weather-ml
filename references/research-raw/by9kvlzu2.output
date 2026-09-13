@@ -1,0 +1,272 @@
+2026-09-12 22:12:00,488 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2014-10-01&date_end=2014-10-31 "HTTP/1.1 200 OK"
+2026-09-12 22:12:00,490 INFO Chunk 2014-10-01 to 2014-10-31: 0 items, 0 total ratings so far
+2026-09-12 22:12:00,833 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2014-11-01&date_end=2014-12-01 "HTTP/1.1 200 OK"
+2026-09-12 22:12:00,836 INFO Chunk 2014-11-01 to 2014-12-01: 0 items, 0 total ratings so far
+2026-09-12 22:12:01,246 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2014-12-02&date_end=2015-01-01 "HTTP/1.1 200 OK"
+2026-09-12 22:12:01,249 INFO Chunk 2014-12-02 to 2015-01-01: 0 items, 0 total ratings so far
+2026-09-12 22:12:01,701 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-01-02&date_end=2015-02-01 "HTTP/1.1 200 OK"
+2026-09-12 22:12:01,707 INFO Chunk 2015-01-02 to 2015-02-01: 0 items, 0 total ratings so far
+2026-09-12 22:12:02,270 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-02-02&date_end=2015-03-04 "HTTP/1.1 200 OK"
+2026-09-12 22:12:02,273 INFO Chunk 2015-02-02 to 2015-03-04: 0 items, 0 total ratings so far
+2026-09-12 22:12:02,751 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-03-05&date_end=2015-04-04 "HTTP/1.1 200 OK"
+2026-09-12 22:12:02,763 INFO Chunk 2015-03-05 to 2015-04-04: 0 items, 0 total ratings so far
+2026-09-12 22:12:03,163 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-04-05&date_end=2015-05-05 "HTTP/1.1 200 OK"
+2026-09-12 22:12:03,166 INFO Chunk 2015-04-05 to 2015-05-05: 0 items, 0 total ratings so far
+2026-09-12 22:12:03,506 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-05-06&date_end=2015-06-05 "HTTP/1.1 200 OK"
+2026-09-12 22:12:03,508 INFO Chunk 2015-05-06 to 2015-06-05: 0 items, 0 total ratings so far
+2026-09-12 22:12:03,842 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-06-06&date_end=2015-07-06 "HTTP/1.1 200 OK"
+2026-09-12 22:12:03,844 INFO Chunk 2015-06-06 to 2015-07-06: 0 items, 0 total ratings so far
+2026-09-12 22:12:04,250 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-07-07&date_end=2015-08-06 "HTTP/1.1 200 OK"
+2026-09-12 22:12:04,252 INFO Chunk 2015-07-07 to 2015-08-06: 0 items, 0 total ratings so far
+2026-09-12 22:12:04,633 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-08-07&date_end=2015-09-06 "HTTP/1.1 200 OK"
+2026-09-12 22:12:04,638 INFO Chunk 2015-08-07 to 2015-09-06: 0 items, 0 total ratings so far
+2026-09-12 22:12:05,022 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-09-07&date_end=2015-10-07 "HTTP/1.1 200 OK"
+2026-09-12 22:12:05,024 INFO Chunk 2015-09-07 to 2015-10-07: 0 items, 0 total ratings so far
+2026-09-12 22:12:05,351 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-10-08&date_end=2015-11-07 "HTTP/1.1 200 OK"
+2026-09-12 22:12:05,363 INFO Chunk 2015-10-08 to 2015-11-07: 0 items, 0 total ratings so far
+2026-09-12 22:12:05,811 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-11-08&date_end=2015-12-08 "HTTP/1.1 200 OK"
+2026-09-12 22:12:05,813 INFO Chunk 2015-11-08 to 2015-12-08: 0 items, 0 total ratings so far
+2026-09-12 22:12:06,271 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2015-12-09&date_end=2016-01-08 "HTTP/1.1 200 OK"
+2026-09-12 22:12:06,293 INFO Chunk 2015-12-09 to 2016-01-08: 0 items, 0 total ratings so far
+2026-09-12 22:12:06,662 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-01-09&date_end=2016-02-08 "HTTP/1.1 200 OK"
+2026-09-12 22:12:06,666 INFO Chunk 2016-01-09 to 2016-02-08: 0 items, 0 total ratings so far
+2026-09-12 22:12:07,122 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-02-09&date_end=2016-03-10 "HTTP/1.1 200 OK"
+2026-09-12 22:12:07,126 INFO Chunk 2016-02-09 to 2016-03-10: 0 items, 0 total ratings so far
+2026-09-12 22:12:07,485 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-03-11&date_end=2016-04-10 "HTTP/1.1 200 OK"
+2026-09-12 22:12:07,489 INFO Chunk 2016-03-11 to 2016-04-10: 0 items, 0 total ratings so far
+2026-09-12 22:12:07,899 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-04-11&date_end=2016-05-11 "HTTP/1.1 200 OK"
+2026-09-12 22:12:07,900 INFO Chunk 2016-04-11 to 2016-05-11: 0 items, 0 total ratings so far
+2026-09-12 22:12:08,201 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-05-12&date_end=2016-06-11 "HTTP/1.1 200 OK"
+2026-09-12 22:12:08,203 INFO Chunk 2016-05-12 to 2016-06-11: 0 items, 0 total ratings so far
+2026-09-12 22:12:08,513 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-06-12&date_end=2016-07-12 "HTTP/1.1 200 OK"
+2026-09-12 22:12:08,515 INFO Chunk 2016-06-12 to 2016-07-12: 0 items, 0 total ratings so far
+2026-09-12 22:12:08,891 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-07-13&date_end=2016-08-12 "HTTP/1.1 200 OK"
+2026-09-12 22:12:08,893 INFO Chunk 2016-07-13 to 2016-08-12: 0 items, 0 total ratings so far
+2026-09-12 22:12:09,217 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-08-13&date_end=2016-09-12 "HTTP/1.1 200 OK"
+2026-09-12 22:12:09,219 INFO Chunk 2016-08-13 to 2016-09-12: 0 items, 0 total ratings so far
+2026-09-12 22:12:09,592 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-09-13&date_end=2016-10-13 "HTTP/1.1 200 OK"
+2026-09-12 22:12:09,595 INFO Chunk 2016-09-13 to 2016-10-13: 0 items, 0 total ratings so far
+2026-09-12 22:12:10,023 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-10-14&date_end=2016-11-13 "HTTP/1.1 200 OK"
+2026-09-12 22:12:10,024 INFO Chunk 2016-10-14 to 2016-11-13: 0 items, 0 total ratings so far
+2026-09-12 22:12:10,485 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-11-14&date_end=2016-12-14 "HTTP/1.1 200 OK"
+2026-09-12 22:12:10,487 INFO Chunk 2016-11-14 to 2016-12-14: 0 items, 0 total ratings so far
+2026-09-12 22:12:10,863 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2016-12-15&date_end=2017-01-14 "HTTP/1.1 200 OK"
+2026-09-12 22:12:10,875 INFO Chunk 2016-12-15 to 2017-01-14: 0 items, 0 total ratings so far
+2026-09-12 22:12:11,322 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-01-15&date_end=2017-02-14 "HTTP/1.1 200 OK"
+2026-09-12 22:12:11,324 INFO Chunk 2017-01-15 to 2017-02-14: 0 items, 0 total ratings so far
+2026-09-12 22:12:11,700 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-02-15&date_end=2017-03-17 "HTTP/1.1 200 OK"
+2026-09-12 22:12:11,712 INFO Chunk 2017-02-15 to 2017-03-17: 0 items, 0 total ratings so far
+2026-09-12 22:12:12,626 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-03-18&date_end=2017-04-17 "HTTP/1.1 200 OK"
+2026-09-12 22:12:12,630 INFO Chunk 2017-03-18 to 2017-04-17: 0 items, 0 total ratings so far
+2026-09-12 22:12:13,027 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-04-18&date_end=2017-05-18 "HTTP/1.1 200 OK"
+2026-09-12 22:12:13,030 INFO Chunk 2017-04-18 to 2017-05-18: 0 items, 0 total ratings so far
+2026-09-12 22:12:13,413 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-05-19&date_end=2017-06-18 "HTTP/1.1 200 OK"
+2026-09-12 22:12:13,416 INFO Chunk 2017-05-19 to 2017-06-18: 0 items, 0 total ratings so far
+2026-09-12 22:12:13,720 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-06-19&date_end=2017-07-19 "HTTP/1.1 200 OK"
+2026-09-12 22:12:13,721 INFO Chunk 2017-06-19 to 2017-07-19: 0 items, 0 total ratings so far
+2026-09-12 22:12:14,111 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-07-20&date_end=2017-08-19 "HTTP/1.1 200 OK"
+2026-09-12 22:12:14,112 INFO Chunk 2017-07-20 to 2017-08-19: 0 items, 0 total ratings so far
+2026-09-12 22:12:14,462 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-08-20&date_end=2017-09-19 "HTTP/1.1 200 OK"
+2026-09-12 22:12:14,464 INFO Chunk 2017-08-20 to 2017-09-19: 0 items, 0 total ratings so far
+2026-09-12 22:12:14,806 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-09-20&date_end=2017-10-20 "HTTP/1.1 200 OK"
+2026-09-12 22:12:14,808 INFO Chunk 2017-09-20 to 2017-10-20: 0 items, 0 total ratings so far
+2026-09-12 22:12:15,242 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-10-21&date_end=2017-11-20 "HTTP/1.1 200 OK"
+2026-09-12 22:12:15,246 INFO Chunk 2017-10-21 to 2017-11-20: 0 items, 0 total ratings so far
+2026-09-12 22:12:15,728 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-11-21&date_end=2017-12-21 "HTTP/1.1 200 OK"
+2026-09-12 22:12:15,732 INFO Chunk 2017-11-21 to 2017-12-21: 0 items, 0 total ratings so far
+2026-09-12 22:12:16,118 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2017-12-22&date_end=2018-01-21 "HTTP/1.1 200 OK"
+2026-09-12 22:12:16,128 INFO Chunk 2017-12-22 to 2018-01-21: 0 items, 0 total ratings so far
+2026-09-12 22:12:16,560 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-01-22&date_end=2018-02-21 "HTTP/1.1 200 OK"
+2026-09-12 22:12:16,566 INFO Chunk 2018-01-22 to 2018-02-21: 0 items, 0 total ratings so far
+2026-09-12 22:12:16,951 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-02-22&date_end=2018-03-24 "HTTP/1.1 200 OK"
+2026-09-12 22:12:16,956 INFO Chunk 2018-02-22 to 2018-03-24: 0 items, 0 total ratings so far
+2026-09-12 22:12:17,385 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-03-25&date_end=2018-04-24 "HTTP/1.1 200 OK"
+2026-09-12 22:12:17,390 INFO Chunk 2018-03-25 to 2018-04-24: 0 items, 0 total ratings so far
+2026-09-12 22:12:17,791 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-04-25&date_end=2018-05-25 "HTTP/1.1 200 OK"
+2026-09-12 22:12:17,794 INFO Chunk 2018-04-25 to 2018-05-25: 0 items, 0 total ratings so far
+2026-09-12 22:12:18,130 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-05-26&date_end=2018-06-25 "HTTP/1.1 200 OK"
+2026-09-12 22:12:18,131 INFO Chunk 2018-05-26 to 2018-06-25: 0 items, 0 total ratings so far
+2026-09-12 22:12:18,449 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-06-26&date_end=2018-07-26 "HTTP/1.1 200 OK"
+2026-09-12 22:12:18,450 INFO Chunk 2018-06-26 to 2018-07-26: 0 items, 0 total ratings so far
+2026-09-12 22:12:18,844 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-07-27&date_end=2018-08-26 "HTTP/1.1 200 OK"
+2026-09-12 22:12:18,845 INFO Chunk 2018-07-27 to 2018-08-26: 0 items, 0 total ratings so far
+2026-09-12 22:12:19,182 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-08-27&date_end=2018-09-26 "HTTP/1.1 200 OK"
+2026-09-12 22:12:19,183 INFO Chunk 2018-08-27 to 2018-09-26: 0 items, 0 total ratings so far
+2026-09-12 22:12:19,597 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-09-27&date_end=2018-10-27 "HTTP/1.1 200 OK"
+2026-09-12 22:12:19,599 INFO Chunk 2018-09-27 to 2018-10-27: 0 items, 0 total ratings so far
+2026-09-12 22:12:20,019 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-10-28&date_end=2018-11-27 "HTTP/1.1 200 OK"
+2026-09-12 22:12:20,021 INFO Chunk 2018-10-28 to 2018-11-27: 0 items, 0 total ratings so far
+2026-09-12 22:12:20,494 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-11-28&date_end=2018-12-28 "HTTP/1.1 200 OK"
+2026-09-12 22:12:20,499 INFO Chunk 2018-11-28 to 2018-12-28: 0 items, 0 total ratings so far
+2026-09-12 22:12:21,017 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2018-12-29&date_end=2019-01-28 "HTTP/1.1 200 OK"
+2026-09-12 22:12:21,027 INFO Chunk 2018-12-29 to 2019-01-28: 0 items, 0 total ratings so far
+2026-09-12 22:12:21,492 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-01-29&date_end=2019-02-28 "HTTP/1.1 200 OK"
+2026-09-12 22:12:21,497 INFO Chunk 2019-01-29 to 2019-02-28: 0 items, 0 total ratings so far
+2026-09-12 22:12:21,900 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-03-01&date_end=2019-03-31 "HTTP/1.1 200 OK"
+2026-09-12 22:12:21,904 INFO Chunk 2019-03-01 to 2019-03-31: 0 items, 0 total ratings so far
+2026-09-12 22:12:22,373 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-04-01&date_end=2019-05-01 "HTTP/1.1 200 OK"
+2026-09-12 22:12:22,377 INFO Chunk 2019-04-01 to 2019-05-01: 0 items, 0 total ratings so far
+2026-09-12 22:12:22,713 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-05-02&date_end=2019-06-01 "HTTP/1.1 200 OK"
+2026-09-12 22:12:22,715 INFO Chunk 2019-05-02 to 2019-06-01: 0 items, 0 total ratings so far
+2026-09-12 22:12:23,129 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-06-02&date_end=2019-07-02 "HTTP/1.1 200 OK"
+2026-09-12 22:12:23,132 INFO Chunk 2019-06-02 to 2019-07-02: 0 items, 0 total ratings so far
+2026-09-12 22:12:23,503 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-07-03&date_end=2019-08-02 "HTTP/1.1 200 OK"
+2026-09-12 22:12:23,505 INFO Chunk 2019-07-03 to 2019-08-02: 0 items, 0 total ratings so far
+2026-09-12 22:12:23,896 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-08-03&date_end=2019-09-02 "HTTP/1.1 200 OK"
+2026-09-12 22:12:23,898 INFO Chunk 2019-08-03 to 2019-09-02: 0 items, 0 total ratings so far
+2026-09-12 22:12:24,266 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-09-03&date_end=2019-10-03 "HTTP/1.1 200 OK"
+2026-09-12 22:12:24,268 INFO Chunk 2019-09-03 to 2019-10-03: 0 items, 0 total ratings so far
+2026-09-12 22:12:24,626 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-10-04&date_end=2019-11-03 "HTTP/1.1 200 OK"
+2026-09-12 22:12:24,629 INFO Chunk 2019-10-04 to 2019-11-03: 0 items, 0 total ratings so far
+2026-09-12 22:12:25,248 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-11-04&date_end=2019-12-04 "HTTP/1.1 200 OK"
+2026-09-12 22:12:25,327 INFO Chunk 2019-11-04 to 2019-12-04: 140 items, 0 total ratings so far
+2026-09-12 22:12:26,095 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2019-12-05&date_end=2020-01-04 "HTTP/1.1 200 OK"
+2026-09-12 22:12:26,210 INFO Chunk 2019-12-05 to 2020-01-04: 300 items, 0 total ratings so far
+2026-09-12 22:12:26,768 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-01-05&date_end=2020-02-04 "HTTP/1.1 200 OK"
+2026-09-12 22:12:26,879 INFO Chunk 2020-01-05 to 2020-02-04: 300 items, 0 total ratings so far
+2026-09-12 22:12:27,476 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-02-05&date_end=2020-03-06 "HTTP/1.1 200 OK"
+2026-09-12 22:12:27,663 INFO Chunk 2020-02-05 to 2020-03-06: 300 items, 0 total ratings so far
+2026-09-12 22:12:28,245 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-03-07&date_end=2020-04-06 "HTTP/1.1 200 OK"
+2026-09-12 22:12:28,379 INFO Chunk 2020-03-07 to 2020-04-06: 300 items, 0 total ratings so far
+2026-09-12 22:12:28,862 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-04-07&date_end=2020-05-07 "HTTP/1.1 200 OK"
+2026-09-12 22:12:28,917 INFO Chunk 2020-04-07 to 2020-05-07: 300 items, 0 total ratings so far
+2026-09-12 22:12:29,396 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-05-08&date_end=2020-06-07 "HTTP/1.1 200 OK"
+2026-09-12 22:12:29,403 INFO Chunk 2020-05-08 to 2020-06-07: 250 items, 0 total ratings so far
+2026-09-12 22:12:29,826 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-06-08&date_end=2020-07-08 "HTTP/1.1 200 OK"
+2026-09-12 22:12:29,829 INFO Chunk 2020-06-08 to 2020-07-08: 0 items, 0 total ratings so far
+2026-09-12 22:12:30,188 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-07-09&date_end=2020-08-08 "HTTP/1.1 200 OK"
+2026-09-12 22:12:30,190 INFO Chunk 2020-07-09 to 2020-08-08: 0 items, 0 total ratings so far
+2026-09-12 22:12:30,526 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-08-09&date_end=2020-09-08 "HTTP/1.1 200 OK"
+2026-09-12 22:12:30,528 INFO Chunk 2020-08-09 to 2020-09-08: 2 items, 0 total ratings so far
+2026-09-12 22:12:30,913 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-09-09&date_end=2020-10-09 "HTTP/1.1 200 OK"
+2026-09-12 22:12:30,916 INFO Chunk 2020-09-09 to 2020-10-09: 1 items, 0 total ratings so far
+2026-09-12 22:12:31,359 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-10-10&date_end=2020-11-09 "HTTP/1.1 200 OK"
+2026-09-12 22:12:31,369 INFO Chunk 2020-10-10 to 2020-11-09: 128 items, 0 total ratings so far
+2026-09-12 22:12:31,820 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-11-10&date_end=2020-12-10 "HTTP/1.1 200 OK"
+2026-09-12 22:12:31,934 INFO Chunk 2020-11-10 to 2020-12-10: 304 items, 0 total ratings so far
+2026-09-12 22:12:32,575 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2020-12-11&date_end=2021-01-10 "HTTP/1.1 200 OK"
+2026-09-12 22:12:32,832 INFO Chunk 2020-12-11 to 2021-01-10: 300 items, 0 total ratings so far
+2026-09-12 22:12:33,386 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-01-11&date_end=2021-02-10 "HTTP/1.1 200 OK"
+2026-09-12 22:12:33,580 INFO Chunk 2021-01-11 to 2021-02-10: 300 items, 0 total ratings so far
+2026-09-12 22:12:34,484 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-02-11&date_end=2021-03-13 "HTTP/1.1 200 OK"
+2026-09-12 22:12:34,687 INFO Chunk 2021-02-11 to 2021-03-13: 300 items, 0 total ratings so far
+2026-09-12 22:12:35,260 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-03-14&date_end=2021-04-13 "HTTP/1.1 200 OK"
+2026-09-12 22:12:35,564 INFO Chunk 2021-03-14 to 2021-04-13: 300 items, 0 total ratings so far
+2026-09-12 22:12:36,056 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-04-14&date_end=2021-05-14 "HTTP/1.1 200 OK"
+2026-09-12 22:12:36,159 INFO Chunk 2021-04-14 to 2021-05-14: 299 items, 0 total ratings so far
+2026-09-12 22:12:36,537 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-05-15&date_end=2021-06-14 "HTTP/1.1 200 OK"
+2026-09-12 22:12:36,544 INFO Chunk 2021-05-15 to 2021-06-14: 170 items, 0 total ratings so far
+2026-09-12 22:12:36,887 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-06-15&date_end=2021-07-15 "HTTP/1.1 200 OK"
+2026-09-12 22:12:36,889 INFO Chunk 2021-06-15 to 2021-07-15: 0 items, 0 total ratings so far
+2026-09-12 22:12:37,276 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-07-16&date_end=2021-08-15 "HTTP/1.1 200 OK"
+2026-09-12 22:12:37,277 INFO Chunk 2021-07-16 to 2021-08-15: 0 items, 0 total ratings so far
+2026-09-12 22:12:37,688 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-08-16&date_end=2021-09-15 "HTTP/1.1 200 OK"
+2026-09-12 22:12:37,691 INFO Chunk 2021-08-16 to 2021-09-15: 0 items, 0 total ratings so far
+2026-09-12 22:12:38,054 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-09-16&date_end=2021-10-16 "HTTP/1.1 200 OK"
+2026-09-12 22:12:38,055 INFO Chunk 2021-09-16 to 2021-10-16: 10 items, 0 total ratings so far
+2026-09-12 22:12:38,654 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-10-17&date_end=2021-11-16 "HTTP/1.1 200 OK"
+2026-09-12 22:12:38,663 INFO Chunk 2021-10-17 to 2021-11-16: 150 items, 0 total ratings so far
+2026-09-12 22:12:39,376 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-11-17&date_end=2021-12-17 "HTTP/1.1 200 OK"
+2026-09-12 22:12:39,501 INFO Chunk 2021-11-17 to 2021-12-17: 300 items, 0 total ratings so far
+2026-09-12 22:12:40,287 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2021-12-18&date_end=2022-01-17 "HTTP/1.1 200 OK"
+2026-09-12 22:12:40,471 INFO Chunk 2021-12-18 to 2022-01-17: 300 items, 0 total ratings so far
+2026-09-12 22:12:41,258 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-01-18&date_end=2022-02-17 "HTTP/1.1 200 OK"
+2026-09-12 22:12:41,468 INFO Chunk 2022-01-18 to 2022-02-17: 300 items, 0 total ratings so far
+2026-09-12 22:12:42,037 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-02-18&date_end=2022-03-20 "HTTP/1.1 200 OK"
+2026-09-12 22:12:42,799 INFO Chunk 2022-02-18 to 2022-03-20: 300 items, 0 total ratings so far
+2026-09-12 22:12:43,498 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-03-21&date_end=2022-04-20 "HTTP/1.1 200 OK"
+2026-09-12 22:12:43,687 INFO Chunk 2022-03-21 to 2022-04-20: 300 items, 0 total ratings so far
+2026-09-12 22:12:44,182 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-04-21&date_end=2022-05-21 "HTTP/1.1 200 OK"
+2026-09-12 22:12:44,264 INFO Chunk 2022-04-21 to 2022-05-21: 300 items, 0 total ratings so far
+2026-09-12 22:12:44,661 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-05-22&date_end=2022-06-21 "HTTP/1.1 200 OK"
+2026-09-12 22:12:44,668 INFO Chunk 2022-05-22 to 2022-06-21: 150 items, 0 total ratings so far
+2026-09-12 22:12:45,153 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-06-22&date_end=2022-07-22 "HTTP/1.1 200 OK"
+2026-09-12 22:12:45,155 INFO Chunk 2022-06-22 to 2022-07-22: 0 items, 0 total ratings so far
+2026-09-12 22:12:45,525 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-07-23&date_end=2022-08-22 "HTTP/1.1 200 OK"
+2026-09-12 22:12:45,528 INFO Chunk 2022-07-23 to 2022-08-22: 0 items, 0 total ratings so far
+2026-09-12 22:12:45,919 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-08-23&date_end=2022-09-22 "HTTP/1.1 200 OK"
+2026-09-12 22:12:45,920 INFO Chunk 2022-08-23 to 2022-09-22: 0 items, 0 total ratings so far
+2026-09-12 22:12:46,207 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-09-23&date_end=2022-10-23 "HTTP/1.1 200 OK"
+2026-09-12 22:12:46,210 INFO Chunk 2022-09-23 to 2022-10-23: 0 items, 0 total ratings so far
+2026-09-12 22:12:46,843 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-10-24&date_end=2022-11-23 "HTTP/1.1 200 OK"
+2026-09-12 22:12:47,500 INFO Chunk 2022-10-24 to 2022-11-23: 69 items, 197 total ratings so far
+2026-09-12 22:12:48,441 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-11-24&date_end=2022-12-24 "HTTP/1.1 200 OK"
+2026-09-12 22:12:49,982 INFO Chunk 2022-11-24 to 2022-12-24: 401 items, 1377 total ratings so far
+2026-09-12 22:12:51,059 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2022-12-25&date_end=2023-01-24 "HTTP/1.1 200 OK"
+2026-09-12 22:12:52,607 INFO Chunk 2022-12-25 to 2023-01-24: 437 items, 2634 total ratings so far
+2026-09-12 22:12:53,496 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-01-25&date_end=2023-02-24 "HTTP/1.1 200 OK"
+2026-09-12 22:12:55,244 INFO Chunk 2023-01-25 to 2023-02-24: 402 items, 3817 total ratings so far
+2026-09-12 22:12:56,105 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-02-25&date_end=2023-03-27 "HTTP/1.1 200 OK"
+2026-09-12 22:12:57,559 INFO Chunk 2023-02-25 to 2023-03-27: 424 items, 5068 total ratings so far
+2026-09-12 22:12:58,027 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-03-28&date_end=2023-04-27 "HTTP/1.1 200 OK"
+2026-09-12 22:12:59,027 INFO Chunk 2023-03-28 to 2023-04-27: 278 items, 5889 total ratings so far
+2026-09-12 22:12:59,426 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-04-28&date_end=2023-05-28 "HTTP/1.1 200 OK"
+2026-09-12 22:12:59,752 INFO Chunk 2023-04-28 to 2023-05-28: 61 items, 6071 total ratings so far
+2026-09-12 22:13:00,850 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-05-29&date_end=2023-06-28 "HTTP/1.1 200 OK"
+2026-09-12 22:13:00,863 INFO Chunk 2023-05-29 to 2023-06-28: 22 items, 6077 total ratings so far
+2026-09-12 22:13:01,486 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-06-29&date_end=2023-07-29 "HTTP/1.1 200 OK"
+2026-09-12 22:13:01,504 INFO Chunk 2023-06-29 to 2023-07-29: 15 items, 6077 total ratings so far
+2026-09-12 22:13:02,174 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-07-30&date_end=2023-08-29 "HTTP/1.1 200 OK"
+2026-09-12 22:13:02,178 INFO Chunk 2023-07-30 to 2023-08-29: 3 items, 6077 total ratings so far
+2026-09-12 22:13:02,596 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-08-30&date_end=2023-09-29 "HTTP/1.1 200 OK"
+2026-09-12 22:13:02,696 INFO Chunk 2023-08-30 to 2023-09-29: 10 items, 6077 total ratings so far
+2026-09-12 22:13:03,224 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-09-30&date_end=2023-10-30 "HTTP/1.1 200 OK"
+2026-09-12 22:13:03,234 INFO Chunk 2023-09-30 to 2023-10-30: 16 items, 6077 total ratings so far
+2026-09-12 22:13:03,749 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-10-31&date_end=2023-11-30 "HTTP/1.1 200 OK"
+2026-09-12 22:13:04,339 INFO Chunk 2023-10-31 to 2023-11-30: 168 items, 6576 total ratings so far
+2026-09-12 22:13:05,146 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2023-12-01&date_end=2023-12-31 "HTTP/1.1 200 OK"
+2026-09-12 22:13:06,280 INFO Chunk 2023-12-01 to 2023-12-31: 274 items, 7398 total ratings so far
+2026-09-12 22:13:07,417 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2024-01-01&date_end=2024-01-31 "HTTP/1.1 200 OK"
+2026-09-12 22:13:08,429 INFO Chunk 2024-01-01 to 2024-01-31: 274 items, 8198 total ratings so far
+2026-09-12 22:13:09,593 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2024-02-01&date_end=2024-03-02 "HTTP/1.1 200 OK"
+2026-09-12 22:13:11,369 INFO Chunk 2024-02-01 to 2024-03-02: 404 items, 9390 total ratings so far
+2026-09-12 22:13:12,455 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2024-03-03&date_end=2024-04-02 "HTTP/1.1 200 OK"
+2026-09-12 22:13:13,829 INFO Chunk 2024-03-03 to 2024-04-02: 333 items, 10385 total ratings so far
+2026-09-12 22:13:14,509 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2024-04-03&date_end=2024-05-03 "HTTP/1.1 200 OK"
+2026-09-12 22:13:15,306 INFO Chunk 2024-04-03 to 2024-05-03: 177 items, 10915 total ratings so far
+2026-09-12 22:13:15,859 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2024-05-04&date_end=2024-06-03 "HTTP/1.1 200 OK"
+2026-09-12 22:13:16,182 INFO Chunk 2024-05-04 to 2024-06-03: 88 items, 11173 total ratings so far
+2026-09-12 22:13:16,853 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2024-06-04&date_end=2024-07-04 "HTTP/1.1 200 OK"
+2026-09-12 22:13:16,879 INFO Chunk 2024-06-04 to 2024-07-04: 18 items, 11173 total ratings so far
+2026-09-12 22:13:17,377 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2024-07-05&date_end=2024-08-04 "HTTP/1.1 200 OK"
+2026-09-12 22:13:17,407 INFO Chunk 2024-07-05 to 2024-08-04: 12 items, 11173 total ratings so far
+2026-09-12 22:13:17,901 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2024-08-05&date_end=2024-09-04 "HTTP/1.1 200 OK"
+2026-09-12 22:13:17,906 INFO Chunk 2024-08-05 to 2024-09-04: 16 items, 11173 total ratings so far
+2026-09-12 22:13:27,862 INFO HTTP Request: GET https://api.avalanche.org/v2/public/products?type=forecast&center_id=CAIC&date_start=2024-09-05&date_end=2024-10-05 "HTTP/1.1 200 OK"
+Traceback (most recent call last):
+  File "<string>", line 35, in <module>
+    asyncio.run(pull_caic())
+    ~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 205, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "<string>", line 15, in pull_caic
+    count = await client.ingest_danger_ratings_with_fallback(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/Users/cooperanderson/work/personal/code/colorado-avalanche-ml/src/avalanche_ml/ingestion/caic.py", line 235, in ingest_danger_ratings_with_fallback
+    return await self.ingest_avorg_danger_ratings(start_date, end_date)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cooperanderson/work/personal/code/colorado-avalanche-ml/src/avalanche_ml/ingestion/caic.py", line 193, in ingest_avorg_danger_ratings
+    data = response.json()
+  File "/Users/cooperanderson/work/personal/code/colorado-avalanche-ml/.venv/lib/python3.14/site-packages/httpx/_models.py", line 832, in json
+    return jsonlib.loads(self.content, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+Pulling CAIC danger ratings via avalanche.org API...

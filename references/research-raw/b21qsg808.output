@@ -1,0 +1,10 @@
+2026/09/12 22:51:34 INFO mlflow.agent.hint: Load the `instrumenting-with-mlflow-tracing` skill at /Users/cooperanderson/work/personal/code/colorado-avalanche-ml/.venv/lib/python3.14/site-packages/mlflow/assistant/skills/instrumenting-with-mlflow-tracing/SKILL.md before writing any tracing code; it ships with this MLflow install. Set MLFLOW_DISABLE_AGENT_HINT=1 to silence this.
+/Users/cooperanderson/work/personal/code/colorado-avalanche-ml/src/avalanche_ml/models/lstm_data.py:167: RuntimeWarning: Mean of empty slice
+  agg[i] = np.nanmean(features[s:e], axis=0)
+2026/09/12 22:53:10 INFO mlflow.store.db.utils: Creating initial MLflow database tables...
+2026/09/12 22:53:10 INFO mlflow.store.db.utils: Updating database tables
+2026/09/12 22:53:10 INFO mlflow.tracking.fluent: Experiment with name 'lstm-real-data' does not exist. Creating a new experiment.
+/Users/cooperanderson/work/personal/code/colorado-avalanche-ml/src/avalanche_ml/models/lstm_data.py:167: RuntimeWarning: Mean of empty slice
+  agg[i] = np.nanmean(features[s:e], axis=0)
+
+[exited with code 144]

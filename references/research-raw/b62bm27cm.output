@@ -1,0 +1,1002 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- /Users/cooperanderson/work/personal/code/colorado-avalanche-ml/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/cooperanderson/work/personal/code/colorado-avalanche-ml
+configfile: pyproject.toml
+plugins: timeout-2.4.0, asyncio-1.4.0, anyio-4.15.1, respx-0.23.1
+timeout: 30.0s
+timeout method: signal
+timeout func_only: False
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 20 items
+
+tests/test_snotel.py::test_discover_stores_stations FAILED               [  5%]
+tests/test_snotel.py::test_discover_parses_metadata FAILED               [ 10%]
+tests/test_snotel.py::test_discover_updates_existing_stations FAILED     [ 15%]
+tests/test_snotel.py::test_ingest_daily_stores_readings FAILED           [ 20%]
+tests/test_snotel.py::test_ingest_daily_parses_values FAILED             [ 25%]
+tests/test_snotel.py::test_ingest_daily_upserts_on_overlap FAILED        [ 30%]
+tests/test_snotel.py::test_ingest_hourly_stores_readings FAILED          [ 35%]
+tests/test_snotel.py::test_ingest_flags_negative_swe FAILED              [ 40%]
+tests/test_snotel.py::test_ingest_flags_temp_out_of_range FAILED         [ 45%]
+tests/test_snotel.py::test_ingest_flags_discontinuity FAILED             [ 50%]
+tests/test_snotel.py::test_ingest_no_flag_on_clean_data FAILED           [ 55%]
+tests/test_snotel.py::test_ingest_sets_watermark FAILED                  [ 60%]
+tests/test_snotel.py::test_incremental_ingest_uses_watermark FAILED      [ 65%]
+tests/test_snotel.py::test_backfill_ignores_watermark FAILED             [ 70%]
+tests/test_snotel.py::test_retry_on_5xx FAILED                           [ 75%]
+tests/test_snotel.py::test_retry_exhaustion_raises PASSED                [ 80%]
+tests/test_snotel.py::test_rate_limit_429_retry FAILED                   [ 85%]
+tests/test_snotel.py::test_empty_response_returns_zero PASSED            [ 90%]
+tests/test_snotel.py::test_partial_data_stores_nulls FAILED              [ 95%]
+tests/test_snotel.py::test_ingest_daily_correct_station_id FAILED        [100%]
+
+=================================== FAILURES ===================================
+________________________ test_discover_stores_stations _________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x10990f770>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x10997aaf0>
+snotel_stations_response = [{'stationTriplet': '335:CO:SNTL', 'name': 'Berthoud Summit', 'latitude': 39.7975, 'longitude': -105.7778, ...}, {'sta..., ...}, {'stationTriplet': '415:CO:SNTL', 'name': 'Cumbres Trestle', 'latitude': 36.9883, 'longitude': -106.4478, ...}]
+
+    @respx.mock
+    async def test_discover_stores_stations(client, snotel_db, snotel_stations_response):
+        respx.get(f"{AWDB_BASE}/stations").mock(
+            return_value=httpx.Response(200, json=snotel_stations_response)
+        )
+>       count = await client.discover()
+                ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_snotel.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x10990f770>
+
+    async def discover(self) -> int:
+        data = await self._request(
+            f"{AWDB_BASE}/stations",
+            params={"stateCode": "CO", "networkCode": "SNTL"},
+        )
+        count = 0
+        for station in data:
+>           self._db.execute("""
+                INSERT INTO stations (station_id, name, latitude, longitude, elevation, huc,
+                                      state_code, county, active, catalog_updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, TRUE, CURRENT_TIMESTAMP)
+                ON CONFLICT (station_id) DO UPDATE SET
+                    name = EXCLUDED.name,
+                    latitude = EXCLUDED.latitude,
+                    longitude = EXCLUDED.longitude,
+                    elevation = EXCLUDED.elevation,
+                    huc = EXCLUDED.huc,
+                    state_code = EXCLUDED.state_code,
+                    county = EXCLUDED.county,
+                    catalog_updated_at = CURRENT_TIMESTAMP
+            """, [
+                station["stationTriplet"],
+                station["name"],
+                station["latitude"],
+                station["longitude"],
+                station["elevation"],
+                station.get("huc"),
+                station.get("stateCode"),
+                station.get("countyName"),
+            ])
+E           _duckdb.BinderException: Binder Error: Table "stations" does not have a column named "CURRENT_TIMESTAMP"
+E           
+E           Candidate bindings: : "active"
+
+src/avalanche_ml/ingestion/snotel.py:55: BinderException
+________________________ test_discover_parses_metadata _________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111cf2210>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x109997970>
+snotel_stations_response = [{'stationTriplet': '335:CO:SNTL', 'name': 'Berthoud Summit', 'latitude': 39.7975, 'longitude': -105.7778, ...}, {'sta..., ...}, {'stationTriplet': '415:CO:SNTL', 'name': 'Cumbres Trestle', 'latitude': 36.9883, 'longitude': -106.4478, ...}]
+
+    @respx.mock
+    async def test_discover_parses_metadata(client, snotel_db, snotel_stations_response):
+        respx.get(f"{AWDB_BASE}/stations").mock(
+            return_value=httpx.Response(200, json=snotel_stations_response)
+        )
+>       await client.discover()
+
+tests/test_snotel.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111cf2210>
+
+    async def discover(self) -> int:
+        data = await self._request(
+            f"{AWDB_BASE}/stations",
+            params={"stateCode": "CO", "networkCode": "SNTL"},
+        )
+        count = 0
+        for station in data:
+>           self._db.execute("""
+                INSERT INTO stations (station_id, name, latitude, longitude, elevation, huc,
+                                      state_code, county, active, catalog_updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, TRUE, CURRENT_TIMESTAMP)
+                ON CONFLICT (station_id) DO UPDATE SET
+                    name = EXCLUDED.name,
+                    latitude = EXCLUDED.latitude,
+                    longitude = EXCLUDED.longitude,
+                    elevation = EXCLUDED.elevation,
+                    huc = EXCLUDED.huc,
+                    state_code = EXCLUDED.state_code,
+                    county = EXCLUDED.county,
+                    catalog_updated_at = CURRENT_TIMESTAMP
+            """, [
+                station["stationTriplet"],
+                station["name"],
+                station["latitude"],
+                station["longitude"],
+                station["elevation"],
+                station.get("huc"),
+                station.get("stateCode"),
+                station.get("countyName"),
+            ])
+E           _duckdb.BinderException: Binder Error: Table "stations" does not have a column named "CURRENT_TIMESTAMP"
+E           
+E           Candidate bindings: : "active"
+
+src/avalanche_ml/ingestion/snotel.py:55: BinderException
+___________________ test_discover_updates_existing_stations ____________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111cf2710>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111dffe30>
+snotel_stations_response = [{'stationTriplet': '335:CO:SNTL', 'name': 'Berthoud Summit', 'latitude': 39.7975, 'longitude': -105.7778, ...}, {'sta..., ...}, {'stationTriplet': '415:CO:SNTL', 'name': 'Cumbres Trestle', 'latitude': 36.9883, 'longitude': -106.4478, ...}]
+
+    @respx.mock
+    async def test_discover_updates_existing_stations(client, snotel_db, snotel_stations_response):
+        respx.get(f"{AWDB_BASE}/stations").mock(
+            return_value=httpx.Response(200, json=snotel_stations_response)
+        )
+>       await client.discover()
+
+tests/test_snotel.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111cf2710>
+
+    async def discover(self) -> int:
+        data = await self._request(
+            f"{AWDB_BASE}/stations",
+            params={"stateCode": "CO", "networkCode": "SNTL"},
+        )
+        count = 0
+        for station in data:
+>           self._db.execute("""
+                INSERT INTO stations (station_id, name, latitude, longitude, elevation, huc,
+                                      state_code, county, active, catalog_updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, TRUE, CURRENT_TIMESTAMP)
+                ON CONFLICT (station_id) DO UPDATE SET
+                    name = EXCLUDED.name,
+                    latitude = EXCLUDED.latitude,
+                    longitude = EXCLUDED.longitude,
+                    elevation = EXCLUDED.elevation,
+                    huc = EXCLUDED.huc,
+                    state_code = EXCLUDED.state_code,
+                    county = EXCLUDED.county,
+                    catalog_updated_at = CURRENT_TIMESTAMP
+            """, [
+                station["stationTriplet"],
+                station["name"],
+                station["latitude"],
+                station["longitude"],
+                station["elevation"],
+                station.get("huc"),
+                station.get("stateCode"),
+                station.get("countyName"),
+            ])
+E           _duckdb.BinderException: Binder Error: Table "stations" does not have a column named "CURRENT_TIMESTAMP"
+E           
+E           Candidate bindings: : "active"
+
+src/avalanche_ml/ingestion/snotel.py:55: BinderException
+______________________ test_ingest_daily_stores_readings _______________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d02520>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111ee7c70>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_daily_stores_readings(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+>       count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d02520>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+_______________________ test_ingest_daily_parses_values ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d02b10>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111ddc770>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_daily_parses_values(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+>       await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d02b10>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+_____________________ test_ingest_daily_upserts_on_overlap _____________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111e2f410>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111e92830>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_daily_upserts_on_overlap(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+>       await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:119: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111e2f410>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+______________________ test_ingest_hourly_stores_readings ______________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d81f20>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111ddddf0>
+snotel_hourly_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01 00:00', 'endDate': '2024-01-01 03:00', 'values': [{'dateTi... 38.2, 'airTemp': 12.0, ...}, {'dateTime': '2024-01-01 03:00', 'swe': 12.6, 'snowDepth': 38.3, 'airTemp': 11.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_hourly_stores_readings(client, snotel_db, snotel_hourly_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_hourly_response)
+        )
+>       count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 1),
+            resolution="hourly",
+        )
+
+tests/test_snotel.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d81f20>
+station_id = '335:CO:SNTL', resolution = 'hourly'
+end_date = datetime.date(2024, 1, 1)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+________________________ test_ingest_flags_negative_swe ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d82360>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111ebad30>
+
+    @respx.mock
+    async def test_ingest_flags_negative_swe(client, snotel_db):
+        bad_response = [{
+            "stationTriplet": "335:CO:SNTL",
+            "beginDate": "2024-01-01",
+            "endDate": "2024-01-01",
+            "values": [
+                {"date": "2024-01-01", "swe": -5.0, "snowDepth": 38.0,
+                 "airTempMin": 5.0, "airTempMax": 22.0, "airTempAvg": 13.5,
+                 "precipIncrement": 0.3},
+            ],
+        }]
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=bad_response)
+        )
+>       await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 1),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:177: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d82360>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 1)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+_____________________ test_ingest_flags_temp_out_of_range ______________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d7e550>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111df8b70>
+
+    @respx.mock
+    async def test_ingest_flags_temp_out_of_range(client, snotel_db):
+        bad_response = [{
+            "stationTriplet": "335:CO:SNTL",
+            "beginDate": "2024-01-01",
+            "endDate": "2024-01-01",
+            "values": [
+                {"date": "2024-01-01", "swe": 12.0, "snowDepth": 38.0,
+                 "airTempMin": -70.0, "airTempMax": 22.0, "airTempAvg": -24.0,
+                 "precipIncrement": 0.3},
+            ],
+        }]
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=bad_response)
+        )
+>       await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 1),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:205: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d7e550>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 1)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+_______________________ test_ingest_flags_discontinuity ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d7e950>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111ddc730>
+
+    @respx.mock
+    async def test_ingest_flags_discontinuity(client, snotel_db):
+        disc_response = [{
+            "stationTriplet": "335:CO:SNTL",
+            "beginDate": "2024-01-01",
+            "endDate": "2024-01-02",
+            "values": [
+                {"date": "2024-01-01", "swe": 10.0, "snowDepth": 30.0,
+                 "airTempMin": 5.0, "airTempMax": 22.0, "airTempAvg": 13.5,
+                 "precipIncrement": 0.3},
+                {"date": "2024-01-02", "swe": 35.0, "snowDepth": 30.0,
+                 "airTempMin": 5.0, "airTempMax": 22.0, "airTempAvg": 13.5,
+                 "precipIncrement": 0.3},
+            ],
+        }]
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=disc_response)
+        )
+>       await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 2),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:236: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d7e950>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 2)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+______________________ test_ingest_no_flag_on_clean_data _______________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111df7200>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111ddd770>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_no_flag_on_clean_data(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+>       await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:254: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111df7200>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+__________________________ test_ingest_sets_watermark __________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111df47d0>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111ec4230>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_sets_watermark(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+>       await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:275: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111df47d0>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+____________________ test_incremental_ingest_uses_watermark ____________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d2eb30>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111dfbef0>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_incremental_ingest_uses_watermark(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+>       await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:294: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d2eb30>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+_______________________ test_backfill_ignores_watermark ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d2f850>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111e7f8f0>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_backfill_ignores_watermark(client, snotel_db, snotel_daily_response):
+        snotel_db.execute(
+            "INSERT INTO ingestion_watermarks VALUES "
+            "('snotel', '335:CO:SNTL', 'daily', '2024-01-10', CURRENT_TIMESTAMP)"
+        )
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+>       count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:332: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111d2f850>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+______________________________ test_retry_on_5xx _______________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111f2c870>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111efbdb0>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_retry_on_5xx(client, snotel_db, snotel_daily_response):
+        route = respx.get(f"{AWDB_BASE}/data")
+        route.side_effect = [
+            httpx.Response(503),
+            httpx.Response(503),
+            httpx.Response(200, json=snotel_daily_response),
+        ]
+>       count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:352: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111f2c870>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+------------------------------ Captured log call -------------------------------
+WARNING  avalanche_ml.ingestion.snotel:snotel.py:35 Server error 503, retry 1/3 in 1.0s
+WARNING  avalanche_ml.ingestion.snotel:snotel.py:35 Server error 503, retry 2/3 in 2.0s
+__________________________ test_rate_limit_429_retry ___________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111dbab10>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111ec4970>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_rate_limit_429_retry(client, snotel_db, snotel_daily_response):
+        route = respx.get(f"{AWDB_BASE}/data")
+        route.side_effect = [
+            httpx.Response(429, headers={"Retry-After": "0"}),
+            httpx.Response(200, json=snotel_daily_response),
+        ]
+>       count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:383: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111dbab10>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+------------------------------ Captured log call -------------------------------
+WARNING  avalanche_ml.ingestion.snotel:snotel.py:29 Rate limited, waiting 0s
+________________________ test_partial_data_stores_nulls ________________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111e26ba0>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111ebe0b0>
+
+    @respx.mock
+    async def test_partial_data_stores_nulls(client, snotel_db):
+        partial_response = [{
+            "stationTriplet": "335:CO:SNTL",
+            "beginDate": "2024-01-01",
+            "endDate": "2024-01-01",
+            "values": [
+                {"date": "2024-01-01", "swe": 12.5, "snowDepth": None,
+                 "airTempMin": 5.0, "airTempMax": None, "airTempAvg": None,
+                 "precipIncrement": 0.3},
+            ],
+        }]
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=partial_response)
+        )
+>       count = await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 1),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:424: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111e26ba0>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 1)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+_____________________ test_ingest_daily_correct_station_id _____________________
+
+client = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111e32170>
+snotel_db = <_duckdb.DuckDBPyConnection object at 0x111eb0130>
+snotel_daily_response = [{'stationTriplet': '335:CO:SNTL', 'beginDate': '2024-01-01', 'endDate': '2024-01-03', 'values': [{'date': '2024-01-01...th': 39.0, 'airTempMin': -2.0, ...}, {'date': '2024-01-03', 'swe': 13.5, 'snowDepth': 41.0, 'airTempMin': 10.0, ...}]}]
+
+    @respx.mock
+    async def test_ingest_daily_correct_station_id(client, snotel_db, snotel_daily_response):
+        respx.get(f"{AWDB_BASE}/data").mock(
+            return_value=httpx.Response(200, json=snotel_daily_response)
+        )
+>       await client.ingest(
+            station_id="335:CO:SNTL",
+            start_date=datetime.date(2024, 1, 1),
+            end_date=datetime.date(2024, 1, 3),
+            resolution="daily",
+        )
+
+tests/test_snotel.py:446: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/avalanche_ml/ingestion/snotel.py:119: in ingest
+    self._update_watermark(station_id, resolution, end_date)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <avalanche_ml.ingestion.snotel.SnotelClient object at 0x111e32170>
+station_id = '335:CO:SNTL', resolution = 'daily'
+end_date = datetime.date(2024, 1, 3)
+
+    def _update_watermark(
+        self, station_id: str, resolution: str, end_date: datetime.date
+    ) -> None:
+        ts = datetime.datetime.combine(end_date, datetime.time.max)
+>       self._db.execute("""
+            INSERT INTO ingestion_watermarks (source, entity_id, resolution,
+                                              last_timestamp, updated_at)
+            VALUES ('snotel', ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (source, entity_id, resolution) DO UPDATE SET
+                last_timestamp = CASE
+                    WHEN EXCLUDED.last_timestamp > ingestion_watermarks.last_timestamp
+                    THEN EXCLUDED.last_timestamp
+                    ELSE ingestion_watermarks.last_timestamp
+                END,
+                updated_at = CURRENT_TIMESTAMP
+        """, [station_id, resolution, ts])
+E       _duckdb.BinderException: Binder Error: Table "ingestion_watermarks" does not have a column named "CURRENT_TIMESTAMP"
+E       
+E       Candidate bindings: : "last_timestamp"
+
+src/avalanche_ml/ingestion/snotel.py:241: BinderException
+=========================== short test summary info ============================
+FAILED tests/test_snotel.py::test_discover_stores_stations - _duckdb.BinderEx...
+FAILED tests/test_snotel.py::test_discover_parses_metadata - _duckdb.BinderEx...
+FAILED tests/test_snotel.py::test_discover_updates_existing_stations - _duckd...
+FAILED tests/test_snotel.py::test_ingest_daily_stores_readings - _duckdb.Bind...
+FAILED tests/test_snotel.py::test_ingest_daily_parses_values - _duckdb.Binder...
+FAILED tests/test_snotel.py::test_ingest_daily_upserts_on_overlap - _duckdb.B...
+FAILED tests/test_snotel.py::test_ingest_hourly_stores_readings - _duckdb.Bin...
+FAILED tests/test_snotel.py::test_ingest_flags_negative_swe - _duckdb.BinderE...
+FAILED tests/test_snotel.py::test_ingest_flags_temp_out_of_range - _duckdb.Bi...
+FAILED tests/test_snotel.py::test_ingest_flags_discontinuity - _duckdb.Binder...
+FAILED tests/test_snotel.py::test_ingest_no_flag_on_clean_data - _duckdb.Bind...
+FAILED tests/test_snotel.py::test_ingest_sets_watermark - _duckdb.BinderExcep...
+FAILED tests/test_snotel.py::test_incremental_ingest_uses_watermark - _duckdb...
+FAILED tests/test_snotel.py::test_backfill_ignores_watermark - _duckdb.Binder...
+FAILED tests/test_snotel.py::test_retry_on_5xx - _duckdb.BinderException: Bin...
+FAILED tests/test_snotel.py::test_rate_limit_429_retry - _duckdb.BinderExcept...
+FAILED tests/test_snotel.py::test_partial_data_stores_nulls - _duckdb.BinderE...
+FAILED tests/test_snotel.py::test_ingest_daily_correct_station_id - _duckdb.B...
+======================== 18 failed, 2 passed in 27.27s =========================

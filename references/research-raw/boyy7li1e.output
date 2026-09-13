@@ -1,0 +1,262 @@
+
+
+===== MENA localized adaptation =====
+
+--- Efficient Localized Adaptation of Neural Weather Forecasting: A Case Study in the MENA Region
+URL: https://arxiv.org/abs/2409.07585
+Efficient Localized Adaptation of Neural Weather Forecasting: A Case Study in the MENA Region
+
+# Efficient Localized Adaptation of Neural Weather Forecasting: A Case Study in the MENA Region
+
+Muhammad Akhtar Munir1 , Fahad Shahbaz Khan1,3, Salman Khan1,2 1Mohamed bin Zayed University of AI, 2Australian National University, 3Linköping University akhtar.munir@mbzuai.ac.ae
+
+###### Abstract
+
+Accurate weather and climate modeling is critical for both scientific advancement and safeguarding communities against environmental risks. Traditional approaches rely heavily on Numerical Weather Prediction (NWP) models, which simulate energy and matter flow across Earth’s systems. However, heavy computational requirements and low efficiency restrict the suitability of NWP, leading to a pressing need for enhanced modeling techniques. Neural network-based models have emerged as promising alternatives, leveraging data-driven approaches to forecast atmospheric variables. In this work, we focus on limited-area modeling and train our model specifically for localized region-level downstream tasks. As a case study, we consider the MENA region due to its unique climatic challenges, where accurate localized weather forecasting is crucial for managing water resources, agriculture and mitigating the impacts of extreme weather events. This targeted approach allows us to tailor the model’s capabilities to the unique conditions of the region of interest. Our study aims to validate the effectiveness of integrating parameter-efficient fine-tuning (PEFT) methodologies, specifically Low-Rank Adaptation (LoRA) and its variants, to enhance forecast accuracy, as well as training speed, computational resource utilization, and memory efficiency in weather and climate modeling for specific regions. Our codebase and pre-trained models can be accessed at https://github.com/akhtarvision/weather-regional.
+
+## 1 Introduction
+
+The accurate modeling and prediction of weather and climate patterns hold prominent significance for both scientific research and societal well-being. Primarily, weather and climate modeling can be categorized into two types: numerical (NWP) methods and neural network-based models. The former, usually related to General Circulation Models (GCMs) [1, 2], are designed to simulate the flow of energy and matter across the land, atmosphere, and ocean. However, the ability to perform detailed simulations to forecast weather and atmospheric variables in NWP models is restricted by computational resources and the time required for execution. As a consequence, there is a pressing need to address computational challenges and improve the precision of weather and climate modeling.
+
+Neural network-based models [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] are data-centric and can absorb large-scale data to enhance performance. These models undergo comprehensive training on globally accessible datasets, thereby providing a viable alternative for predicting weather and climate patterns. Desp
+
+--- Efficient Localized Adaptation of Neural Weather Forecasting: A Case Study in the MENA Region
+URL: https://doi.org/10.48550/arxiv.2409.07585
+# Efficient Localized Adaptation of Neural Weather Forecasting: A Case Study in the MENA Region
+
+arXiv (Cornell University). Published: 2024-09-11. Preprint. 0 citations.
+
+## Authors
+
+- Muhammad Akhtar Munir: h-index 7; 181 citations
+- Fahad Shahbaz Khan: h-index 86; 40,694 citations
+- Salman Khan: h-index 20; 7,397 citations
+
+## Topics
+
+- Meteorological Phenomena and Simulations
+
+---
+
+# Efficient Localized Adaptation of Neural Weather Forecasting: A Case Study in the MENA Region
+
+Muhammad Akhtar Munir 1, Fahad Shahbaz Khan 1,3, Salman Khan 1,2 1Mohamed bin Zayed University of AI, 2Australian National University, 3Linköping University akhtar.munir@mbzuai.ac.ae
+
+## Abstract
+
+Accurate weather and climate modeling is critical for both scientific advancement and safeguarding communities against environmental risks. Traditional approaches rely heavily on Numerical Weather Prediction (NWP) models, which simulate energy and matter flow across Earth’s systems. However, heavy computational requirements and low efficiency restrict the suitability of NWP, leading to a pressing need for enhanced modeling techniques. Neural network-based models have emerged as promising alternatives, leveraging data-driven approaches to forecast atmospheric variables. In this work, we focus on limited-area modeling and train our model specifically for localized region-level downstream tasks. As a case study, we consider the MENA region due to its unique climatic challenges, where accurate localized weather forecasting is crucial for managing water resources, agriculture and mitigating the impacts of extreme weather events. This targeted approach allows us to tailor the model’s capabilities to the unique conditions of the region of interest. Our study aims to validate the effectiveness of integrating parameter efficient fine-tuning (PEFT) methodologies, specifically Low-Rank Adaptation (LoRA) and its variants, to enhance forecast accuracy, as well as training speed, computational resource utilization, and memory efficiency in weather and climate modeling for specific regions. Our codebase and pre-trained models can be accessed at https://github.com/akhtarvision/weather-regional.
+
+## 1. Introduction
+
+The accurate modeling and prediction of weather and climate patterns hold prominent significance for both scientific research and societal well-being. Primarily, weather and climate modeling can be categorized into two types: numerical (NWP) methods and neural network-based models. The former, usually related to General Circulation Models (GCMs) [1, 2], are designed to simulate the flow of energy and matter across the land, atmosphere, and ocean. However, the ability to perform detailed simulations to forecast weather and atmospheric variables in NWP models is restricted by computational resources and the time required for execution. As a consequence, there is a pressing need to address computational challenges and improve the precision of weather and climate modeling. Neural netwo
+
+
+===== Geographic generalization downscaling =====
+
+--- Benchmarking the geographic generalization of deep learning models for precipitation downscaling
+URL: https://doi.org/10.1038/s41598-025-34557-4
+# Benchmarking the geographic generalization of deep learning models for precipitation downscaling
+
+Scientific Reports. Published: 2026-01-27. 5 citations.
+
+## Authors
+
+- Paula Harder (European Centre for Medium-Range Weather Forecasts): h-index 7; 282 citations
+- Luca Schmidt (Mila - Quebec Artificial Intelligence Institute): h-index 1; 5 citations; corresponding author
+- Francis Pelletier (Mila - Quebec Artificial Intelligence Institute): h-index 1; 5 citations
+- Nicole Ludwig (University of Tübingen): h-index 1; 5 citations
+- Matthew Chantry (European Centre for Medium-Range Weather Forecasts): h-index 1; 5 citations
+- Christian Lessig (European Centre for Medium-Range Weather Forecasts): h-index 1; 5 citations
+- Alex Hernandez-Garcia (Mila - Quebec Artificial Intelligence Institute): h-index 1; 5 citations
+- David Rolnick (Mila - Quebec Artificial Intelligence Institute): h-index 1; 5 citations
+
+## Topics
+
+- Climate variability and models
+- Cryospheric studies and observations
+- Flood Risk Assessment and Management
+
+---
+
+# Benchmarking the geographic generalization of deep learning models for precipitation downscaling
+
+## Abstract
+
+Earth System Models (ESM) are our main tool for projecting the impacts of climate change. However, running these models at sufficient resolution for local-scale risk-assessments is not computationally feasible. Deep learning-based super-resolution models offer a promising solution to downscale ESM outputs to higher resolutions by learning from data. Yet, due to regional variations in climatic processes, these models typically require retraining for each geographical area-demanding highresolution observational data, which is unevenly available across the globe. This highlights the need to assess how well these models generalize across geographic regions. To address this, we introduce RainShift, a dataset and benchmark for evaluating downscaling under geographic distribution shifts. We evaluate state-of-the-art downscaling approaches including GANs and diffusion models in generalizing across data gaps between the Global North and Global South. Our findings reveal substantial performance drops in out-of-distribution regions, depending on model and geographic area. While expanding the training domain generally improves generalization, it is insufficient to overcome shifts between geographically distinct regions. We show that addressing these shifts through, for example, domain adaptation can improve spatial generalization. Our work advances the global applicability of downscaling methods and represents a step toward reducing inequities in access to high-resolution climate information.
+
+High-resolution climate projections are crucial for planning effective responses to extreme weather and climate events. With ongoing climate change, extreme events such as floods, droughts, and heatwaves are expected to become more frequent and severe, threatening infrastructure, agriculture, energy systems, and public health 1 . Among t
+
+--- RainShift: A Benchmark for Precipitation Downscaling Across Geographies
+URL: https://arxiv.org/html/2507.04930
+RainShift: A Benchmark for Precipitation Downscaling Across Geographies
+
+# RainShift: A Benchmark for Precipitation Downscaling Across Geographies
+
+Paula Harder Mila Quebec AI Institute, Montreal, Canada European Centre for Medium Range Weather Forecasts (ECMWF), Bonn, Germany these authors contributed equally to this work Luca Schmidt Cluster of Excellence Machine Learning, University of Tübingen, Tübingen, Germany luca-marie.schmidt@mila.quebec these authors contributed equally to this work Francis Pelletier Mila Quebec AI Institute, Montreal, Canada Nicole Ludwig Cluster of Excellence Machine Learning, University of Tübingen, Tübingen, Germany Matthew Chantry European Centre for Medium Range Weather Forecasts (ECMWF), Bonn, Germany Christian Lessig European Centre for Medium Range Weather Forecasts (ECMWF), Bonn, Germany Alex Hernandez-Garcia McGill University, Montreal, Canada David Rolnick Mila Quebec AI Institute, Montreal, Canada McGill University, Montreal, Canada
+
+###### Abstract
+
+Earth System Models (ESM) are our main tool for projecting the impacts of climate change. However, running these models at sufficient resolution for local-scale risk-assessments is not computationally feasible. Deep learning-based super-resolution models offer a promising solution to downscale ESM outputs to higher resolutions by learning from data. Yet, due to regional variations in climatic processes, these models typically require retraining for each geographical area—demanding high-resolution observational data, which is unevenly available across the globe. This highlights the need to assess how well these models generalize across geographic regions. To address this, we introduce RainShift, a dataset and benchmark for evaluating downscaling under geographic distribution shifts. We evaluate state-of-the-art downscaling approaches including GANs and diffusion models in generalizing across data gaps between the Global North and Global South. Our findings reveal substantial performance drops in out-of-distribution regions, depending on model and geographic area. While expanding the training domain generally improves generalization, it is insufficient to overcome shifts between geographically distinct regions. We show that addressing these shifts through, for example, data alignment can improve spatial generalization. Our work advances the global applicability of downscaling methods and represents a step toward reducing inequities in access to high-resolution climate information.
+
+## Introduction
+
+High-resolution climate projections are crucial for planning effective responses to extreme weather and climate events. With ongoing climate change, extreme events such as floods, droughts, and heatwaves are expected to become more frequent and severe, threatening infrastructure, agriculture, energy systems, and public health [1]. Among these, precipitation extremes are particularly destructive, causing floods, landslides, and soil erosion; and are projected to intensi
+
+
+===== Alps->Pyrenees avalanche transfer =====
+
+--- From the Swiss Alps to the Pyrenees: Evaluating the transferability of machine learning models for avalanche forecasting
+URL: https://doi.org/10.1016/j.coldregions.2026.104884
+# From the Swiss Alps to the Pyrenees: Evaluating the transferability of machine learning models for avalanche forecasting
+
+Cold Regions Science and Technology. Published: 2026-02-26. 0 citations.
+
+## Abstract
+
+Avalanche forecasting is crucial for ensuring safety and mobility in snow-covered mountainous regions worldwide. While traditional avalanche forecasts relied solely on human expertise, machine learning models have been developed in recent years and are already operational in Switzerland. Such models can rapidly assimilate large amounts of complex data, providing objective and high-resolution predictions of the avalanche danger level and avalanche activity, assisting forecasters with a “second opinion”. These Random Forest classifiers were originally trained on a historical database containing 20 years of Swiss meteorological measurements, snow cover simulations, danger level assessments, and avalanche observations. The performance of the models was comparable to the experience-based avalanche forecasts in the Swiss Alps, although some variations were observed across different climatic regions. For the future operational extension of the models, there is the challenge of addressing the spatial variation of predictive performance between different snow climate regions, and hence verifying the capability to transfer such models to other mountain regions outside of Switzerland. In this study, we test for the first time the avalanche danger and wet-snow avalanche activity models using a database recorded during three winter seasons in Val d’Aran, a small county on the Atlantic watershed of the Spanish Central Pyrenees. The Aran Avalanche Center issues a daily regional avalanche forecast to inform the public about the avalanche hazard. To prepare this bulletin, forecasters analyze extensive data sources, including weather forecasts and meteorological and avalanche activity observations. Additionally, during the last winter seasons, the SNOWPACK model has provided snow cover simulations for specific orientations (flat field and four mountain slope aspects) driven by meteorological data measured from two automatic weather stations. These data are used as input to run the danger level and wet-snow avalanche activity models, using the same model versions as those operationally used in Switzerland. Even though Val d’Aran is a relatively small mountain region, the high-quality data collected there, including daily avalanche danger level forecasts, snow cover simulations, snowpack stability field assessments, and avalanche activity observations, make it a perfect study site to test and validate the predictions of the Swiss machine learning models in a region with different snow climate conditions. Overall, the danger level model achieved agreement rates of approximately 60%–70% with the public forecast danger levels for dry-snow conditions, whereas the wet-avalanche activity model showed a moderate correlation with the forecast for wet-snow conditions.
+
+--- EVALUATION OF THE TRANSFERABILITY TO THE PYRENEES OF MACHINE LEARNING MODELS DEVELOPED FOR AVALANCHE FORECASTING IN THE SWISS ALPS
+URL: https://arc.lib.montana.edu/snow-science/objects/ISSW2024_P1.27.pdf
+## EVALUATION OF THE TRANSFERABILITY TO THE PYRENEES OF MACHINE LEARNING MODELS DEVELOPED FOR AVALANCHE FORECASTING IN THE SWISS ALPS
+
+Montse Bacardit 1,∗, Cristina Perez-Guill ´ en´ 2, Jordi Gavalda` 1, Ivan Moner 1, Martin Hendrick 2, Fabiano Monti 3 1Centre Lauegi Aran - Conselh Generau Aran, Val d’Aran, Spain 2WSL Institute for Snow and Avalanche Research SLF, Davos, Switzerland 3Alpsolut S.L.R, Livigno, Italy
+
+ABSTRACT: Avalanche forecasting is crucial for ensuring safety and mobility in snow-covered mountainous 
+regions worldwide. While traditional avalanche forecasts relied solely on human expertise, machine-learning 
+models have been developed in recent years, and they are already in operation for avalanche forecasting 
+in Switzerland. Such models can rapidly assimilate large amounts of complex datasets, providing objec 
+tive and high-resolution predictions on the avalanche danger level, the snowpack instability, and wet-snow 
+avalanche activity, assisting forecasters with a “second opinion”. These models were originally trained on a 
+historical database containing 20 years of Swiss meteorological measurements, snow cover simulations, dan 
+ger level assessments and avalanche observations. The performance of the models was comparable to the 
+experienced-based avalanche forecasts in the Swiss Alps, although some variations were observed in differ 
+ent climatic regions. For the future operational application of the models, there is the challenge of addressing 
+the spatial variation of predictive performance between different snow climate regions, and hence verifying 
+the capability to transfer such models into other mountain regions outside of Switzerland. In this study, we test 
+for the first time the avalanche danger and wet-snow avalanche activity models using a database recorded 
+during the last winter seasons in Val d’Aran, a small county on the Atlantic watershed of the Spanish Central 
+Pyrenees. The snow climate has oceanic influence, with an average annual snowfall of 5-6 meters and the 
+snowpack reaching 1-3 meters in high altitudes during mid-winter. The Aran Avalanche Center issues a daily 
+public regional avalanche forecast based on EAWS standards. Additionally, for the last winter seasons, the 
+SNOWPACK model has provided snow cover simulations for two automated weather stations for the flat field 
+and for four mountain slope aspects (north, east, south and west). These data are used as input to run the 
+danger level and avalanche activity models. Even though Val d’Aran is a relatively small mountain region, the 
+high-quality data collected there, including daily avalanche danger level forecasts, snow-cover simulations, 
+snowpack stability field assessments, and avalanche activity observations, makes it a perfect study site to 
+test and validate the predictions of the Swiss machine-learning models in a region with different snow climate 
+conditions. 
+Keywords: machine learning, avalanche forecasting, avalanche danger, avalanche 
+
+
+===== SWE transfer Sierra->Rockies =====
+
+--- Modeling Spatial Distribution of Snow Water Equivalent Using Transfer Learning Across Mountainous Basins
+URL: https://doi.org/10.1029/2024jh000278
+# Modeling Spatial Distribution of Snow Water Equivalent Using Transfer Learning Across Mountainous Basins
+
+Journal of Geophysical Research Machine Learning and Computation. Published: 2025-06-01. 0 citations.
+
+## Authors
+
+- Lama El Halabi (Environmental and Water Resources Engineering): h-index 0; 0 citations
+- Utkarsh Mital (Intel (United States)): h-index 12; 368 citations
+- Dipankar Dwivedi (Lawrence Berkeley National Laboratory): h-index 30; 2,924 citations; corresponding author
+
+## Topics
+
+- Cryospheric studies and observations
+- Landslides and related hazards
+- Hydrology and Watershed Management Studies
+
+---
+
+# Modeling Spatial Distribution of Snow Water Equivalent Using Transfer Learning Across Mountainous Basins
+
+## Abstract
+
+Accurately estimating snow water equivalent (SWE) is crucial for understanding the impacts of climate change, urbanization, and population growth on water resources. High operational costs of lidar observations limit the frequency and coverage of SWE estimates at high spatial resolutions, leading to significant data gaps. We address this challenge with a transfer learning (TL) framework that leverages abundant SWE data from California to enhance predictions in Colorado, where data are scarce. From 2016 to 2019, the disparity in SWE data collection between these states was stark: 94 snowpack maps were recorded in California's Sierra Nevada versus only 12 in Colorado's Rocky Mountains. We hypothesized that geographic predictors (e.g., elevation and snowfall) would exhibit similar effects on SWE across these landscapes. By conducting an exploratory factor analysis, we validated this hypothesis and refined our TL model, which incorporated data based on 80 snowpack maps from California to predict SWE in Colorado. The analysis included six models: Local 1, Local 1W, TL1, TL2, TL1W, and TL2W. Local models were trained only on Colorado data, while TL models leveraged TL using a base model trained on California data. Weighted models (Local 1W, TL1W, TL2W) incorporated a weighting mechanism to emphasize critical predictors. Compared to using data from Colorado alone, TL improved the mean R 2 value from 0.45 to 0.54, representing a significant enhancement of 20% in predictive accuracy, while reducing bias from 0.24 to 0.17 (a 30% decrease). Our framework helps mitigate lidar data limitations, supporting water management. It is important to estimate the amount of snowpack accurately to understand how factors like climate change, urbanization, and population growth will affect water resources. Airborne lidar technology can be used to map snowpack in great detail, but it is costly and can only be used infrequently. High operating costs imply that some regions (e.g., Sierra Nevada mountains in California) are mapped more frequently than others (e.g., Rocky Mountains in Colorado). Model estimates of snowpack are inherently dependent on the availability and quantity of data. Therefore, these estimates tend to be more accurate in reg
+
+--- Predicting the Spatial Distribution of Snow Water Equivalent using Transfer Learning
+URL: https://doi.org/10.25740/xv296vk9757
+# Predicting the Spatial Distribution of Snow Water Equivalent using Transfer Learning
+
+Stanford Digital Repository. Published: 2022-12-15. 0 citations.
+
+## Abstract
+
+Globally, water resources are under increasing stress that risks both water availability and quality. Hydrologic and watershed models have been used to forecast both water flow and quality. Furthermore, these models serve as decision making tools for sustainable water management. These models are subject to high uncertainties that can be reduced by accurate estimates of high-resolution spatial distribution of Snow Water Equivalent (SWE). The Airborne Snow Observatory generates Lidar maps that quantify SWE at a 50 m resolution. Although these maps provide detailed information, their infrequent temporal availability limits their use for modeling. For instance, in the Rocky Mountains of Colorado, only 12 maps are present in total for the period covering 2016 to 2019. In this work, we develop a neural network (NN) framework to model this temporally sparse Lidar data, which enables the estimation of SWE at unmapped time points in the Rocky Mountains of Colorado. To achieve this, we first incorporate meteorological and topographic data that describe the physical processes governing SWE. This data is used to extract seven predictor variables: accumulated snow, accumulated precipitation, mean seasonal temperature, the sum of positive degree days, elevation, slope, and aspect. Next, we tackle data scarcity by using transfer learning to integrate information from 80 Lidar maps in the Sierra Nevada mountains in California. An explanatory factor analysis is conducted to justify and reinforce the use of transfer learning. Results show that our NN framework, using the seven predictor variables, models SWE with a mean R2 of 0.44 prior to transfer learning. After applying transfer learning, we improve the mean R2 results to 0.56. Overall, transfer learning increases model predictability while decreasing both scatter and bias.
+
+## Authors
+
+- El Halabi, Lama
+- Tartakovsky, Daniel
+- Mital, Utkarsh
+- Dwivedi, Dipankar
+- Stanford University
+
+## Topics
+
+- American Constitutional Law and Politics
+- Political Theory and Influence
+- American History and Culture
+
+
+===== Global to Local foundation model =====
+
+--- From Global to Local: Efficient Regional Weather Downscaling with Global Weather Foundation Model
+URL: https://arxiv.org/html/2607.03279
+From Global to Local: Efficient Regional Weather Downscaling with Global Weather Foundation Model
+
+# From Global to Local: Efficient Regional Weather Downscaling with Global Weather Foundation Model
+
+ Wiktor Kamzela 1,2 &Jakub Kubiak 1,2 &Adam Dobosz 1,2 &Jędrzej Miczke 1,2 &Anatol Kaczmarek 1,2 &Piotr Wyrwiński 1,2 &Wojciech Stefaniak 1 &Wojciech Kotłowski 2 1 Poznań Supercomputing and Networking Center 2 Poznań University of Technology wstefaniak@man.poznan.pl 
+
+###### Abstract
+
+Accurate regional weather prediction requires resolving fine-scale structure while remaining consistent with global dynamics. Traditional limited area models rely on computationally expensive simulations, while many learning-based approaches frame the problem as super-resolution, overlooking statistical and physical mismatches across scales. We propose a foundation-model-driven downscaling framework that learns regional refinements of global forecasts by augmenting a pretrained weather model backbone with lightweight, multi-scale prediction heads operating directly in its latent space. Despite being trained on substantially coarser inputs, the pretrained backbone supports regional adaptation at resolutions corresponding to a two-order-of-magnitude increase in grid-cell resolution, without the need for retraining. The proposed approach uses regional numerical simulations as training targets and is evaluated not only against gridded datasets but also against ground-based weather station observations, enabling analysis of systematic biases between global reanalysis, regional simulations, and in-situ weather station observations. Our experiments show improved accuracy in comparison to NWP on most of the metrics at the fraction of computational cost. Moreover, we observe that building on a latent space of globally pre-trained weather foundation model offers better downscaling capabilities than the standard image-based super-resolution approaches.
+
+## 1 Introduction
+
+Accurate weather prediction, normally solved by Numerical Weather Prediction (NWP) models NWP became one of the key technologies in today’s applications spanning from precision farming NN_agri and urban flood management flash_flooding to stabilization of the energy grid by accurate predictions of renewable energy sources RES . However, all of the aforementioned applications require forecasts that are not only precise but also produced quickly. NWP methods address this challenge through localized mesoscale approaches, such as the Weather Research and Forecasting (WRF) model WRF_ver3 , including its most recent state-of-the-art solvers: Advanced Research WRF (WRF-ARW) WRF-ARW and the nonhydrostatic mesoscale model (WRF-NMM) WRF-NMM . While the precision requirement is clearly met – since NWP outputs have become standard inputs for Data-Driven Models (DDMs) – the speed requirement remains a limitation due to the computationally intensive nature of NWP simulations vaughan2024 . This limitation has driven growing inte
+
+--- From Global to Local: Efficient Regional Weather Downscaling with Global Weather Foundation Model - arXiv.gg
+URL: https://arxiv.gg/abs/2607.03279
+From Global to Local: Efficient Regional Weather Downscaling with Global Weather Foundation Model - arXiv.gg
+
+# From Global to Local: Efficient Regional Weather Downscaling with Global Weather Foundation Model
+
+Accurate regional weather prediction requires resolving fine-scale structure while remaining consistent with global dynamics. Traditional limited area models rely on computationally expensive simulations, while many learning-based approaches frame the problem as super-resolution, overlooking statistical and physical mismatches across scales. We propose a foundation-model-driven downscaling framework that learns regional refinements of global forecasts by augmenting a pretrained weather model backbone with lightweight, multi-scale prediction heads operating directly in its latent space. Despite being trained on substantially coarser inputs, the pretrained backbone supports regional adaptation at resolutions corresponding to a two-order-of-magnitude increase in grid-cell resolution, without the need for retraining. The proposed approach uses regional numerical simulations as training targets and is evaluated not only against gridded datasets but also against ground-based weather station observations, enabling analysis of systematic biases between global reanalysis, regional simulations, and in-situ weather station observations. Our experiments show improved accuracy in comparison to NWP on most of the metrics at the fraction of computational cost. Moreover, we observe that building on a latent space of globally pre-trained weather foundation model offers better downscaling capabilities than the standard image-based super-resolution approaches.
+
+📄 PDF on arXiv.org
+
+Prepare Paper
+
+Find Similar Auto-prepare
+
+related-work
+
+Original on arxiv.org PDF (external)
+
+## Citation Graph
+
+Reset Fullscreen
+
+This paper
+
+Reference
+
+Citing
+
+Metadata not cached
+
+Loading citation graph...
+
+## Related Work Map
+
+Find Similar Prepare paper first
+
+Prepare this paper, then map nearby papers.
+
+## Source Files
+
+📁 Source files are served from arXiv.org for compliance
