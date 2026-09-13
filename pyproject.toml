@@ -15,6 +15,7 @@ dependencies = [
     "pydantic>=2.9",
     "huggingface-hub>=0.25",
     "safetensors>=0.4",
+    "scipy>=1.14",
 ]
 
 [project.optional-dependencies]
