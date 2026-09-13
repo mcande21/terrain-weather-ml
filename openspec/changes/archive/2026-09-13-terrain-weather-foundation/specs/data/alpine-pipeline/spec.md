@@ -75,6 +75,4 @@ The aligned dataset SHALL be stored as a collection of per-station time series i
 - **WHEN** a training dataloader requests data for station X between times T1 and T2
 - **THEN** the system returns the time series slice in O(log N) time without scanning the full dataset
 
-### Note: Deferred data sources
-
-**SAFRAN S2M** (mentioned in proposal as a potential Alpine data source) is deferred — priority 6, not in Tier 1-2 scope. The PeakWeather and IMIS networks provide sufficient Alpine station coverage for pre-training. SAFRAN S2M can be evaluated for inclusion in a future iteration if additional gridded Alpine training data proves necessary.
+**Deferred data sources note:** SAFRAN S2M (mentioned in proposal as a potential Alpine data source) is deferred — priority 6, not in Tier 1-2 scope. The PeakWeather and IMIS networks provide sufficient Alpine station coverage for pre-training. SAFRAN S2M can be evaluated for inclusion in a future iteration if additional gridded Alpine training data proves necessary.

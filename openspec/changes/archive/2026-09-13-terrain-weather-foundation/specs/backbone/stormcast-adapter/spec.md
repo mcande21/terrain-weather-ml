@@ -80,6 +80,4 @@ The system SHALL accept HRRR analysis or forecast grids as input to StormCast fo
 - **WHEN** a HRRR GRIB2 file is provided
 - **THEN** the system extracts the required input variables, reprojects to StormCast's expected grid, normalizes, and produces the input tensor for a forward pass
 
-### Note: Alternative backbone
-
-ECMWF AIFS (CC BY 4.0) is the most permissive-license alternative backbone with the lowest distribution-shift risk relative to StormCast. It operates on the same HRRR-scale resolution and produces comparable surface variables. If StormCast proves unsuitable (memory, weight compatibility, or licensing concerns), AIFS is the recommended fallback with minimal architecture changes required.
+**Alternative backbone note:** ECMWF AIFS (CC BY 4.0) is the most permissive-license alternative backbone with the lowest distribution-shift risk relative to StormCast. It operates on the same HRRR-scale resolution and produces comparable surface variables. If StormCast proves unsuitable (memory, weight compatibility, or licensing concerns), AIFS is the recommended fallback with minimal architecture changes required.
