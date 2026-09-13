@@ -30,6 +30,9 @@ dev = [
 backbone = [
     "diffusers>=0.31",
 ]
+era5 = [
+    "cdsapi>=0.7",
+]
 downscaling = [
     "windninjapy>=0.1",
 ]
