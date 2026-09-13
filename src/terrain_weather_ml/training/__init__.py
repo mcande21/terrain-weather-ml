@@ -2,8 +2,8 @@
 
 3-phase training protocol:
   Phase 1: CFD pre-training of the downscaling head (wind-only)
-  Phase 2: Alpine fine-tuning with StormCast + LoRA + DEVINE init
-  Phase 3: Colorado LoRA adaptation with quantile mapping
+  Phase 2: Alpine fine-tuning with ERA5 passthrough + DEVINE init
+  Phase 3: Colorado adaptation with HRRR passthrough + quantile mapping
 """
 
 from terrain_weather_ml.training.checkpoint import (
@@ -17,6 +17,7 @@ from terrain_weather_ml.training.datasets import (
     AlpinePhaseDataset,
     CFDPhaseDataset,
     ColoradoPhaseDataset,
+    ERA5StationDataset,
 )
 from terrain_weather_ml.training.phases import (
     Phase1Trainer,
@@ -35,6 +36,7 @@ __all__ = [
     "CFDPhaseDataset",
     "CheckpointMetadata",
     "ColoradoPhaseDataset",
+    "ERA5StationDataset",
     "Phase1Trainer",
     "Phase2Trainer",
     "Phase3Trainer",
