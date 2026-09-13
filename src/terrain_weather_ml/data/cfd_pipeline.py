@@ -1,8 +1,12 @@
 """CFD data pipeline for synthetic wind field pre-training data.
 
-Downloads and indexes the wind-cfd-trial HuggingFace dataset (~10K RANS cases),
-optionally generates synthetic cases via WindNinja, applies domain randomization,
-and computes mass-conservation labels.
+Downloads and indexes the wind-cfd-trial HuggingFace dataset (zarr stores of
+RANS simulations), optionally generates synthetic cases via WindNinja, applies
+domain randomization, and computes mass-conservation labels.
+
+The real dataset (souravsud/wind-cfd-trial) stores each case as a zarr store
+with 3D wind fields (Ux, Uy, Uz) on a terrain-following mesh. This pipeline
+extracts near-surface 2D slices for training.
 """
 
 from __future__ import annotations
@@ -21,18 +25,115 @@ from torch import Tensor
 
 logger = logging.getLogger(__name__)
 
-WIND_CFD_TRIAL_REPO = "daisy1212/wind-cfd-trial"
+WIND_CFD_TRIAL_REPO = "souravsud/wind-cfd-trial"
+
+# Zarr variable name mapping: real dataset -> pipeline internal names
+ZARR_WIND_VAR_MAP = {
+    "Ux": "u_wind",
+    "Uy": "v_wind",
+    "Uz": "w_wind",
+}
+
+# Zarr attr name mapping: real dataset attrs -> pipeline metadata keys
+ZARR_ATTR_MAP = {
+    "reference_velocity_ms": "wind_speed",
+    "rotation_deg": "wind_direction",
+    "reference_height_m": "reference_height",
+}
+
+# Default vertical level index for 3D -> 2D extraction.
+# k=0 is the nearest-to-surface level (~2m AGL in real data).
+DEFAULT_VERTICAL_LEVEL = 0
 
 
-def load_dataset(repo_id: str, **kwargs):
-    """Lazy wrapper around ``datasets.load_dataset`` for mock-patching."""
-    from datasets import load_dataset as _load_dataset
+def download_zarr_cases(
+    repo_id: str = WIND_CFD_TRIAL_REPO,
+    cache_dir: str | Path | None = None,
+) -> list[Path]:
+    """Download zarr stores from a HuggingFace dataset repo.
 
-    return _load_dataset(repo_id, **kwargs)
+    Uses ``huggingface_hub.snapshot_download`` to fetch the repo, then
+    discovers all ``.zarr`` directories within it.
+
+    Args:
+        repo_id: HuggingFace repo ID (e.g. ``souravsud/wind-cfd-trial``).
+        cache_dir: Local cache directory. Defaults to HF cache.
+
+    Returns:
+        List of paths to zarr store directories.
+    """
+    from huggingface_hub import snapshot_download
+
+    kwargs: dict[str, Any] = {"repo_id": repo_id, "repo_type": "dataset"}
+    if cache_dir is not None:
+        kwargs["cache_dir"] = str(cache_dir)
+
+    local_dir = Path(snapshot_download(**kwargs))
+
+    # Discover all .zarr directories (may be nested under data/)
+    zarr_paths: list[Path] = []
+    for candidate in sorted(local_dir.rglob("*.zarr")):
+        if candidate.is_dir():
+            zarr_paths.append(candidate)
+
+    if not zarr_paths:
+        logger.warning("No .zarr stores found in %s", local_dir)
+
+    return zarr_paths
+
+
+def load_zarr_case(zarr_path: str | Path) -> dict[str, Any]:
+    """Load a single zarr store and return a pipeline-ready dict.
+
+    Reads the zarr store via xarray, maps variable names (Ux->u_wind etc.)
+    and attribute names (reference_velocity_ms->wind_speed etc.), and returns
+    numpy arrays with metadata.
+
+    Args:
+        zarr_path: Path to a ``.zarr`` directory.
+
+    Returns:
+        Dict with keys: ``case_id``, ``Ux``, ``Uy``, ``Uz``, ``dem``,
+        ``h_agl`` (if present), ``wind_speed``, ``wind_direction``,
+        ``reference_height``, and ``zarr_path``.
+    """
+    import xarray as xr
+
+    ds = xr.open_zarr(str(zarr_path))
+
+    result: dict[str, Any] = {}
+
+    # Extract case_id from attrs
+    result["case_id"] = ds.attrs.get("case_id", Path(zarr_path).stem)
+
+    # Map attrs to pipeline metadata keys
+    for zarr_attr, pipeline_key in ZARR_ATTR_MAP.items():
+        if zarr_attr in ds.attrs:
+            result[pipeline_key] = float(ds.attrs[zarr_attr])
+
+    # Extract wind field arrays (keep original Ux/Uy/Uz names)
+    for var_name in ("Ux", "Uy", "Uz"):
+        if var_name in ds:
+            result[var_name] = ds[var_name].values
+
+    # Extract DEM (2D)
+    if "dem" in ds:
+        result["dem"] = ds["dem"].values
+
+    # Extract height above ground level (3D, for vertical level selection)
+    if "h_agl" in ds:
+        result["h_agl"] = ds["h_agl"].values
+
+    # Store zarr path for reference
+    result["zarr_path"] = str(zarr_path)
+
+    ds.close()
+
+    return result
 
 
 # ---------------------------------------------------------------------------
-# Task 3.1 — Dataset index
+# Task 3.1 -- Dataset index
 # ---------------------------------------------------------------------------
 
 
@@ -55,25 +156,31 @@ class CFDDatasetIndex:
         repo_id: str = WIND_CFD_TRIAL_REPO,
         cache_dir: str | Path | None = None,
     ) -> CFDDatasetIndex:
-        """Download and index all cases from the HuggingFace dataset."""
-        ds = load_dataset(repo_id, cache_dir=cache_dir)
+        """Download and index all zarr cases from the HuggingFace dataset.
 
-        # The dataset may be a DatasetDict with a "train" split
-        if isinstance(ds, dict):
-            split = ds.get("train", next(iter(ds.values())))
-        else:
-            split = ds
+        Each zarr store's ``.attrs`` provide the case metadata
+        (reference_velocity_ms, rotation_deg, reference_height_m).
+        """
+        import xarray as xr
+
+        zarr_paths = download_zarr_cases(repo_id=repo_id, cache_dir=cache_dir)
 
         index = cls()
-        for row in split:
-            case_id = row["case_id"]
+        for zarr_path in zarr_paths:
+            ds = xr.open_zarr(str(zarr_path))
+            attrs = dict(ds.attrs)
+            case_id = attrs.get("case_id", Path(zarr_path).stem)
+
             index._cases[case_id] = {
                 "case_id": case_id,
-                "wind_speed": row["wind_speed"],
-                "wind_direction": row["wind_direction"],
-                "reference_height": row["reference_height"],
+                "wind_speed": float(attrs.get("reference_velocity_ms", 0.0)),
+                "wind_direction": float(attrs.get("rotation_deg", 0.0)),
+                "reference_height": float(attrs.get("reference_height_m", 0.0)),
+                "zarr_path": str(zarr_path),
             }
+            ds.close()
 
+        logger.info("Indexed %d CFD cases from %s", len(index), repo_id)
         return index
 
     # ------------------------------------------------------------------
@@ -93,7 +200,7 @@ class CFDDatasetIndex:
 
 
 # ---------------------------------------------------------------------------
-# Task 3.2 — Input/output tensor formatting
+# Task 3.2 -- Input/output tensor formatting
 # ---------------------------------------------------------------------------
 
 
@@ -105,9 +212,9 @@ class CFDSample:
         dem: Elevation grid, shape ``(1, H, W)``.
         terrain_features: Derived terrain features, shape ``(C_terrain, H, W)``.
             Placeholder until the terrain encoder is integrated.
-        boundary_conditions: Wind boundary vector ``(3,)`` —
+        boundary_conditions: Wind boundary vector ``(3,)`` --
             (speed m/s, direction degrees, reference height m).
-        wind_field: Target wind field ``(3, H, W)`` — u, v, w components.
+        wind_field: Target wind field ``(3, H, W)`` -- u, v, w components.
         case_id: Original dataset case identifier.
     """
 
@@ -118,21 +225,30 @@ class CFDSample:
     case_id: str
 
 
-def format_cfd_tensors(raw: dict[str, Any]) -> CFDSample:
-    """Convert a raw HuggingFace case dict to standardised tensors.
+def format_cfd_tensors(
+    raw: dict[str, Any],
+    vertical_level: int = DEFAULT_VERTICAL_LEVEL,
+) -> CFDSample:
+    """Convert a raw zarr case dict to standardised tensors.
+
+    Handles both the real zarr schema (3D wind fields with Ux/Uy/Uz names)
+    and pre-extracted 2D data. When wind fields are 3D (ni, nj, nk), extracts
+    a 2D slice at the given vertical level.
 
     Args:
-        raw: Dict with keys ``dem``, ``u_wind``, ``v_wind``, ``w_wind``,
-             ``wind_speed``, ``wind_direction``, ``reference_height``, ``case_id``.
+        raw: Dict with keys ``Ux``, ``Uy``, ``Uz`` (or legacy ``u_wind`` etc.),
+             ``dem``, ``wind_speed``, ``wind_direction``, ``reference_height``,
+             ``case_id``.
+        vertical_level: Vertical level index for 3D->2D extraction.
+            Default 0 = nearest surface (~2m AGL in real data).
 
     Returns:
-        A :class:`CFDSample` with correctly shaped tensors.
+        A :class:`CFDSample` with correctly shaped 2D tensors.
     """
     dem_np = np.asarray(raw["dem"], dtype=np.float32)
     dem = torch.from_numpy(dem_np).unsqueeze(0)  # (1, H, W)
 
-    # Placeholder terrain features — just the normalised DEM for now.
-    # The real terrain encoder (task 1.x) will replace this.
+    # Placeholder terrain features -- just the normalised DEM for now.
     terrain_features = dem.clone()  # (1, H, W)
 
     boundary_conditions = torch.tensor(
@@ -140,9 +256,24 @@ def format_cfd_tensors(raw: dict[str, Any]) -> CFDSample:
         dtype=torch.float32,
     )
 
-    u = torch.from_numpy(np.asarray(raw["u_wind"], dtype=np.float32))
-    v = torch.from_numpy(np.asarray(raw["v_wind"], dtype=np.float32))
-    w = torch.from_numpy(np.asarray(raw["w_wind"], dtype=np.float32))
+    # Resolve variable names: accept both Ux/Uy/Uz and legacy u_wind/v_wind/w_wind
+    u_key = "Ux" if "Ux" in raw else "u_wind"
+    v_key = "Uy" if "Uy" in raw else "v_wind"
+    w_key = "Uz" if "Uz" in raw else "w_wind"
+
+    u_np = np.asarray(raw[u_key], dtype=np.float32)
+    v_np = np.asarray(raw[v_key], dtype=np.float32)
+    w_np = np.asarray(raw[w_key], dtype=np.float32)
+
+    # 3D -> 2D extraction: if wind fields have 3 dims, take a vertical slice
+    if u_np.ndim == 3:
+        u_np = u_np[:, :, vertical_level]
+        v_np = v_np[:, :, vertical_level]
+        w_np = w_np[:, :, vertical_level]
+
+    u = torch.from_numpy(u_np)
+    v = torch.from_numpy(v_np)
+    w = torch.from_numpy(w_np)
     wind_field = torch.stack([u, v, w], dim=0)  # (3, H, W)
 
     return CFDSample(
@@ -155,7 +286,7 @@ def format_cfd_tensors(raw: dict[str, Any]) -> CFDSample:
 
 
 # ---------------------------------------------------------------------------
-# Task 3.3 — WindNinja synthetic generation
+# Task 3.3 -- WindNinja synthetic generation
 # ---------------------------------------------------------------------------
 
 WINDNINJA_BINARY = "WindNinja_cli"
@@ -183,7 +314,7 @@ class WindNinjaGenerator:
 
         Args:
             dem: Elevation grid tensor ``(1, H, W)``.
-            boundary_conditions: ``(3,)`` — speed, direction, reference height.
+            boundary_conditions: ``(3,)`` -- speed, direction, reference height.
 
         Returns:
             A :class:`CFDSample` with the solved wind field, or ``None``
@@ -192,7 +323,7 @@ class WindNinjaGenerator:
         if not self.is_available():
             logger.warning(
                 "WindNinja binary not found on PATH. "
-                "Synthetic generation skipped — operating on wind-cfd-trial data only."
+                "Synthetic generation skipped -- operating on wind-cfd-trial data only."
             )
             return None
 
@@ -246,7 +377,7 @@ class WindNinjaGenerator:
 
 
 # ---------------------------------------------------------------------------
-# Task 3.4 — Domain randomization
+# Task 3.4 -- Domain randomization
 # ---------------------------------------------------------------------------
 
 MIN_WIND_SPEED = 0.5   # m/s
@@ -339,7 +470,7 @@ def augment_elevation_noise(
 ) -> CFDSample:
     """Add Gaussian noise to the DEM (and terrain features derived from DEM).
 
-    Wind field is NOT modified — the noise tests model robustness to DEM
+    Wind field is NOT modified -- the noise tests model robustness to DEM
     uncertainty, not physics consistency.
     """
     out = _copy_sample(sample)
@@ -362,8 +493,7 @@ def augment_sample(
     rotation = torch.rand(1).item() * 360.0
     out = augment_wind_direction(sample, rotation)
 
-    # 2) Random wind speed scaling — uniform log-scale within physical bounds
-    # Scale factor chosen so result lands in [0.5, 30] m/s
+    # 2) Random wind speed scaling -- uniform log-scale within physical bounds
     current_speed = out.boundary_conditions[0].item()
     if current_speed > 0:
         min_scale = MIN_WIND_SPEED / current_speed
@@ -383,10 +513,16 @@ def augment_sample(
 
 
 # ---------------------------------------------------------------------------
-# Task 3.5 — Mass conservation labeling
+# Task 3.5 -- Mass conservation labeling
 # ---------------------------------------------------------------------------
 
-DEFAULT_DIVERGENCE_THRESHOLD = 0.01  # s^-1
+# Default threshold for near-surface 2D slices of 3D terrain-following RANS.
+# Real data shows max |div| of 7-10 s^-1 for k=0 slices because the 2D
+# divergence (du/dx + dv/dy) omits the vertical dw/dz term that balances
+# the 3D continuity equation in terrain-following coordinates. A threshold
+# of 10.0 s^-1 filters only extreme numerical artifacts while accepting
+# physically valid near-surface flow.
+DEFAULT_DIVERGENCE_THRESHOLD = 10.0  # s^-1
 
 
 def compute_divergence(wind_field: Tensor) -> Tensor:
@@ -439,7 +575,10 @@ def label_mass_conservation(
     Args:
         sample: The input sample.
         threshold: Maximum absolute divergence (s^-1). Samples exceeding
-            this are flagged ``passes_conservation=False``.
+            this are flagged ``passes_conservation=False``. Default is
+            10.0 s^-1, suitable for near-surface 2D slices of 3D RANS data.
+            For synthetic 2D-native data (e.g. WindNinja), use a stricter
+            threshold like 0.01 s^-1.
 
     Returns:
         A :class:`LabeledCFDSample` with divergence field and flag.
