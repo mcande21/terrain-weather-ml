@@ -1,28 +1,4 @@
-# training/transfer-pipeline Specification
-
-## Purpose
-Orchestrates the three-phase training protocol — CFD pre-train, Alpine fine-tune, Colorado LoRA adaptation — with phase-gated checkpointing and cross-domain alignment.
-
-## Requirements
-
-### Requirement: Phase 1 — CFD pre-training
-
-The system SHALL pre-train the downscaling head on synthetic CFD data from the cfd-pipeline. This phase trains the U-Net to learn terrain-wind interaction physics from idealized simulations.
-
-- **Data source:** wind-cfd-trial + WindNinja synthetic cases
-- **Loss function:** MSE on wind field + mass-conservation penalty (lambda=0.1)
-- **Trainable parameters:** Full downscaling head (U-Net encoder, decoder, projection layer)
-- **StormCast:** Not used in this phase — CFD data provides direct terrain→wind mappings
-
-#### Scenario: Phase 1 completion
-
-- **WHEN** Phase 1 training reaches the configured epoch count or early-stopping criterion
-- **THEN** the system saves a Phase 1 checkpoint and logs validation loss on a held-out CFD test set
-
-#### Scenario: Phase 1 checkpoint contains no StormCast weights
-
-- **WHEN** a Phase 1 checkpoint is saved
-- **THEN** it contains only downscaling head parameters, not StormCast or LoRA weights
+## MODIFIED Requirements
 
 ### Requirement: Phase 2 — Alpine fine-tuning
 
@@ -74,30 +50,3 @@ The system SHALL adapt the Alpine-trained model to the Colorado domain using SNO
 
 - **WHEN** Phase 3 processes a training sample
 - **THEN** the coarse weather input comes from the NWP passthrough adapter reading raw HRRR data, not from StormCast inference
-
-### Requirement: Phase-gated checkpointing
-
-The system SHALL enforce phase ordering: Phase 2 requires a Phase 1 checkpoint, Phase 3 requires a Phase 2 checkpoint. Each phase SHALL produce a checkpoint with metadata indicating the phase, epoch, validation metrics, and a hash of the input checkpoint it was initialized from.
-
-#### Scenario: Attempt Phase 3 without Phase 2
-
-- **WHEN** Phase 3 is launched without a valid Phase 2 checkpoint
-- **THEN** the system raises an error specifying which checkpoint is missing
-
-#### Scenario: Checkpoint metadata
-
-- **WHEN** any phase saves a checkpoint
-- **THEN** the checkpoint file includes: phase number, total epochs trained, best validation loss, training data hash, and parent checkpoint hash
-
-### Requirement: Data flow specification
-
-The training data flow across phases SHALL be:
-
-1. Phase 1: `CFD(DEM patch, boundary conditions) → wind field` (terrain→wind only)
-2. Phase 2: `StormCast(HRRR) + terrain features → station observations` (full pipeline)
-3. Phase 3: `quantile_map(StormCast(HRRR)) + terrain features → SNOTEL observations` (domain-adapted)
-
-#### Scenario: Data flow validation
-
-- **WHEN** a training run is configured
-- **THEN** the system validates that the specified data source matches the expected phase data flow before beginning training

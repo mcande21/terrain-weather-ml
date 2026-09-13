@@ -1,9 +1,4 @@
-# backbone/stormcast-adapter Specification
-
-## Purpose
-Integrates frozen NVIDIA StormCast as the coarse weather backbone with LoRA adapters for regional specialization, providing the dynamic weather input to the downscaling head.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: StormCast checkpoint loading
 
