@@ -19,7 +19,7 @@ class WeatherAdapter(Protocol):
 
     Any adapter that extracts surface weather variables from NWP data
     must implement this interface. The extract method accepts a dict
-    mapping variable names to 2D tensors and returns a batched
+    mapping variable names to tensors and returns a batched
     (batch, C_WEATHER, H, W) tensor with the 6 canonical surface
     variables: T2M, U10, V10, PRATE, SP, BLH.
     """
@@ -28,9 +28,10 @@ class WeatherAdapter(Protocol):
         """Extract surface weather variables from NWP data.
 
         Args:
-            nwp_data: Dict mapping NWP variable names to 2D tensors (H, W).
-                Variable names follow the source convention (HRRR cfgrib
-                or ERA5 short names).
+            nwp_data: Dict mapping NWP variable names to tensors.
+                Contents depend on the adapter:
+                - NWPPassthrough: raw HRRR/ERA5 fields
+                - StormCast: 'stormcast_input' tensor + HRRR passthrough vars
 
         Returns:
             Weather tensor of shape (batch, 6, H, W) with channels ordered
