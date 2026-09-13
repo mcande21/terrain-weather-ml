@@ -2,11 +2,17 @@
 
 Task 2.1: Download and parse MeteoSwiss/PeakWeather dataset for 302 Swiss
 stations at 10-min resolution.
+
+Real HuggingFace schema:
+- stations.parquet: nat_abbr index, station_height, 13 terrain features
+- observations/YYYY.parquet: datetime index, MultiIndex columns (nat_abbr, param_short)
+- Parameter codes: tre200s0, fkl010z0, dkl010z0, rre150z0, prestas0, ure200s0, sre000z0
 """
 
 from __future__ import annotations
 
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Protocol
@@ -22,18 +28,46 @@ from terrain_weather_ml.data.alpine.schema import (
 
 logger = logging.getLogger(__name__)
 
-# PeakWeather variable mapping: HuggingFace column names -> our schema
+# PeakWeather variable mapping: real MeteoSwiss parameter codes -> our schema
 PEAKWEATHER_VAR_MAP = {
-    "ta": "temperature",  # 2m air temperature (Celsius in raw)
-    "fu": "wind_speed",  # wind speed (m/s)
-    "dkl": "wind_direction",  # wind direction (degrees)
-    "rre": "precipitation",  # precipitation (mm/10min)
-    "prestas": "pressure",  # station pressure (hPa)
-    "ure": "humidity",  # relative humidity (%)
-    "gre": "global_radiation",  # global radiation (W/m2)
+    "tre200s0": "temperature",    # 2m air temperature (Celsius in raw)
+    "fkl010z0": "wind_speed",     # wind speed (m/s)
+    "dkl010z0": "wind_direction", # wind direction (degrees)
+    "rre150z0": "precipitation",  # precipitation (mm/10min)
+    "prestas0": "pressure",       # station pressure (hPa)
+    "ure200s0": "humidity",       # relative humidity (% in raw)
+    "sre000z0": "sunshine",       # sunshine duration (min/10min)
+    "fkl010z1": "wind_gust",      # wind gust peak (m/s), optional
 }
 
+# Pre-computed terrain feature columns in stations.parquet
+TERRAIN_FEATURE_COLS = (
+    "ASPECT_2000M_SIGRATIO1",
+    "WE_DERIVATIVE_2000M_SIGRATIO1",
+    "TPI_2000M",
+    "SN_DERIVATIVE_10000M_SIGRATIO1",
+    "dem",
+    "SN_DERIVATIVE_2000M_SIGRATIO1",
+    "SLOPE_10000M_SIGRATIO1",
+    "ASPECT_10000M_SIGRATIO1",
+    "SLOPE_2000M_SIGRATIO1",
+    "STD_2000M",
+    "STD_10000M",
+    "TPI_10000M",
+    "WE_DERIVATIVE_10000M_SIGRATIO1",
+)
+
 EXPECTED_STATION_COUNT = 302
+
+# Metadata files that should always be downloaded
+_METADATA_FILES = frozenset({
+    "stations.parquet",
+    "parameters.parquet",
+    "installation.parquet",
+})
+
+# Pattern matching observation year files: data/observations/YYYY.parquet
+_OBS_YEAR_RE = re.compile(r"observations/(\d{4})\.parquet$")
 
 
 class HuggingFaceDownloader(Protocol):
@@ -94,10 +128,23 @@ class DefaultHFDownloader:
     def _file_in_range(
         fname: str, start_date: datetime, end_date: datetime
     ) -> bool:
-        """Check if a filename corresponds to a date within range."""
-        # PeakWeather files are typically organized by year/month
-        # Accept all data files for now; filtering happens at parse time
-        return fname.endswith((".csv", ".parquet", ".csv.gz"))
+        """Check if a filename should be downloaded for the given date range.
+
+        Metadata files (stations.parquet, parameters.parquet,
+        installation.parquet) are always included. Observation files
+        (data/observations/YYYY.parquet) are included only when the year
+        overlaps the requested date range. All other files are skipped.
+        """
+        basename = fname.rsplit("/", 1)[-1] if "/" in fname else fname
+        if basename in _METADATA_FILES:
+            return True
+
+        match = _OBS_YEAR_RE.search(fname)
+        if match:
+            year = int(match.group(1))
+            return start_date.year <= year <= end_date.year
+
+        return False
 
 
 class PeakWeatherClient:
@@ -156,19 +203,29 @@ class PeakWeatherClient:
     ) -> dict[str, StationMetadata]:
         """Extract station metadata from PeakWeather DataFrame.
 
+        Handles the real schema where station ID is the DataFrame index
+        (nat_abbr), elevation is station_height, and 13 pre-computed
+        terrain features are present as columns.
+
         Returns dict mapping station_id to StationMetadata.
         """
-        stations: dict[str, StationMetadata] = {}
+        # Handle index-as-ID: nat_abbr is the index, not a column
+        if data.index.name == "nat_abbr":
+            data = data.reset_index()
 
-        if "station_id" not in data.columns:
-            # Try alternate column names
-            if "stn" in data.columns:
-                data = data.rename(columns={"stn": "station_id"})
-            else:
-                raise ValueError("No station_id or stn column found in data")
+        # Normalize station ID column
+        if "nat_abbr" in data.columns:
+            data = data.rename(columns={"nat_abbr": "station_id"})
+        elif "stn" in data.columns:
+            data = data.rename(columns={"stn": "station_id"})
+        elif "station_id" not in data.columns:
+            raise ValueError(
+                "No station_id, nat_abbr, or stn column found in data"
+            )
 
-        # Map alternate column names
+        # Map alternate column names for coordinates and elevation
         col_renames = {
+            "station_height": "elevation",
             "lat": "latitude",
             "lon": "longitude",
             "alt": "elevation",
@@ -178,20 +235,36 @@ class PeakWeatherClient:
             columns={k: v for k, v in col_renames.items() if k in data.columns}
         )
 
-        for sid in data["station_id"].unique():
-            sdata = data[data["station_id"] == sid].iloc[0]
-            lat = float(sdata["latitude"])
-            lon = float(sdata["longitude"])
-            elev = float(sdata["elevation"])
+        # Identify terrain feature columns present in data
+        tf_cols = [c for c in TERRAIN_FEATURE_COLS if c in data.columns]
 
-            stations[str(sid)] = StationMetadata(
-                station_id=str(sid),
+        stations: dict[str, StationMetadata] = {}
+        for _, row in data.drop_duplicates("station_id").iterrows():
+            sid = str(row["station_id"])
+            lat = float(row["latitude"])
+            lon = float(row["longitude"])
+            elev = float(row["elevation"])
+
+            # Collect terrain features as immutable tuple of pairs
+            terrain = tuple(
+                (col, float(row[col]))
+                for col in tf_cols
+                if pd.notna(row[col])
+            )
+
+            # Preserve station name if available
+            name = str(row["station_name"]) if "station_name" in row.index and pd.notna(row.get("station_name")) else None
+
+            stations[sid] = StationMetadata(
+                station_id=sid,
                 network=Network.PEAKWEATHER,
                 latitude=lat,
                 longitude=lon,
                 elevation=elev,
                 terrain_ref_lat=lat,
                 terrain_ref_lon=lon,
+                station_name=name,
+                terrain_features=terrain,
             )
 
         return stations
@@ -201,14 +274,100 @@ class PeakWeatherClient:
     ) -> list[WeatherRecord]:
         """Parse PeakWeather observations into WeatherRecords.
 
-        Raw PeakWeather data uses:
-        - Temperature in Celsius -> convert to Kelvin
-        - Humidity in % -> convert to fraction
-        - All other variables already in target units
-        """
-        records: list[WeatherRecord] = []
+        Handles the real schema with MultiIndex columns (nat_abbr, param_short)
+        and datetime index. Uses vectorized operations for performance.
 
-        # Normalize column names
+        Unit conversions applied:
+        - Temperature: Celsius -> Kelvin (+ 273.15)
+        - Humidity: percentage -> fraction (/ 100.0)
+        """
+        if isinstance(data.columns, pd.MultiIndex):
+            return self._parse_multiindex_observations(data)
+        return self._parse_flat_observations(data)
+
+    def _parse_multiindex_observations(
+        self, data: pd.DataFrame
+    ) -> list[WeatherRecord]:
+        """Parse observations with MultiIndex (nat_abbr, param_short) columns.
+
+        Reshapes the wide MultiIndex DataFrame into flat records using
+        vectorized pandas operations, then applies unit conversions.
+        """
+        # Stack the MultiIndex columns into a flat format:
+        # datetime | nat_abbr | param_short | value
+        flat = data.stack(level="nat_abbr", future_stack=True)
+        # flat now has columns = param_short values, index = (datetime, nat_abbr)
+
+        # Identify which param_short columns are in our var map
+        mapped_params = {
+            p: var for p, var in PEAKWEATHER_VAR_MAP.items()
+            if p in flat.columns
+        }
+
+        # Rename param_short columns to our schema variable names
+        flat = flat.rename(columns=mapped_params)
+
+        # Apply unit conversions vectorized
+        if "temperature" in flat.columns:
+            flat["temperature"] = flat["temperature"] + 273.15
+        if "humidity" in flat.columns:
+            flat["humidity"] = flat["humidity"] / 100.0
+
+        # Reset index to get datetime and nat_abbr as columns
+        flat = flat.reset_index()
+
+        # Rename index columns
+        rename_map = {}
+        if "datetime" in flat.columns:
+            rename_map["datetime"] = "timestamp"
+        if "nat_abbr" in flat.columns:
+            rename_map["nat_abbr"] = "station_id"
+        if rename_map:
+            flat = flat.rename(columns=rename_map)
+
+        # Ensure timestamps are proper datetime
+        if "timestamp" in flat.columns:
+            flat["timestamp"] = pd.to_datetime(flat["timestamp"], utc=True)
+
+        # Build WeatherRecord objects from the flat DataFrame
+        records: list[WeatherRecord] = []
+        schema_vars = list(mapped_params.values())
+
+        # Vectorized extraction: convert columns to numpy for speed
+        timestamps = flat["timestamp"].values
+        station_ids = flat["station_id"].values
+
+        # Pre-extract variable arrays
+        var_arrays: dict[str, pd.Series] = {}
+        for var_name in schema_vars:
+            if var_name in flat.columns:
+                var_arrays[var_name] = flat[var_name]
+
+        for i in range(len(flat)):
+            ts = pd.Timestamp(timestamps[i]).to_pydatetime()
+            record = WeatherRecord(
+                timestamp=ts,
+                station_id=str(station_ids[i]),
+                network=Network.PEAKWEATHER,
+            )
+
+            for var_name, series in var_arrays.items():
+                value = series.iloc[i]
+                if pd.notna(value):
+                    setattr(record, var_name, float(value))
+                    setattr(record, f"{var_name}_qc", QualityFlag.GOOD)
+
+            records.append(record)
+
+        return records
+
+    def _parse_flat_observations(
+        self, data: pd.DataFrame
+    ) -> list[WeatherRecord]:
+        """Parse observations with flat column structure (legacy format).
+
+        Kept for backward compatibility with pre-processed data.
+        """
         if "stn" in data.columns:
             data = data.rename(columns={"stn": "station_id"})
         if "time" in data.columns:
@@ -217,18 +376,39 @@ class PeakWeatherClient:
         if not pd.api.types.is_datetime64_any_dtype(data["timestamp"]):
             data["timestamp"] = pd.to_datetime(data["timestamp"])
 
-        for _, row in data.iterrows():
+        # Apply unit conversions vectorized
+        for raw_col, var_name in PEAKWEATHER_VAR_MAP.items():
+            if raw_col in data.columns:
+                data = data.rename(columns={raw_col: var_name})
+
+        if "temperature" in data.columns:
+            data["temperature"] = data["temperature"] + 273.15
+        if "humidity" in data.columns:
+            data["humidity"] = data["humidity"] / 100.0
+
+        records: list[WeatherRecord] = []
+        schema_vars = list(PEAKWEATHER_VAR_MAP.values())
+
+        timestamps = data["timestamp"].values
+        station_ids = data["station_id"].values
+
+        var_arrays: dict[str, pd.Series] = {}
+        for var_name in schema_vars:
+            if var_name in data.columns:
+                var_arrays[var_name] = data[var_name]
+
+        for i in range(len(data)):
+            ts = pd.Timestamp(timestamps[i]).to_pydatetime()
             record = WeatherRecord(
-                timestamp=row["timestamp"].to_pydatetime(),
-                station_id=str(row["station_id"]),
+                timestamp=ts,
+                station_id=str(station_ids[i]),
                 network=Network.PEAKWEATHER,
             )
 
-            # Map and convert variables
-            for raw_col, var_name in PEAKWEATHER_VAR_MAP.items():
-                if raw_col in row.index and pd.notna(row[raw_col]):
-                    value = float(row[raw_col])
-                    setattr(record, var_name, value)
+            for var_name, series in var_arrays.items():
+                value = series.iloc[i]
+                if pd.notna(value):
+                    setattr(record, var_name, float(value))
                     setattr(record, f"{var_name}_qc", QualityFlag.GOOD)
 
             records.append(record)
