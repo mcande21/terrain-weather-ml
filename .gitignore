@@ -2,10 +2,15 @@
 data/raw/
 data/processed/
 data/synthetic/
+data/cfd/
+data/hrrr/
 *.parquet
 *.grib2
 *.nc
 *.zarr
+
+# Checkpoints
+checkpoints/
 
 # Models
 models/
