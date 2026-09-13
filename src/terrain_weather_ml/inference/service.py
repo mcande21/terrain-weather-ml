@@ -2,6 +2,10 @@
 
 Encapsulates model loading, terrain lookups, HRRR refresh, and
 prediction logic. The FastAPI routes are thin wrappers around this.
+
+Default backbone is NWP passthrough (raw HRRR field extraction).
+StormCast is available as an experimental option via
+InferenceConfig(backbone="stormcast").
 """
 
 from __future__ import annotations
@@ -15,6 +19,7 @@ from typing import Any
 
 import torch
 
+from terrain_weather_ml.backbone import create_adapter
 from terrain_weather_ml.inference.schemas import (
     DEFAULT_DOMAIN_BOUNDS,
     MAX_FORECAST_HOURS,
@@ -25,6 +30,12 @@ from terrain_weather_ml.inference.schemas import (
 from terrain_weather_ml.terrain.downscaling.output import uv_to_speed_direction
 
 logger = logging.getLogger(__name__)
+
+# Backbone name -> data source mapping
+_BACKBONE_DATA_SOURCES: dict[str, str] = {
+    "nwp": "hrrr",
+    "stormcast": "hrrr+era5",
+}
 
 
 def _get_device() -> str:
@@ -46,6 +57,8 @@ class InferenceConfig:
         domain_bounds: Spatial domain bounds {lat_min, lat_max, lon_min, lon_max}.
         hrrr_refresh_seconds: Interval for HRRR refresh (default 3600 = hourly).
         device: PyTorch device string. Auto-detected if None.
+        backbone: Backbone adapter selection. "nwp" (default) for raw HRRR
+            passthrough. "stormcast" for experimental StormCast with LoRA.
     """
 
     model_version: str = "terrain-weather-ml-v0.1.0"
@@ -55,6 +68,7 @@ class InferenceConfig:
     )
     hrrr_refresh_seconds: int = 3600
     device: str | None = None
+    backbone: str = "nwp"
 
 
 class InferenceService:
@@ -62,7 +76,10 @@ class InferenceService:
 
     Designed for dependency injection: the model, terrain lookup, and
     HRRR fetcher are callables so tests can supply mocks without touching
-    the real StormCast/DEM infrastructure.
+    the real backbone/DEM infrastructure.
+
+    Default backbone is NWP passthrough (HRRR only). StormCast is
+    available via InferenceConfig(backbone="stormcast").
     """
 
     def __init__(
@@ -78,9 +95,41 @@ class InferenceService:
         self._terrain_lookup_fn = terrain_lookup_fn
         self._hrrr_fetch_fn = hrrr_fetch_fn
 
+        # Backbone adapter selection
+        backbone_key = config.backbone
+        if backbone_key == "nwp":
+            adapter_key = "passthrough"
+        elif backbone_key == "stormcast":
+            adapter_key = "stormcast"
+        else:
+            raise ValueError(
+                f"Unknown backbone: {backbone_key!r}. "
+                f"Valid options: 'nwp', 'stormcast'"
+            )
+        self._adapter = create_adapter(adapter_key)
+        self._backbone_name = backbone_key
+        self._data_source = _BACKBONE_DATA_SOURCES.get(backbone_key, "hrrr")
+
         self._model_loaded = False
         self._current_hrrr_cycle: str = "unknown"
         self._hrrr_refresh_task: asyncio.Task | None = None
+
+    # ----- backbone info -----
+
+    @property
+    def backbone_name(self) -> str:
+        """Return the active backbone name ('nwp' or 'stormcast')."""
+        return self._backbone_name
+
+    @property
+    def data_source(self) -> str:
+        """Return the data source(s) for the active backbone."""
+        return self._data_source
+
+    @property
+    def adapter(self) -> Any:
+        """Return the backbone adapter instance."""
+        return self._adapter
 
     # ----- lifecycle -----
 
@@ -299,6 +348,8 @@ class InferenceService:
             "checkpoint_hash": self.config.checkpoint_hash,
             "domain_bounds": self.config.domain_bounds,
             "max_forecast_hours": MAX_FORECAST_HOURS,
+            "backbone": self._backbone_name,
+            "data_source": self._data_source,
             "output_variables": [
                 {"name": "wind_speed", "unit": "m/s"},
                 {"name": "wind_direction", "unit": "degrees"},
