@@ -43,6 +43,7 @@ from terrain_weather_ml.terrain.svf import compute_svf
 from terrain_weather_ml.terrain.sx import compute_sx
 from terrain_weather_ml.terrain.tpi import compute_tpi
 from terrain_weather_ml.training.checkpoint import load_phase_checkpoint
+from terrain_weather_ml.training.normalizer import TargetNormalizer
 from terrain_weather_ml.training.quantile_mapping import QuantileMapper
 
 logging.basicConfig(
@@ -79,7 +80,7 @@ IDX_PRECIPITATION = 3
 
 
 def load_model(checkpoint_path):
-    """Load Phase 3 model head and quantile mapper from checkpoint."""
+    """Load Phase 3 model head, quantile mapper, and normalizer from checkpoint."""
     ckpt = load_phase_checkpoint(checkpoint_path)
     logger.info(
         "Loaded Phase %d checkpoint: epoch=%d, val_loss=%.4f",
@@ -108,7 +109,16 @@ def load_model(checkpoint_path):
         logger.info("Loaded quantile mapper for %d variables",
                      len(ckpt.extra_data["quantile_params"]))
 
-    return head, mapper
+    normalizer = None
+    if ckpt.extra_data.get("normalizer"):
+        normalizer = TargetNormalizer()
+        normalizer.load_state_dict(ckpt.extra_data["normalizer"])
+        logger.info(
+            "Loaded target normalizer: mean=%s, std=%s",
+            normalizer.mean.tolist(), normalizer.std.tolist(),
+        )
+
+    return head, mapper, normalizer
 
 
 def extract_dem_patches(stations_df, dem_path, patch_size):
@@ -296,8 +306,9 @@ def apply_quantile_mapping(weather_tensor, mapper):
     return mapped
 
 
-def run_model_predictions(head, mapper, terrain_tensors, hrrr_tensors,
-                          hrrr_lat, hrrr_lon, stations_df, station_obs):
+def run_model_predictions(head, mapper, normalizer, terrain_tensors,
+                          hrrr_tensors, hrrr_lat, hrrr_lon, stations_df,
+                          station_obs):
     """Run model predictions for each station on each day.
 
     Returns dict of station_id -> {"temperature": array, "precipitation": array}
@@ -335,6 +346,8 @@ def run_model_predictions(head, mapper, terrain_tensors, hrrr_tensors,
 
             with torch.no_grad():
                 out = head(terrain, weather_patch.unsqueeze(0))
+                if normalizer is not None:
+                    out = normalizer.denormalize(out)
 
             h_mid = out.shape[2] // 2
             w_mid = out.shape[3] // 2
@@ -607,7 +620,7 @@ def main():
 
     # 1. Load model
     logger.info("Loading Phase 3 model...")
-    head, mapper = load_model(PHASE3_CKPT)
+    head, mapper, normalizer = load_model(PHASE3_CKPT)
     head.to(device_name)
 
     # 2. Load SNOTEL station metadata
@@ -652,7 +665,7 @@ def main():
     logger.info("Running model predictions...")
     t_pred = time.time()
     model_preds = run_model_predictions(
-        head, mapper, terrain_tensors, hrrr_tensors,
+        head, mapper, normalizer, terrain_tensors, hrrr_tensors,
         hrrr_lat, hrrr_lon, stations_df, station_obs,
     )
     logger.info("Model predictions done in %.1fs for %d stations",

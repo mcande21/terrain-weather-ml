@@ -40,6 +40,7 @@ from terrain_weather_ml.terrain.sx import compute_sx
 from terrain_weather_ml.terrain.tpi import compute_tpi
 from terrain_weather_ml.training.checkpoint import load_phase_checkpoint
 from terrain_weather_ml.training.datasets import ColoradoPhaseDataset
+from terrain_weather_ml.training.normalizer import TargetNormalizer
 from terrain_weather_ml.training.phases import Phase3Trainer, PhaseConfig
 from terrain_weather_ml.training.quantile_mapping import QuantileMapper
 
@@ -61,8 +62,7 @@ TERRAIN_CACHE = PROJECT_ROOT / "data" / "cache" / "terrain_patches_colorado"
 
 # --- Hyperparameters ---
 PATCH_SIZE = 64
-MAX_STATIONS = 50
-EPOCHS = 5
+EPOCHS = 30
 BATCH_SIZE = 8
 LEARNING_RATE = 1e-4
 LAMBDA_DIV = 0.05
@@ -439,11 +439,6 @@ def main():
     patches = extract_dem_patches(stations_df, DEM_PATH, PATCH_SIZE)
     logger.info("Extracted %d valid patches", len(patches))
 
-    if len(patches) > MAX_STATIONS:
-        selected = sorted(patches.keys())[:MAX_STATIONS]
-        patches = {k: patches[k] for k in selected}
-        logger.info("Subsampled to %d stations", len(patches))
-
     # 4. Compute terrain features
     logger.info("Computing 17-channel terrain features...")
     t0 = time.time()
@@ -478,7 +473,22 @@ def main():
         logger.error("No valid training samples. Check data alignment.")
         sys.exit(1)
 
-    # 9. Create dataset and trainer
+    # 9. Fit target normalizer on SNOTEL training targets
+    all_targets = torch.stack([s["weather_target"] for s in samples], dim=0)
+    normalizer = TargetNormalizer()
+    normalizer.fit(all_targets)
+    logger.info(
+        "Target normalizer: mean=%s, std=%s",
+        normalizer.mean.tolist(), normalizer.std.tolist(),
+    )
+
+    # Normalize targets in-place
+    for s in samples:
+        s["weather_target"] = normalizer.normalize(
+            s["weather_target"].unsqueeze(0)
+        ).squeeze(0)
+
+    # 10. Create dataset and trainer
     dataset = ColoradoPhaseDataset(samples)
 
     config = PhaseConfig(
@@ -499,9 +509,8 @@ def main():
     trainer = Phase3Trainer(config, quantile_mapper=mapper)
 
     # Zero out wind target weights: SNOTEL has no wind data
-    trainer.loss_fn = __import__(
-        "terrain_weather_ml.terrain.downscaling.loss", fromlist=["DownscalingLoss"]
-    ).DownscalingLoss(
+    from terrain_weather_ml.terrain.downscaling.loss import DownscalingLoss
+    trainer.loss_fn = DownscalingLoss(
         lambda_div=LAMBDA_DIV,
         lambda_oro=0.0,
         variable_weights=[0.0, 0.0, 1.0, 1.0],
@@ -513,7 +522,7 @@ def main():
         "Model: %d parameters (%.2f MB)", param_count, param_count * 4 / 1e6
     )
 
-    # 10. Train
+    # 11. Train
     logger.info(
         "Training: %d epochs, batch_size=%d, lr=%s, samples=%d",
         EPOCHS, BATCH_SIZE, LEARNING_RATE, len(samples),
@@ -522,7 +531,13 @@ def main():
     checkpoint_path = trainer.train(dataset)
     elapsed = time.time() - t0
 
-    # 11. Report
+    # 12. Save normalizer state in checkpoint
+    ckpt_data = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    ckpt_data["extra_data"]["normalizer"] = normalizer.state_dict()
+    torch.save(ckpt_data, checkpoint_path)
+    logger.info("Saved normalizer state to checkpoint")
+
+    # 13. Report
     print()
     print("=" * 60)
     print("Phase 3 Colorado Adaptation Complete")
@@ -533,10 +548,11 @@ def main():
     print(f"Stations: {len(terrain_tensors)}")
     print(f"HRRR timesteps: {len(hrrr_tensors)}")
     print()
-    print("Loss curve:")
+    print("Loss curve (first 10, then every 5th):")
     for i, loss in enumerate(trainer.epoch_losses):
-        marker = " <-- best" if loss == min(trainer.epoch_losses) else ""
-        print(f"  Epoch {i + 1:2d}: {loss:.6f}{marker}")
+        if i < 10 or (i + 1) % 5 == 0 or i == len(trainer.epoch_losses) - 1:
+            marker = " <-- best" if loss == min(trainer.epoch_losses) else ""
+            print(f"  Epoch {i + 1:2d}: {loss:.6f}{marker}")
 
     initial = trainer.epoch_losses[0]
     final = trainer.epoch_losses[-1]
@@ -554,6 +570,8 @@ def main():
         f"val_loss={ckpt.metadata.best_val_loss:.6f}"
     )
     print(f"Checkpoint hash: {ckpt.compute_hash()[:16]}")
+    print(f"Normalizer mean: {normalizer.mean.tolist()}")
+    print(f"Normalizer std:  {normalizer.std.tolist()}")
 
     if ckpt.extra_data.get("quantile_params"):
         qp = ckpt.extra_data["quantile_params"]

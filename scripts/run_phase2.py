@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 import rasterio
 import torch
+import torch.utils.data
 import xarray as xr
 from rasterio.warp import transform as warp_transform
 
@@ -36,6 +37,7 @@ from terrain_weather_ml.terrain.sx import compute_sx
 from terrain_weather_ml.terrain.tpi import compute_tpi
 from terrain_weather_ml.training.checkpoint import load_phase_checkpoint
 from terrain_weather_ml.training.datasets import ERA5StationDataset
+from terrain_weather_ml.training.normalizer import TargetNormalizer
 from terrain_weather_ml.training.phases import Phase2Trainer, PhaseConfig
 
 logging.basicConfig(
@@ -60,10 +62,9 @@ TERRAIN_CACHE = PROJECT_ROOT / "data" / "cache" / "terrain_patches"
 
 # --- Hyperparameters ---
 PATCH_SIZE = 64
-MAX_STATIONS = 50
-EPOCHS = 5
+EPOCHS = 50
 BATCH_SIZE = 8
-LEARNING_RATE = 5e-4
+LEARNING_RATE = 1e-3
 LAMBDA_DIV = 0.05
 BASE_FEATURES = 32  # Must match Phase 1
 C_TERRAIN = 17
@@ -365,11 +366,6 @@ def main():
     patches = extract_dem_patches(stations_df, DEM_PATH, PATCH_SIZE)
     logger.info("Extracted %d valid patches", len(patches))
 
-    if len(patches) > MAX_STATIONS:
-        selected = sorted(patches.keys())[:MAX_STATIONS]
-        patches = {k: patches[k] for k in selected}
-        logger.info("Subsampled to %d stations", len(patches))
-
     # 4. Compute terrain features
     logger.info("Computing 17-channel terrain features...")
     t0 = time.time()
@@ -403,7 +399,20 @@ def main():
         logger.error("No valid training samples. Check data alignment.")
         sys.exit(1)
 
-    # 8. Create dataset and trainer
+    # 8. Fit target normalizer on all training targets
+    all_targets = torch.stack([s["target"] for s in samples], dim=0)
+    normalizer = TargetNormalizer()
+    normalizer.fit(all_targets)
+    logger.info(
+        "Target normalizer: mean=%s, std=%s",
+        normalizer.mean.tolist(), normalizer.std.tolist(),
+    )
+
+    # Normalize targets in-place
+    for s in samples:
+        s["target"] = normalizer.normalize(s["target"].unsqueeze(0)).squeeze(0)
+
+    # 9. Create dataset and trainer
     dataset = ERA5StationDataset(samples)
 
     config = PhaseConfig(
@@ -422,21 +431,73 @@ def main():
     )
 
     trainer = Phase2Trainer(config)
+
+    # LR schedule: 1e-3 for first 10 epochs, then cosine decay
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+        trainer.optimizer, T_max=EPOCHS - 10, eta_min=1e-5,
+    )
+
     param_count = sum(p.numel() for p in trainer.head.parameters())
     logger.info(
         "Model: %d parameters (%.2f MB)", param_count, param_count * 4 / 1e6
     )
 
-    # 9. Train
+    # 10. Train with LR schedule
     logger.info(
         "Training: %d epochs, batch_size=%d, lr=%s, samples=%d",
         EPOCHS, BATCH_SIZE, LEARNING_RATE, len(samples),
     )
     t0 = time.time()
-    checkpoint_path = trainer.train(dataset)
+
+    loader = torch.utils.data.DataLoader(
+        dataset, batch_size=BATCH_SIZE, shuffle=True, drop_last=False,
+    )
+    best_loss = float("inf")
+
+    for epoch in range(EPOCHS):
+        trainer.head.train()
+        epoch_loss = 0.0
+        n_batches = 0
+
+        for terrain, weather, weather_target, mask in loader:
+            terrain = terrain.to(trainer.device)
+            weather = weather.to(trainer.device)
+            weather_target = weather_target.to(trainer.device)
+
+            trainer.optimizer.zero_grad()
+            pred = trainer.head(terrain, weather)
+            loss_dict = trainer.loss_fn(pred, weather_target, terrain)
+            loss = loss_dict["total"]
+            loss.backward()
+            trainer.optimizer.step()
+
+            epoch_loss += loss.item()
+            n_batches += 1
+
+        avg_loss = epoch_loss / max(n_batches, 1)
+        trainer.epoch_losses.append(avg_loss)
+        best_loss = min(best_loss, avg_loss)
+        trainer.best_val_loss = best_loss
+
+        if epoch >= 10:
+            scheduler.step()
+
+        current_lr = trainer.optimizer.param_groups[0]["lr"]
+        logger.info(
+            "Phase 2 epoch %d/%d: loss=%.6f lr=%.2e",
+            epoch + 1, EPOCHS, avg_loss, current_lr,
+        )
+
     elapsed = time.time() - t0
 
-    # 10. Report
+    # 11. Save checkpoint with normalizer state
+    checkpoint_path = trainer._save_checkpoint(dataset)
+    ckpt_data = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    ckpt_data["extra_data"]["normalizer"] = normalizer.state_dict()
+    torch.save(ckpt_data, checkpoint_path)
+    logger.info("Saved normalizer state to checkpoint")
+
+    # 12. Report
     print()
     print("=" * 60)
     print("Phase 2 Alpine Fine-tuning Complete")
@@ -447,10 +508,11 @@ def main():
     print(f"Stations: {len(terrain_tensors)}")
     print(f"ERA5 timesteps: {len(era5_times)}")
     print()
-    print("Loss curve:")
+    print("Loss curve (first 10, then every 5th):")
     for i, loss in enumerate(trainer.epoch_losses):
-        marker = " <-- best" if loss == min(trainer.epoch_losses) else ""
-        print(f"  Epoch {i + 1:2d}: {loss:.6f}{marker}")
+        if i < 10 or (i + 1) % 5 == 0 or i == len(trainer.epoch_losses) - 1:
+            marker = " <-- best" if loss == min(trainer.epoch_losses) else ""
+            print(f"  Epoch {i + 1:2d}: {loss:.6f}{marker}")
 
     initial = trainer.epoch_losses[0]
     final = trainer.epoch_losses[-1]
@@ -468,6 +530,8 @@ def main():
         f"val_loss={ckpt.metadata.best_val_loss:.6f}"
     )
     print(f"Checkpoint hash: {ckpt.compute_hash()[:16]}")
+    print(f"Normalizer mean: {normalizer.mean.tolist()}")
+    print(f"Normalizer std:  {normalizer.std.tolist()}")
 
 
 if __name__ == "__main__":
