@@ -5,6 +5,8 @@ data/synthetic/
 data/cfd/
 data/hrrr/
 data/era5/
+data/dem/
+data/snotel/
 *.parquet
 *.grib2
 *.nc
