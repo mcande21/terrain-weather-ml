@@ -4,7 +4,7 @@
 
 - **Evaluation period:** January 2024 (training set)
 - **Stations evaluated:** 13
-- **Runtime:** 10.0s
+- **Runtime:** 11.8s
 - **Variables:** temperature (K), precipitation (kg/m^2/s)
 - **Baseline:** Raw HRRR nearest grid cell (3km)
 
@@ -12,37 +12,37 @@
 
 | Variable | Metric | Model | HRRR Baseline | Improvement |
 |----------|--------|-------|---------------|-------------|
-| temperature | rmse | 182.4366 | 2.9878 | -6006.1% |
-| temperature | mae | 182.3881 | 2.3732 | -7585.3% |
-| temperature | bias | -182.3881 | -1.3255 | +13660.5% |
-| temperature | r_squared | -2003.6775 | 0.4310 | -2004.1085 |
-| precipitation | rmse | 0.0001 | 0.0001 | +0.0% |
-| precipitation | mae | 0.0000 | 0.0000 | +0.0% |
-| precipitation | bias | -0.0000 | -0.0000 | +0.0% |
-| precipitation | r_squared | -0.3806 | -0.3806 | +0.0000 |
+| temperature | rmse | 4.5832 | 2.9878 | -53.4% |
+| temperature | mae | 3.7184 | 2.3732 | -56.7% |
+| temperature | bias | -0.9916 | -1.3255 | -25.2% |
+| temperature | r_squared | -0.2155 | 0.4310 | -0.6464 |
+| precipitation | rmse | 0.0000 | 0.0001 | +53.1% |
+| precipitation | mae | 0.0000 | 0.0000 | +42.2% |
+| precipitation | bias | -0.0000 | -0.0000 | -89.0% |
+| precipitation | r_squared | 0.6584 | -0.3806 | +1.0390 |
 
 ## Per-Station Temperature Metrics
 
 | Station | Model RMSE | HRRR RMSE | Model Bias | HRRR Bias | Model R^2 |
 |---------|-----------|-----------|------------|-----------|-----------|
-| 303 | 185.53 | 2.18 | -185.48 | -1.20 | -1715.1533 |
-| 322 | 183.96 | 2.84 | -183.88 | -1.41 | -1253.6164 |
-| 327 | 180.58 | 3.24 | -180.53 | -2.68 | -1818.9908 |
-| 335 | 179.79 | 2.31 | -179.74 | -1.48 | -1864.1952 |
-| 345 | 180.62 | 4.68 | -180.57 | -2.97 | -1842.2744 |
-| 369 | 178.89 | 3.03 | -178.86 | -0.20 | -2751.0639 |
-| 378 | 183.03 | 2.48 | -182.98 | -0.50 | -1878.4639 |
-| 380 | 182.39 | 2.86 | -182.35 | -2.04 | -2259.9235 |
-| 387 | 184.36 | 2.86 | -184.32 | +0.14 | -2436.8450 |
-| 408 | 182.00 | 2.89 | -181.96 | -1.35 | -2368.9398 |
-| 409 | 184.85 | 0.95 | -184.81 | -0.01 | -2086.6069 |
-| 412 | 185.81 | 5.32 | -185.74 | -2.63 | -1196.9118 |
-| 415 | 179.87 | 3.21 | -179.84 | -0.90 | -2574.8226 |
+| 303 | 5.69 | 2.18 | -3.77 | -1.20 | -0.6157 |
+| 322 | 5.89 | 2.84 | -2.83 | -1.41 | -0.2870 |
+| 327 | 4.12 | 3.24 | +0.46 | -2.68 | 0.0516 |
+| 335 | 4.23 | 2.31 | +1.28 | -1.48 | -0.0305 |
+| 345 | 3.95 | 4.68 | +0.41 | -2.97 | 0.1187 |
+| 369 | 3.84 | 3.03 | +1.47 | -0.20 | -0.2712 |
+| 378 | 4.34 | 2.48 | +0.16 | -0.50 | -0.0586 |
+| 380 | 4.14 | 2.86 | -1.82 | -2.04 | -0.1643 |
+| 387 | 4.90 | 2.86 | -3.12 | +0.14 | -0.7187 |
+| 408 | 3.76 | 2.89 | -0.48 | -1.35 | -0.0130 |
+| 409 | 4.50 | 0.95 | -1.92 | -0.01 | -0.2344 |
+| 412 | 6.43 | 5.32 | -4.08 | -2.63 | -0.4333 |
+| 415 | 3.79 | 3.21 | +1.34 | -0.90 | -0.1447 |
 
 ## Statistical Significance
 
-- **terrain_downscaling_vs_hrrr_raw (temperature):** t=241.791, p=0.0000, significant=True, better=hrrr_raw
-- **terrain_downscaling_vs_hrrr_raw (precipitation):** t=nan, p=nan, significant=False, better=hrrr_raw
+- **terrain_downscaling_vs_hrrr_raw (precipitation):** t=-6.498, p=0.0000, significant=True, better=terrain_downscaling
+- **terrain_downscaling_vs_hrrr_raw (temperature):** t=4.644, p=0.0006, significant=True, better=hrrr_raw
 
 ## Physics Checks
 
