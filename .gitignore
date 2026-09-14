@@ -4,6 +4,7 @@ data/processed/
 data/synthetic/
 data/cfd/
 data/hrrr/
+data/era5/
 *.parquet
 *.grib2
 *.nc

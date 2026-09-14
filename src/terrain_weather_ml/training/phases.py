@@ -325,6 +325,7 @@ class Phase2Trainer:
             lambda_div=config.lambda_div,
             lambda_oro=config.lambda_oro,
         )
+        self.loss_fn.to(self.device)
 
         # Tracking
         self.epoch_losses: list[float] = []
@@ -620,6 +621,7 @@ class Phase3Trainer:
             lambda_div=config.lambda_div,
             lambda_oro=config.lambda_oro,
         )
+        self.loss_fn.to(self.device)
 
         # Tracking
         self.epoch_losses: list[float] = []
