@@ -16,6 +16,7 @@ Key constraints:
 - Only SNOTEL dates with matching HRRR data produce training samples.
 """
 
+import hashlib
 import logging
 import sys
 import time
@@ -41,7 +42,6 @@ from terrain_weather_ml.terrain.svf import compute_svf
 from terrain_weather_ml.terrain.sx import compute_sx
 from terrain_weather_ml.terrain.tpi import compute_tpi
 from terrain_weather_ml.training.checkpoint import load_phase_checkpoint
-from terrain_weather_ml.training.datasets import ColoradoPhaseDataset
 from terrain_weather_ml.training.normalizer import TargetNormalizer
 from terrain_weather_ml.training.phases import Phase3Trainer, PhaseConfig
 from terrain_weather_ml.training.quantile_mapping import QuantileMapper
@@ -65,7 +65,7 @@ TERRAIN_CACHE = PROJECT_ROOT / "data" / "cache" / "terrain_patches_colorado"
 # --- Hyperparameters ---
 PATCH_SIZE = 64
 EPOCHS = 30
-BATCH_SIZE = 8
+BATCH_SIZE = 32
 LEARNING_RATE = 1e-4
 LAMBDA_DIV = 0.05
 BASE_FEATURES = 32
@@ -360,11 +360,44 @@ def apply_quantile_mapping(weather_tensor, mapper):
     return mapped
 
 
+class CompactColoradoDataset(torch.utils.data.Dataset):
+    """Memory-efficient dataset storing scalar targets, expanding on access."""
+
+    def __init__(self, terrain_list, weather_list, target_scalars, h, w):
+        self.terrain_list = terrain_list
+        self.weather_list = weather_list
+        self.target_scalars = target_scalars
+        self.h = h
+        self.w = w
+
+    def __len__(self):
+        return len(self.terrain_list)
+
+    def __getitem__(self, idx):
+        terrain = self.terrain_list[idx]
+        weather = self.weather_list[idx]
+        target = self.target_scalars[idx].view(-1, 1, 1).expand(-1, self.h, self.w)
+        mask = torch.ones(self.h, self.w)
+        return terrain, weather, target.contiguous(), mask
+
+    def compute_data_hash(self):
+        h = hashlib.sha256()
+        h.update(str(len(self)).encode())
+        if len(self) > 0:
+            terrain, weather, target, _ = self[0]
+            h.update(str(terrain.shape).encode())
+            h.update(str(weather.shape).encode())
+            h.update(str(target.shape).encode())
+        return h.hexdigest()[:16]
+
+
 def build_samples(station_obs, hrrr_tensors, hrrr_lat, hrrr_lon,
                   terrain_tensors, stations_df, mapper):
-    """Build training samples matching SNOTEL daily obs to 12Z HRRR."""
+    """Build compact training samples matching SNOTEL daily obs to 12Z HRRR."""
     stn_meta = stations_df.set_index("station_id")
-    samples = []
+    terrain_list = []
+    weather_list = []
+    target_list = []
     n_matched = 0
     n_skipped = 0
 
@@ -377,7 +410,6 @@ def build_samples(station_obs, hrrr_tensors, hrrr_lat, hrrr_lon,
             continue
 
         terrain = terrain_tensors[sid]
-        h, w = terrain.shape[1], terrain.shape[2]
 
         stn_lat = stn_meta.loc[sid, "latitude"]
         stn_lon = stn_meta.loc[sid, "longitude"]
@@ -405,24 +437,20 @@ def build_samples(station_obs, hrrr_tensors, hrrr_lat, hrrr_lon,
                 n_skipped += 1
                 continue
 
-            target = torch.zeros(C_OUT, h, w)
+            target_scalar = torch.zeros(C_OUT)
             if has_temp:
-                target[2] = float(row["temperature"])
+                target_scalar[2] = float(row["temperature"])
             if has_prec:
-                target[3] = float(row["precipitation"])
+                target_scalar[3] = float(row["precipitation"])
 
-            mask = torch.ones(h, w)
-
-            samples.append({
-                "terrain": terrain,
-                "weather_in": weather_mapped,
-                "weather_target": target,
-                "mask": mask,
-            })
+            terrain_list.append(terrain)
+            weather_list.append(weather_mapped)
+            target_list.append(target_scalar)
             n_matched += 1
 
     logger.info("Samples: %d matched, %d skipped", n_matched, n_skipped)
-    return samples
+    target_scalars = torch.stack(target_list) if target_list else torch.zeros(0, C_OUT)
+    return terrain_list, weather_list, target_scalars
 
 
 def main():
@@ -470,35 +498,33 @@ def main():
     station_obs = load_snotel_observations(SNOTEL_DIR, list(patches.keys()))
     logger.info("Observations loaded for %d stations", len(station_obs))
 
-    # 8. Build training samples
+    # 8. Build training samples (compact scalar targets)
     logger.info("Building training samples...")
-    samples = build_samples(
+    terrain_list, weather_list, target_scalars = build_samples(
         station_obs, hrrr_tensors, hrrr_lat, hrrr_lon,
         terrain_tensors, stations_df, mapper,
     )
-    logger.info("Total training samples: %d", len(samples))
+    logger.info("Total training samples: %d", len(terrain_list))
 
-    if not samples:
+    if len(terrain_list) == 0:
         logger.error("No valid training samples. Check data alignment.")
         sys.exit(1)
 
-    # 9. Fit target normalizer on SNOTEL training targets
-    all_targets = torch.stack([s["weather_target"] for s in samples], dim=0)
+    # 9. Fit target normalizer on scalar targets
+    all_targets_4d = target_scalars.unsqueeze(-1).unsqueeze(-1)
     normalizer = TargetNormalizer()
-    normalizer.fit(all_targets)
+    normalizer.fit(all_targets_4d)
     logger.info(
         "Target normalizer: mean=%s, std=%s",
         normalizer.mean.tolist(), normalizer.std.tolist(),
     )
 
-    # Normalize targets in-place
-    for s in samples:
-        s["weather_target"] = normalizer.normalize(
-            s["weather_target"].unsqueeze(0)
-        ).squeeze(0)
+    # Normalize scalar targets in-place
+    target_scalars = (target_scalars - normalizer.mean) / normalizer.std
 
-    # 10. Create dataset and trainer
-    dataset = ColoradoPhaseDataset(samples)
+    # 10. Create compact dataset and trainer
+    h, w = terrain_list[0].shape[1], terrain_list[0].shape[2]
+    dataset = CompactColoradoDataset(terrain_list, weather_list, target_scalars, h, w)
 
     config = PhaseConfig(
         phase=3,
@@ -534,7 +560,7 @@ def main():
     # 11. Train
     logger.info(
         "Training: %d epochs, batch_size=%d, lr=%s, samples=%d",
-        EPOCHS, BATCH_SIZE, LEARNING_RATE, len(samples),
+        EPOCHS, BATCH_SIZE, LEARNING_RATE, len(dataset),
     )
     t0 = time.time()
     checkpoint_path = trainer.train(dataset)
@@ -553,7 +579,7 @@ def main():
     print("=" * 60)
     print(f"Checkpoint: {checkpoint_path}")
     print(f"Time: {elapsed:.1f}s ({elapsed / EPOCHS:.1f}s/epoch)")
-    print(f"Samples: {len(samples)}")
+    print(f"Samples: {len(dataset)}")
     print(f"Stations: {len(terrain_tensors)}")
     print(f"HRRR timesteps: {len(hrrr_tensors)}")
     print()
