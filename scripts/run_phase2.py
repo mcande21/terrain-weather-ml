@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Phase 2 Alpine fine-tuning: train the downscaling head on ERA5 + PeakWeather.
 
-Loads January 2024 ERA5 reanalysis paired with PeakWeather Swiss station
-observations and DEM terrain patches. The downscaling head learns terrain-weather
-corrections: (ERA5 coarse weather + terrain features) -> station observations.
+Loads all 12 months of ERA5 reanalysis (WY2024: Oct 2023 - Sep 2024) paired with
+PeakWeather Swiss station observations and DEM terrain patches. The downscaling
+head learns terrain-weather corrections:
+(ERA5 coarse weather + terrain features) -> station observations.
 """
 
 import logging
@@ -48,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 # --- Paths ---
 DEM_PATH = PROJECT_ROOT / "data" / "dem" / "alpine_stations_utm.tif"
-ERA5_PATH = PROJECT_ROOT / "data" / "era5" / "alpine" / "era5_alpine_202401.nc"
+ERA5_DIR = PROJECT_ROOT / "data" / "era5" / "alpine"
 STATIONS_PATH = (
     PROJECT_ROOT / "data" / "raw" / "peakweather" / "data" / "stations.parquet"
 )
@@ -189,59 +190,64 @@ def compute_all_terrain(patches, cache_dir):
     return terrain
 
 
-def load_era5(era5_path):
-    """Load ERA5 and return per-timestep weather tensors + times.
+def load_era5(era5_dir):
+    """Load all ERA5 monthly files and return per-timestep weather tensors + times.
 
     Returns:
         tensors: dict[int, Tensor] — timestep index -> (6, 13, 25) tensor
         times: list[datetime] — UTC-aware datetimes
     """
-    ds = xr.open_dataset(era5_path)
+    era5_dir = Path(era5_dir)
+    files = sorted(era5_dir.glob("era5_alpine_*.nc"))
+    logger.info("Found %d ERA5 monthly files", len(files))
+
     conditioner = ERA5Conditioner(ERA5Config(domain="alpine"))
     var_order = ["T2M", "U10", "V10", "PRATE", "SP", "BLH"]
 
     tensors = {}
     times = []
+    global_idx = 0
 
-    for t_idx in range(len(ds.time)):
-        era5_data = conditioner.extract_variables(ds, time_idx=t_idx)
-        channels = [
-            torch.from_numpy(era5_data.fields[v]).float() for v in var_order
-        ]
-        tensors[t_idx] = torch.stack(channels, dim=0)
+    for f in files:
+        ds = xr.open_dataset(f)
+        for t_idx in range(len(ds.time)):
+            era5_data = conditioner.extract_variables(ds, time_idx=t_idx)
+            channels = [
+                torch.from_numpy(era5_data.fields[v]).float() for v in var_order
+            ]
+            tensors[global_idx] = torch.stack(channels, dim=0)
 
-        ts = pd.Timestamp(ds.time.values[t_idx])
-        if ts.tzinfo is None:
-            ts = ts.tz_localize("UTC")
-        times.append(ts.to_pydatetime())
+            ts = pd.Timestamp(ds.time.values[t_idx])
+            if ts.tzinfo is None:
+                ts = ts.tz_localize("UTC")
+            times.append(ts.to_pydatetime())
+            global_idx += 1
+        ds.close()
 
-    ds.close()
+    logger.info("Loaded %d total ERA5 timesteps from %d files", len(tensors), len(files))
     return tensors, times
 
 
-def load_january_obs(obs_path, station_ids):
-    """Load PeakWeather January 2024 observations.
+def load_observations(obs_path, station_ids):
+    """Load all PeakWeather 2024 observations (full year).
 
     Extracts temperature (K), u/v wind (m/s), and precipitation (mm/10min)
-    per station.
+    per station across all available months.
 
     Returns dict[station_id, DataFrame] with columns:
         temperature, u_wind, v_wind, precipitation
     """
     obs = pd.read_parquet(obs_path)
+    logger.info("PeakWeather 2024: %d timesteps x %d columns", len(obs), len(obs.columns))
 
-    jan_mask = (obs.index.month == 1) & (obs.index.year == 2024)
-    obs_jan = obs[jan_mask]
-    logger.info("January 2024: %d timesteps x %d columns", len(obs_jan), len(obs_jan.columns))
-
-    available_stations = obs_jan.columns.get_level_values(0).unique()
+    available_stations = obs.columns.get_level_values(0).unique()
     records = {}
 
     for sid in station_ids:
         if sid not in available_stations:
             continue
 
-        stn = obs_jan[sid]
+        stn = obs[sid]
         result = pd.DataFrame(index=stn.index)
 
         if "tre200s0" in stn.columns:
@@ -375,17 +381,17 @@ def main():
     sample_t = next(iter(terrain_tensors.values()))
     logger.info("Terrain tensor shape: %s", list(sample_t.shape))
 
-    # 5. Load ERA5
-    logger.info("Loading ERA5 data...")
-    weather_tensors, era5_times = load_era5(ERA5_PATH)
+    # 5. Load ERA5 (all months)
+    logger.info("Loading ERA5 data (all months)...")
+    weather_tensors, era5_times = load_era5(ERA5_DIR)
     logger.info(
         "ERA5: %d timesteps, weather shape %s",
         len(weather_tensors), list(weather_tensors[0].shape),
     )
 
-    # 6. Load PeakWeather observations
-    logger.info("Loading PeakWeather January 2024 observations...")
-    station_obs = load_january_obs(OBS_PATH, list(patches.keys()))
+    # 6. Load PeakWeather observations (full year)
+    logger.info("Loading PeakWeather 2024 observations (all months)...")
+    station_obs = load_observations(OBS_PATH, list(patches.keys()))
     logger.info("Observations loaded for %d stations", len(station_obs))
 
     # 7. Build training samples

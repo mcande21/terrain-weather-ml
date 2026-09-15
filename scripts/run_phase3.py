@@ -2,8 +2,9 @@
 """Phase 3 Colorado adaptation: fine-tune the downscaling head on HRRR + SNOTEL.
 
 Loads the Phase 2 Alpine-trained checkpoint and adapts it to the Colorado domain
-using HRRR weather paired with SNOTEL station observations. Applies quantile
-mapping (RainShift protocol) to bridge the ERA5 -> HRRR distribution gap.
+using full WY2024 HRRR weather (366 days) paired with SNOTEL station observations
+from WY2020-2024 (5 water years). Applies quantile mapping (RainShift protocol)
+to bridge the ERA5 -> HRRR distribution gap.
 
 Key constraints:
 - SNOTEL has NO wind data: wind target weight is set to 0, preserving Phase 2
@@ -12,6 +13,7 @@ Key constraints:
   analysis per day.
 - SNOTEL precipitation is accumulated: differences consecutive days to get daily
   precipitation, converted to rate matching HRRR units (kg/m^2/s).
+- Only SNOTEL dates with matching HRRR data produce training samples.
 """
 
 import logging
@@ -55,7 +57,7 @@ DEM_PATH = PROJECT_ROOT / "data" / "dem" / "colorado_snotel_utm.tif"
 HRRR_DIR = PROJECT_ROOT / "data" / "hrrr" / "colorado"
 ERA5_PATH = PROJECT_ROOT / "data" / "era5" / "alpine" / "era5_alpine_202401.nc"
 STATIONS_PATH = PROJECT_ROOT / "data" / "snotel" / "stations.csv"
-OBS_PATH = PROJECT_ROOT / "data" / "snotel" / "observations_wy2024.csv"
+SNOTEL_DIR = PROJECT_ROOT / "data" / "snotel"
 PHASE2_CKPT = PROJECT_ROOT / "checkpoints" / "phase2" / "phase2_checkpoint.pt"
 CHECKPOINT_DIR = PROJECT_ROOT / "checkpoints" / "phase3"
 TERRAIN_CACHE = PROJECT_ROOT / "data" / "cache" / "terrain_patches_colorado"
@@ -257,23 +259,30 @@ def extract_hrrr_patch(weather_full, center_row, center_col, patch_size=8):
     return patch
 
 
-def load_snotel_january(obs_path, stations_path, station_ids):
-    """Load SNOTEL January 2024 observations with temperature and precipitation.
+def load_snotel_observations(snotel_dir, station_ids):
+    """Load all SNOTEL water year observations (WY2020-2024).
 
     Temperature: TOBS (degF) -> Kelvin
     Precipitation: accumulated inches -> daily rate in kg/m^2/s
     """
-    obs = pd.read_csv(obs_path)
-    obs["date"] = pd.to_datetime(obs["date"])
+    snotel_dir = Path(snotel_dir)
+    wy_files = sorted(snotel_dir.glob("observations_wy*.csv"))
+    logger.info("Found %d SNOTEL water year files", len(wy_files))
 
-    jan_mask = (obs["date"].dt.month == 1) & (obs["date"].dt.year == 2024)
-    obs_jan = obs[jan_mask].copy()
-    logger.info("January 2024: %d rows", len(obs_jan))
+    all_obs = []
+    for f in wy_files:
+        df = pd.read_csv(f)
+        df["date"] = pd.to_datetime(df["date"])
+        all_obs.append(df)
+        logger.info("  Loaded %s: %d rows", f.name, len(df))
+
+    obs = pd.concat(all_obs, ignore_index=True)
+    logger.info("Total SNOTEL observations: %d rows across %d WYs", len(obs), len(wy_files))
 
     records = {}
 
     for sid in station_ids:
-        stn_obs = obs_jan[obs_jan["station_id"] == sid].sort_values("date")
+        stn_obs = obs[obs["station_id"] == sid].sort_values("date")
         if len(stn_obs) < 2:
             continue
 
@@ -456,9 +465,9 @@ def main():
     logger.info("Calibrating quantile mapping (ERA5 Alpine -> HRRR Colorado)...")
     mapper = calibrate_quantile_mapping(ERA5_PATH, hrrr_tensors)
 
-    # 7. Load SNOTEL January 2024 observations
-    logger.info("Loading SNOTEL January 2024 observations...")
-    station_obs = load_snotel_january(OBS_PATH, STATIONS_PATH, list(patches.keys()))
+    # 7. Load SNOTEL observations (all water years)
+    logger.info("Loading SNOTEL observations (WY2020-2024)...")
+    station_obs = load_snotel_observations(SNOTEL_DIR, list(patches.keys()))
     logger.info("Observations loaded for %d stations", len(station_obs))
 
     # 8. Build training samples
