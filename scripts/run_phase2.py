@@ -41,11 +41,20 @@ from terrain_weather_ml.training.checkpoint import load_phase_checkpoint
 from terrain_weather_ml.training.normalizer import TargetNormalizer
 from terrain_weather_ml.training.phases import Phase2Trainer, PhaseConfig
 
+PROGRESS_FILE = Path(__file__).resolve().parent.parent / "phase2_progress.log"
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(name)s %(levelname)s %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+
+def log_progress(msg):
+    """Write progress to both logger and a file with explicit flush."""
+    logger.info(msg)
+    with open(PROGRESS_FILE, "a") as f:
+        f.write(msg + "\n")
 
 # --- Paths ---
 DEM_PATH = PROJECT_ROOT / "data" / "dem" / "alpine_stations_utm.tif"
@@ -64,7 +73,8 @@ TERRAIN_CACHE = PROJECT_ROOT / "data" / "cache" / "terrain_patches"
 # --- Hyperparameters ---
 PATCH_SIZE = 64
 EPOCHS = 50
-BATCH_SIZE = 32
+BATCH_SIZE = 8
+MAX_SAMPLES = 30000
 LEARNING_RATE = 1e-3
 LAMBDA_DIV = 0.05
 BASE_FEATURES = 32  # Must match Phase 1
@@ -383,6 +393,7 @@ def build_samples(station_obs, era5_times, weather_tensors, terrain_tensors):
 
 
 def main():
+    PROGRESS_FILE.write_text("")
     device_name = "mps" if torch.backends.mps.is_available() else "cpu"
     logger.info("Device: %s", device_name)
 
@@ -438,6 +449,15 @@ def main():
         logger.error("No valid training samples. Check data alignment.")
         sys.exit(1)
 
+    if len(terrain_list) > MAX_SAMPLES:
+        rng = np.random.default_rng(42)
+        idx = rng.choice(len(terrain_list), size=MAX_SAMPLES, replace=False)
+        idx.sort()
+        terrain_list = [terrain_list[i] for i in idx]
+        weather_list = [weather_list[i] for i in idx]
+        target_scalars = target_scalars[idx]
+        logger.info("Subsampled to %d samples (from full year)", len(terrain_list))
+
     # 8. Fit target normalizer on scalar targets
     all_targets_4d = target_scalars.unsqueeze(-1).unsqueeze(-1)
     normalizer = TargetNormalizer()
@@ -484,7 +504,7 @@ def main():
     # 10. Train with LR schedule
     logger.info(
         "Training: %d epochs, batch_size=%d, lr=%s, samples=%d",
-        EPOCHS, BATCH_SIZE, LEARNING_RATE, len(samples),
+        EPOCHS, BATCH_SIZE, LEARNING_RATE, len(dataset),
     )
     t0 = time.time()
 
@@ -522,9 +542,8 @@ def main():
             scheduler.step()
 
         current_lr = trainer.optimizer.param_groups[0]["lr"]
-        logger.info(
-            "Phase 2 epoch %d/%d: loss=%.6f lr=%.2e",
-            epoch + 1, EPOCHS, avg_loss, current_lr,
+        log_progress(
+            f"Phase 2 epoch {epoch + 1}/{EPOCHS}: loss={avg_loss:.6f} lr={current_lr:.2e}"
         )
 
     elapsed = time.time() - t0

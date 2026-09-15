@@ -65,7 +65,8 @@ TERRAIN_CACHE = PROJECT_ROOT / "data" / "cache" / "terrain_patches_colorado"
 # --- Hyperparameters ---
 PATCH_SIZE = 64
 EPOCHS = 30
-BATCH_SIZE = 32
+BATCH_SIZE = 8
+MAX_SAMPLES = 30000
 LEARNING_RATE = 1e-4
 LAMBDA_DIV = 0.05
 BASE_FEATURES = 32
@@ -509,6 +510,15 @@ def main():
     if len(terrain_list) == 0:
         logger.error("No valid training samples. Check data alignment.")
         sys.exit(1)
+
+    if len(terrain_list) > MAX_SAMPLES:
+        rng = np.random.default_rng(42)
+        idx = rng.choice(len(terrain_list), size=MAX_SAMPLES, replace=False)
+        idx.sort()
+        terrain_list = [terrain_list[i] for i in idx]
+        weather_list = [weather_list[i] for i in idx]
+        target_scalars = target_scalars[idx]
+        logger.info("Subsampled to %d samples", len(terrain_list))
 
     # 9. Fit target normalizer on scalar targets
     all_targets_4d = target_scalars.unsqueeze(-1).unsqueeze(-1)
