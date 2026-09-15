@@ -3,15 +3,24 @@
 Implements LOSO cross-validation over SNOTEL stations. For each fold,
 one station is held out and the model is evaluated on its observations.
 Supports single-station mode and produces per-station + aggregate metrics.
+
+Extended with proper holdout evaluation (Group 2):
+- Temporal holdout split (WY boundary enforcement)
+- Full station coverage with missing data flagging
+- Per-season stratification (DJF/MAM/JJA/SON)
+- Per-elevation-band stratification
+- Bootstrap 95% confidence intervals
 """
 
 from __future__ import annotations
 
+import datetime
 import logging
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 import numpy as np
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -51,9 +60,35 @@ class LOSOConfig:
 
     Attributes:
         stations: List of station data for evaluation.
+        missing_threshold: Fraction of missing values (0-1) above which
+            a station-variable pair is flagged for exclusion.
     """
 
     stations: list[StationData]
+    missing_threshold: float = 0.5
+
+    def flag_missing_stations(self) -> dict[str, list[str]]:
+        """Identify stations with excessive missing values.
+
+        Returns:
+            Dict of station_id -> list of variable names exceeding the
+            missing threshold. Only stations with at least one flagged
+            variable are included.
+        """
+        flagged: dict[str, list[str]] = {}
+        for station in self.stations:
+            bad_vars = []
+            for var_name, obs in station.observations.items():
+                n_total = len(obs)
+                if n_total == 0:
+                    bad_vars.append(var_name)
+                    continue
+                n_missing = int(np.isnan(obs).sum())
+                if n_missing / n_total > self.missing_threshold:
+                    bad_vars.append(var_name)
+            if bad_vars:
+                flagged[station.station_id] = bad_vars
+        return flagged
 
 
 @dataclass
@@ -325,3 +360,241 @@ class LOSOEvaluator:
             "median": median_agg,
             "std": std_agg,
         }
+
+
+# ---------------------------------------------------------------------------
+# Task 2.1: Temporal holdout split
+# ---------------------------------------------------------------------------
+
+@dataclass
+class TemporalSplit:
+    """Temporal holdout split by water year boundary.
+
+    Water year N runs from October 1 of year N-1 through September 30
+    of year N. For example, WY2024 = Oct 1, 2023 through Sep 30, 2024.
+
+    Attributes:
+        test_water_year: The water year reserved for testing.
+    """
+
+    test_water_year: int
+
+    def split(
+        self, timestamps: np.ndarray
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Split timestamps into train and test masks.
+
+        Args:
+            timestamps: 1D array of datetime64 values.
+
+        Returns:
+            Tuple of (train_mask, test_mask) boolean arrays.
+            Mutually exclusive and exhaustive.
+        """
+        ts = pd.DatetimeIndex(timestamps)
+        # Water year N starts Oct 1 of year N-1
+        wy_start = pd.Timestamp(
+            year=self.test_water_year - 1, month=10, day=1
+        )
+        wy_end = pd.Timestamp(
+            year=self.test_water_year, month=9, day=30
+        )
+
+        test_mask = np.array((ts >= wy_start) & (ts <= wy_end))
+        train_mask = ~test_mask
+
+        return train_mask, test_mask
+
+
+# ---------------------------------------------------------------------------
+# Task 2.3: Season classification
+# ---------------------------------------------------------------------------
+
+_MONTH_TO_SEASON = {
+    12: "DJF", 1: "DJF", 2: "DJF",
+    3: "MAM", 4: "MAM", 5: "MAM",
+    6: "JJA", 7: "JJA", 8: "JJA",
+    9: "SON", 10: "SON", 11: "SON",
+}
+
+
+def classify_season(date: datetime.date) -> str:
+    """Classify a date into meteorological season.
+
+    Args:
+        date: A date object.
+
+    Returns:
+        One of "DJF", "MAM", "JJA", "SON".
+    """
+    return _MONTH_TO_SEASON[date.month]
+
+
+def compute_seasonal_metrics(
+    timestamps: np.ndarray,
+    observations: np.ndarray,
+    predictions: np.ndarray,
+) -> dict[str, dict[str, float]]:
+    """Compute per-season and all-season metrics.
+
+    Args:
+        timestamps: 1D array of datetime64 values.
+        observations: 1D array of observed values.
+        predictions: 1D array of predicted values.
+
+    Returns:
+        Dict with keys "DJF", "MAM", "JJA", "SON", "all", each
+        mapping to a metrics dict with "rmse", "mae", "bias", "r_squared".
+    """
+    ts = pd.DatetimeIndex(timestamps)
+    seasons = np.array([_MONTH_TO_SEASON[m] for m in ts.month])
+
+    result: dict[str, dict[str, float]] = {}
+
+    for season in ("DJF", "MAM", "JJA", "SON"):
+        mask = seasons == season
+        if mask.sum() < 2:
+            result[season] = {
+                "rmse": float("nan"),
+                "mae": float("nan"),
+                "bias": float("nan"),
+                "r_squared": float("nan"),
+            }
+            continue
+        result[season] = _compute_basic_metrics(
+            observations[mask], predictions[mask]
+        )
+
+    # All-season aggregate
+    valid = ~(np.isnan(observations) | np.isnan(predictions))
+    if valid.sum() >= 2:
+        result["all"] = _compute_basic_metrics(
+            observations[valid], predictions[valid]
+        )
+    else:
+        result["all"] = {
+            "rmse": float("nan"),
+            "mae": float("nan"),
+            "bias": float("nan"),
+            "r_squared": float("nan"),
+        }
+
+    return result
+
+
+def _compute_basic_metrics(
+    obs: np.ndarray, pred: np.ndarray
+) -> dict[str, float]:
+    """Compute RMSE, MAE, bias, R-squared for valid pairs."""
+    valid = ~(np.isnan(obs) | np.isnan(pred))
+    if valid.sum() < 2:
+        return {
+            "rmse": float("nan"),
+            "mae": float("nan"),
+            "bias": float("nan"),
+            "r_squared": float("nan"),
+        }
+    o = obs[valid]
+    p = pred[valid]
+    errors = p - o
+    rmse = float(np.sqrt(np.mean(errors ** 2)))
+    mae = float(np.mean(np.abs(errors)))
+    bias = float(np.mean(errors))
+    ss_res = float(np.sum(errors ** 2))
+    ss_tot = float(np.sum((o - np.mean(o)) ** 2))
+    r_squared = 1.0 - ss_res / ss_tot if ss_tot > 0 else float("nan")
+    return {
+        "rmse": rmse,
+        "mae": mae,
+        "bias": bias,
+        "r_squared": r_squared,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Task 2.4: Elevation band classification
+# ---------------------------------------------------------------------------
+
+@dataclass
+class ElevationBandConfig:
+    """Configuration for elevation band stratification.
+
+    Default thresholds from proper-holdout spec:
+    - Below treeline: < 2900m
+    - Near treeline: 2900m - 3400m
+    - Above treeline: >= 3400m
+
+    Attributes:
+        below_treeline_max: Upper bound for below-treeline band (exclusive).
+        above_treeline_min: Lower bound for above-treeline band (inclusive).
+    """
+
+    below_treeline_max: float = 2900.0
+    above_treeline_min: float = 3400.0
+
+
+def classify_elevation_band(
+    elevation: float, config: ElevationBandConfig | None = None
+) -> str:
+    """Classify a station elevation into a treeline band.
+
+    Args:
+        elevation: Station elevation in meters.
+        config: Band thresholds. Uses defaults if None.
+
+    Returns:
+        One of "below_treeline", "near_treeline", "above_treeline".
+    """
+    if config is None:
+        config = ElevationBandConfig()
+    if elevation < config.below_treeline_max:
+        return "below_treeline"
+    elif elevation >= config.above_treeline_min:
+        return "above_treeline"
+    else:
+        return "near_treeline"
+
+
+# ---------------------------------------------------------------------------
+# Task 2.5: Bootstrap confidence intervals
+# ---------------------------------------------------------------------------
+
+def bootstrap_confidence_intervals(
+    station_values: np.ndarray,
+    n_resamples: int = 10_000,
+    confidence: float = 0.95,
+    seed: int | None = None,
+) -> dict[str, float]:
+    """Compute bootstrap confidence intervals via station-level resampling.
+
+    Resamples which stations are included (with replacement) to preserve
+    within-station correlation structure.
+
+    Args:
+        station_values: 1D array of per-station metric values.
+        n_resamples: Number of bootstrap resamples (default 10,000).
+        confidence: Confidence level (default 0.95 for 95% CI).
+        seed: Random seed for reproducibility.
+
+    Returns:
+        Dict with "lower", "upper", and "point_estimate".
+    """
+    rng = np.random.default_rng(seed)
+    n_stations = len(station_values)
+    point_estimate = float(np.mean(station_values))
+
+    # Generate bootstrap distribution of means
+    bootstrap_means = np.empty(n_resamples)
+    for i in range(n_resamples):
+        indices = rng.integers(0, n_stations, size=n_stations)
+        bootstrap_means[i] = np.mean(station_values[indices])
+
+    alpha = (1.0 - confidence) / 2.0
+    lower = float(np.percentile(bootstrap_means, alpha * 100))
+    upper = float(np.percentile(bootstrap_means, (1.0 - alpha) * 100))
+
+    return {
+        "lower": lower,
+        "upper": upper,
+        "point_estimate": point_estimate,
+    }

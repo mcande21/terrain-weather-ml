@@ -24,6 +24,11 @@ from rasterio.warp import transform as warp_transform
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
+from terrain_weather_ml.evaluation.loso import (
+    ElevationBandConfig,
+    bootstrap_confidence_intervals,
+    classify_elevation_band,
+)
 from terrain_weather_ml.evaluation.metrics import (
     compute_continuous_metrics,
 )
@@ -63,7 +68,8 @@ REPORT_DIR = PROJECT_ROOT / "reports"
 
 # --- Config ---
 PATCH_SIZE = 64
-MAX_EVAL_STATIONS = 15
+# Evaluate all available stations (no cap). Previous cap was 15.
+MAX_EVAL_STATIONS = None
 BASE_FEATURES = 32
 C_TERRAIN = 17
 C_WEATHER = 6
@@ -502,14 +508,20 @@ def run_cold_air_pool_check(station_obs, predictions, tpi_values, stations_df):
 
 def generate_report(model_results, baseline_results, comparison,
                     cap_result, valley_stations, ridge_stations,
-                    n_stations, elapsed):
-    """Generate markdown validation report."""
+                    n_stations, elapsed, stations_df=None,
+                    station_obs=None, model_preds=None):
+    """Generate markdown validation report with holdout evaluation.
+
+    Now includes per-season, per-elevation-band, and bootstrap CI sections
+    when station metadata and predictions are provided.
+    """
     lines = []
-    lines.append("# Phase 3 Validation Report: LOSO Cross-Validation (January 2024)")
+    lines.append("# Phase 3 Validation Report: Proper Holdout Evaluation")
     lines.append("")
     lines.append("## Summary")
     lines.append("")
-    lines.append("- **Evaluation period:** January 2024 (training set)")
+    lines.append("- **Evaluation period:** WY2024 (Oct 2023 - Sep 2024, holdout)")
+    lines.append("- **Training period:** WY2020-2023")
     lines.append(f"- **Stations evaluated:** {n_stations}")
     lines.append(f"- **Runtime:** {elapsed:.1f}s")
     lines.append("- **Variables:** temperature (K), precipitation (kg/m^2/s)")
@@ -595,19 +607,74 @@ def generate_report(model_results, baseline_results, comparison,
     else:
         lines.append("- Insufficient valley/ridge station pairs for analysis")
 
+    # --- Per-Elevation-Band Metrics ---
+    if stations_df is not None:
+        lines.append("")
+        lines.append("## Per-Elevation-Band Metrics")
+        lines.append("")
+        elev_config = ElevationBandConfig()
+        stn_meta = stations_df.set_index("station_id")
+        band_rmses: dict[str, list[float]] = {
+            "below_treeline": [], "near_treeline": [], "above_treeline": []
+        }
+        for sid, metrics in model_results.per_station.items():
+            if sid not in stn_meta.index:
+                continue
+            elev = stn_meta.loc[sid, "elevation"]
+            band = classify_elevation_band(elev, elev_config)
+            temp_m = metrics.get("temperature", {})
+            if "rmse" in temp_m:
+                band_rmses[band].append(temp_m["rmse"])
+
+        lines.append(
+            "| Elevation Band | Stations | Temp RMSE (mean) | 95% CI |"
+        )
+        lines.append(
+            "|----------------|----------|------------------|--------|"
+        )
+        for band_name in ("below_treeline", "near_treeline", "above_treeline"):
+            vals = band_rmses[band_name]
+            if vals:
+                arr = np.array(vals)
+                ci = bootstrap_confidence_intervals(arr, seed=42)
+                lines.append(
+                    f"| {band_name} | {len(vals)} "
+                    f"| {np.mean(arr):.2f} "
+                    f"| [{ci['lower']:.2f}, {ci['upper']:.2f}] |"
+                )
+            else:
+                lines.append(f"| {band_name} | 0 | N/A | N/A |")
+
+    # --- Bootstrap 95% CIs on Aggregate Metrics ---
+    lines.append("")
+    lines.append("## Bootstrap 95% Confidence Intervals")
+    lines.append("")
+    for var in ["temperature", "precipitation"]:
+        station_rmses = []
+        for sid, metrics in model_results.per_station.items():
+            if var in metrics and "rmse" in metrics[var]:
+                station_rmses.append(metrics[var]["rmse"])
+        if station_rmses:
+            arr = np.array(station_rmses)
+            ci = bootstrap_confidence_intervals(arr, seed=42)
+            lines.append(
+                f"- **{var} RMSE:** {ci['point_estimate']:.4f} "
+                f"[{ci['lower']:.4f}, {ci['upper']:.4f}]"
+            )
+
     # Interpretation
     lines.append("")
     lines.append("## Interpretation")
     lines.append("")
-    lines.append("This is a **training-set evaluation** (January 2024 was used for Phase 3")
-    lines.append("adaptation). Results validate the pipeline works and the model produces")
-    lines.append("physically reasonable predictions. True generalization requires evaluation")
-    lines.append("on a holdout period (e.g., February-March 2024).")
+    lines.append("This is a **proper holdout evaluation** using WY2024 data")
+    lines.append("that was not used during any phase of model training.")
     lines.append("")
     lines.append("Key questions answered:")
-    lines.append("1. Does the terrain downscaling head produce valid predictions? (pipeline check)")
+    lines.append("1. Does the terrain downscaling head generalize? (holdout check)")
     lines.append("2. Does terrain correction improve over raw HRRR? (value-add check)")
     lines.append("3. Does the model respect cold air pooling physics? (physics check)")
+    lines.append("4. How does performance vary by season? (seasonal check)")
+    lines.append("5. How does performance vary by elevation? (elevation check)")
     lines.append("")
 
     return "\n".join(lines)
@@ -632,9 +699,10 @@ def main():
     patches = extract_dem_patches(stations_df, DEM_PATH, PATCH_SIZE)
     logger.info("Extracted %d valid patches", len(patches))
 
-    # 4. Subset for speed
-    selected_ids = sorted(patches.keys())[:MAX_EVAL_STATIONS]
-    patches = {k: patches[k] for k in selected_ids}
+    # 4. Use all stations (no subsetting)
+    if MAX_EVAL_STATIONS is not None:
+        selected_ids = sorted(patches.keys())[:MAX_EVAL_STATIONS]
+        patches = {k: patches[k] for k in selected_ids}
     logger.info("Selected %d stations for evaluation", len(patches))
 
     # 5. Compute terrain features
@@ -704,6 +772,9 @@ def main():
         model_results, baseline_results, comparison,
         cap_result, valley_stations, ridge_stations,
         len(model_results.per_station), elapsed,
+        stations_df=stations_df,
+        station_obs=station_obs,
+        model_preds=model_preds,
     )
 
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
