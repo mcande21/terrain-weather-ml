@@ -3,6 +3,10 @@
 DEVINE-inspired U-Net that takes coarse weather + static terrain
 and produces sub-km multi-variable weather predictions with
 mass-conservation constraint on wind output.
+
+Supports FiLM (Feature-wise Linear Modulation) conditioning where
+terrain features modulate the decoder at every resolution level,
+replacing input concatenation with multi-scale affine conditioning.
 """
 
 from __future__ import annotations
@@ -14,6 +18,7 @@ import torch.nn.functional as F
 from torch import nn
 
 from terrain_weather_ml.terrain.downscaling.divergence import DivergenceFreeProjection
+from terrain_weather_ml.terrain.downscaling.film import FiLMGenerator
 from terrain_weather_ml.terrain.downscaling.unet import UNet
 
 logger = logging.getLogger(__name__)
@@ -31,11 +36,15 @@ IDX_PRECIPITATION = 3
 
 
 class TerrainDownscalingHead(nn.Module):
-    """DEVINE-inspired terrain downscaling head.
+    """DEVINE-inspired terrain downscaling head with FiLM conditioning.
 
-    Dual-branch input: static terrain tensor + dynamic weather tensor.
-    The weather tensor is upsampled to match terrain resolution before
-    concatenation and U-Net processing.
+    When use_film=True (default): terrain features are encoded by a
+    FiLMGenerator into per-decoder-block (gamma, beta) parameters.
+    Only weather channels go into the U-Net encoder; terrain conditions
+    every decoder stage via FiLM modulation.
+
+    When use_film=False: falls back to the original concatenation
+    approach (terrain + weather concatenated as U-Net input).
 
     Args:
         c_terrain: Number of terrain feature channels (default: 17).
@@ -43,6 +52,8 @@ class TerrainDownscalingHead(nn.Module):
         c_out: Number of output channels (default: 4).
         base_features: Base feature count for U-Net encoder.
         apply_divergence_free: Apply divergence-free projection on wind output.
+        use_film: Use FiLM terrain conditioning (default: True).
+            When False, reverts to input concatenation.
     """
 
     def __init__(
@@ -52,14 +63,26 @@ class TerrainDownscalingHead(nn.Module):
         c_out: int = C_OUT_DEFAULT,
         base_features: int = 64,
         apply_divergence_free: bool = True,
+        use_film: bool = True,
     ):
         super().__init__()
         self.c_terrain = c_terrain
         self.c_weather = c_weather
         self.c_out = c_out
         self.apply_divergence_free = apply_divergence_free
+        self.use_film = use_film
 
-        c_in = c_terrain + c_weather
+        if use_film:
+            # FiLM path: weather-only U-Net + terrain FiLM generator
+            c_in = c_weather
+            self.film_gen = FiLMGenerator(
+                c_terrain=c_terrain,
+                base_features=base_features,
+            )
+        else:
+            # Concatenation path: terrain + weather as U-Net input
+            c_in = c_terrain + c_weather
+
         self.unet = UNet(
             in_channels=c_in,
             out_channels=c_out,
@@ -98,11 +121,14 @@ class TerrainDownscalingHead(nn.Module):
         else:
             weather_up = weather
 
-        # Concatenate along channel dimension
-        x = torch.cat([terrain, weather_up], dim=1)
-
-        # U-Net forward pass
-        out = self.unet(x)
+        if self.use_film:
+            # FiLM path: terrain -> FiLM params, weather-only -> U-Net
+            film_params = self.film_gen(terrain)
+            out = self.unet(weather_up, film_params=film_params)
+        else:
+            # Concatenation path: terrain + weather -> U-Net
+            x = torch.cat([terrain, weather_up], dim=1)
+            out = self.unet(x)
 
         # Apply divergence-free projection to wind channels
         if self.apply_divergence_free:

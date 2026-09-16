@@ -14,6 +14,10 @@ from terrain_weather_ml.terrain.downscaling.divergence import (
     compute_divergence,
     divergence_free_projection,
 )
+from terrain_weather_ml.terrain.downscaling.film import (
+    FiLMBlock,
+    FiLMGenerator,
+)
 from terrain_weather_ml.terrain.downscaling.head import (
     C_OUT_DEFAULT,
     C_TERRAIN_DEFAULT,
@@ -45,6 +49,8 @@ __all__ = [
     "OUTPUT_CHANNELS",
     "DivergenceFreeProjection",
     "DownscalingLoss",
+    "FiLMBlock",
+    "FiLMGenerator",
     "TerrainDownscalingHead",
     "UNet",
     "compute_divergence",

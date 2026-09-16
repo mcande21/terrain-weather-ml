@@ -95,3 +95,95 @@ class TestDEVINEWeightInit:
             1 for p in head.parameters() if not p.requires_grad
         )
         assert frozen_after == 0
+
+    def test_init_conv_skipped_on_shape_mismatch(self, tmp_path):
+        """init_conv weights skipped when DEVINE has 23ch but head has 6ch."""
+        # DEVINE checkpoint with 23-channel input (old concat approach)
+        ckpt_path = create_mock_devine_checkpoint(
+            tmp_path, in_channels=23
+        )
+
+        # FiLM head with 6-channel input
+        head = TerrainDownscalingHead(apply_divergence_free=False)
+        assert head.unet.init_conv.block[0].in_channels == 6
+
+        # Save init_conv weight before loading
+        init_weight_before = head.unet.init_conv.block[0].weight.clone()
+
+        load_devine_weights(head, ckpt_path)
+
+        # init_conv should NOT have been overwritten (shape mismatch)
+        init_weight_after = head.unet.init_conv.block[0].weight
+        assert torch.allclose(init_weight_before, init_weight_after), (
+            "init_conv should be skipped when shapes don't match"
+        )
+
+    def test_decoder_weights_loaded_despite_init_conv_mismatch(self, tmp_path):
+        """Decoder weights load even when init_conv shapes don't match."""
+        ckpt_path = create_mock_devine_checkpoint(
+            tmp_path, in_channels=23
+        )
+        head = TerrainDownscalingHead(apply_divergence_free=False)
+
+        # Save a decoder weight before loading
+        dec_weight_before = (
+            head.unet.decoder_blocks[0].conv.block[0].weight.clone()
+        )
+
+        load_devine_weights(head, ckpt_path)
+
+        # Decoder weight SHOULD have been overwritten
+        dec_weight_after = head.unet.decoder_blocks[0].conv.block[0].weight
+        assert not torch.allclose(dec_weight_before, dec_weight_after), (
+            "Decoder weights should be loaded from DEVINE"
+        )
+
+    def test_film_generator_excluded_from_devine(self, tmp_path):
+        """FiLM generator parameters are not affected by DEVINE loading."""
+        head = TerrainDownscalingHead(apply_divergence_free=False)
+
+        # Save FiLM generator weights before
+        film_weights_before = {
+            name: p.clone()
+            for name, p in head.film_gen.named_parameters()
+        }
+
+        ckpt_path = create_mock_devine_checkpoint(tmp_path)
+        load_devine_weights(head, ckpt_path)
+
+        # FiLM generator weights should be unchanged
+        for name, p in head.film_gen.named_parameters():
+            assert torch.allclose(film_weights_before[name], p), (
+                f"FiLM param {name} should not change during DEVINE loading"
+            )
+
+    def test_freeze_wind_keeps_film_trainable(self, tmp_path):
+        """Freezing wind params leaves FiLM generator trainable."""
+        ckpt_path = create_mock_devine_checkpoint(tmp_path)
+        head = TerrainDownscalingHead(apply_divergence_free=False)
+        load_devine_weights(head, ckpt_path, freeze_wind=True)
+
+        # FiLM generator should remain trainable
+        for param in head.film_gen.parameters():
+            assert param.requires_grad, (
+                "FiLM generator should remain trainable after freeze_wind"
+            )
+
+    def test_use_film_false_loads_normally(self, tmp_path):
+        """use_film=False head loads DEVINE weights including init_conv."""
+        ckpt_path = create_mock_devine_checkpoint(
+            tmp_path, in_channels=23
+        )
+        head = TerrainDownscalingHead(
+            apply_divergence_free=False, use_film=False
+        )
+        assert head.unet.init_conv.block[0].in_channels == 23
+
+        init_weight_before = head.unet.init_conv.block[0].weight.clone()
+        load_devine_weights(head, ckpt_path)
+
+        # init_conv SHOULD be loaded (shapes match)
+        init_weight_after = head.unet.init_conv.block[0].weight
+        assert not torch.allclose(init_weight_before, init_weight_after), (
+            "init_conv should be loaded when shapes match (use_film=False)"
+        )

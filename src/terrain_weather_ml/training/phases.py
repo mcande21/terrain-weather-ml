@@ -118,6 +118,7 @@ class Phase1Trainer:
             c_out=2,      # u, v wind only
             base_features=config.base_features,
             apply_divergence_free=False,  # Soft constraint via loss only
+            use_film=False,  # No weather to condition on in Phase 1
         )
         self.head.to(self.device)
 
