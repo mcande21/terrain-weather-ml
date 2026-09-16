@@ -8,6 +8,7 @@ data/era5/
 data/dem/
 data/snotel/
 data/synoptic/
+data/cache/
 *.parquet
 *.grib2
 *.nc
@@ -41,6 +42,12 @@ build/
 
 # Environment
 .env
+
+# Logs
+*.log
+
+# Claude Code
+.claude/worktrees/
 
 # MLflow
 mlflow/mlruns/
