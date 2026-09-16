@@ -2,6 +2,10 @@
 
 Encoder with 4 downsampling stages, decoder with matching upsampling stages,
 and skip connections concatenating encoder features at each resolution level.
+
+Supports optional FiLM (Feature-wise Linear Modulation) conditioning in the
+decoder path: when film_params are provided, affine modulation is applied
+after the first GroupNorm in each decoder ConvBlock.
 """
 
 from __future__ import annotations
@@ -11,13 +15,18 @@ from torch import nn
 
 
 class ConvBlock(nn.Module):
-    """Double convolution block: Conv -> BN -> ReLU -> Conv -> BN -> ReLU."""
+    """Double convolution block: Conv -> GroupNorm -> ReLU -> Conv -> GroupNorm -> ReLU.
+
+    Supports optional FiLM conditioning after the first GroupNorm:
+    Conv -> FiLM(GroupNorm) -> ReLU -> Conv -> GroupNorm -> ReLU
+    """
 
     def __init__(self, in_ch: int, out_ch: int):
         super().__init__()
-        # GroupNorm instead of BatchNorm -- works with batch_size=1 and
-        # small spatial dims at the bottleneck.
         num_groups = min(32, out_ch)
+        # Store layers individually for FiLM insertion, but keep
+        # self.block as a Sequential for backward compatibility
+        # (existing code accesses block[0].in_channels).
         self.block = nn.Sequential(
             nn.Conv2d(in_ch, out_ch, kernel_size=3, padding=1, bias=False),
             nn.GroupNorm(num_groups, out_ch),
@@ -27,8 +36,36 @@ class ConvBlock(nn.Module):
             nn.ReLU(inplace=True),
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.block(x)
+    def forward(
+        self,
+        x: torch.Tensor,
+        gamma: torch.Tensor | None = None,
+        beta: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Forward pass with optional FiLM modulation.
+
+        Args:
+            x: Input tensor (B, C_in, H, W).
+            gamma: FiLM scale parameter (B, C_out, 1, 1). None = no FiLM.
+            beta: FiLM shift parameter (B, C_out, 1, 1). None = no FiLM.
+
+        Returns:
+            Output tensor (B, C_out, H, W).
+        """
+        if gamma is None:
+            return self.block(x)
+
+        # FiLM path: insert modulation after first GroupNorm
+        # block[0] = Conv2d, block[1] = GroupNorm, block[2] = ReLU
+        # block[3] = Conv2d, block[4] = GroupNorm, block[5] = ReLU
+        x = self.block[0](x)   # Conv2d
+        x = self.block[1](x)   # GroupNorm
+        x = gamma * x + beta   # FiLM modulation
+        x = self.block[2](x)   # ReLU
+        x = self.block[3](x)   # Conv2d
+        x = self.block[4](x)   # GroupNorm
+        x = self.block[5](x)   # ReLU
+        return x
 
 
 class EncoderBlock(nn.Module):
@@ -44,14 +81,34 @@ class EncoderBlock(nn.Module):
 
 
 class DecoderBlock(nn.Module):
-    """Upsampling decoder block: Upsample -> Concat skip -> ConvBlock."""
+    """Upsampling decoder block: Upsample -> Concat skip -> ConvBlock.
+
+    Supports optional FiLM conditioning passed through to its ConvBlock.
+    """
 
     def __init__(self, in_ch: int, skip_ch: int, out_ch: int):
         super().__init__()
         self.up = nn.ConvTranspose2d(in_ch, in_ch, kernel_size=2, stride=2)
         self.conv = ConvBlock(in_ch + skip_ch, out_ch)
 
-    def forward(self, x: torch.Tensor, skip: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        x: torch.Tensor,
+        skip: torch.Tensor,
+        gamma: torch.Tensor | None = None,
+        beta: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Forward pass with optional FiLM conditioning.
+
+        Args:
+            x: Input tensor from previous stage.
+            skip: Skip connection tensor from encoder.
+            gamma: FiLM scale parameter. None = no FiLM.
+            beta: FiLM shift parameter. None = no FiLM.
+
+        Returns:
+            Decoded tensor.
+        """
         x = self.up(x)
         # Handle potential size mismatch from odd dimensions
         if x.shape != skip.shape:
@@ -59,7 +116,7 @@ class DecoderBlock(nn.Module):
                 x, size=skip.shape[2:], mode="bilinear", align_corners=False
             )
         x = torch.cat([x, skip], dim=1)
-        return self.conv(x)
+        return self.conv(x, gamma=gamma, beta=beta)
 
 
 class UNet(nn.Module):
@@ -102,26 +159,36 @@ class UNet(nn.Module):
         # Final 1x1 convolution to output channels
         self.final_conv = nn.Conv2d(f, out_channels, kernel_size=1)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        x: torch.Tensor,
+        film_params: list[tuple[torch.Tensor, torch.Tensor]] | None = None,
+    ) -> torch.Tensor:
         """Forward pass through U-Net.
 
         Args:
             x: Input tensor of shape (B, C_in, H, W).
+            film_params: Optional list of (gamma, beta) tuples, one per
+                decoder block. When None, decoder runs unconditioned.
 
         Returns:
             Output tensor of shape (B, C_out, H, W).
         """
         skips, x = self._encode(x)
-        return self._decode(x, skips)
+        return self._decode(x, skips, film_params=film_params)
 
     def forward_ablated(
-        self, x: torch.Tensor, zero_skip_idx: int
+        self,
+        x: torch.Tensor,
+        zero_skip_idx: int,
+        film_params: list[tuple[torch.Tensor, torch.Tensor]] | None = None,
     ) -> torch.Tensor:
         """Forward pass with one skip connection zeroed out (for ablation tests).
 
         Args:
             x: Input tensor.
             zero_skip_idx: Index of the skip connection to zero (0 = deepest).
+            film_params: Optional FiLM conditioning parameters.
         """
         skips, x = self._encode(x)
         # Zero out the specified skip connection
@@ -130,7 +197,7 @@ class UNet(nn.Module):
         # zero_skip_idx 0 = deepest skip (s3)
         target = len(skips) - 1 - zero_skip_idx
         skips[target] = torch.zeros_like(skips[target])
-        return self._decode(x, skips)
+        return self._decode(x, skips, film_params=film_params)
 
     def _encode(self, x: torch.Tensor) -> tuple[list[torch.Tensor], torch.Tensor]:
         """Run encoder, returning skip connections and bottleneck output."""
@@ -146,9 +213,25 @@ class UNet(nn.Module):
         return skips, x
 
     def _decode(
-        self, x: torch.Tensor, skips: list[torch.Tensor]
+        self,
+        x: torch.Tensor,
+        skips: list[torch.Tensor],
+        film_params: list[tuple[torch.Tensor, torch.Tensor]] | None = None,
     ) -> torch.Tensor:
-        """Run decoder with skip connections."""
-        for block, skip in zip(self.decoder_blocks, reversed(skips)):
-            x = block(x, skip)
+        """Run decoder with skip connections and optional FiLM conditioning.
+
+        Args:
+            x: Bottleneck tensor.
+            skips: Skip connection tensors from encoder.
+            film_params: Optional list of (gamma, beta) tuples, one per
+                decoder block. When None, decoder runs unconditioned.
+        """
+        for i, (block, skip) in enumerate(
+            zip(self.decoder_blocks, reversed(skips))
+        ):
+            if film_params is not None:
+                gamma, beta = film_params[i]
+                x = block(x, skip, gamma=gamma, beta=beta)
+            else:
+                x = block(x, skip)
         return self.final_conv(x)
