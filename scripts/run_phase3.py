@@ -42,9 +42,13 @@ from terrain_weather_ml.terrain.svf import compute_svf
 from terrain_weather_ml.terrain.sx import compute_sx
 from terrain_weather_ml.terrain.tpi import compute_tpi
 from terrain_weather_ml.training.checkpoint import load_phase_checkpoint
-from terrain_weather_ml.training.normalizer import TargetNormalizer
+from terrain_weather_ml.training.normalizer import AnomalyNormalizer
 from terrain_weather_ml.training.phases import Phase3Trainer, PhaseConfig
 from terrain_weather_ml.training.quantile_mapping import QuantileMapper
+from terrain_weather_ml.training.temporal_utils import (
+    is_wy2024_date,
+    snotel_date_to_hrrr_key,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -260,11 +264,17 @@ def extract_hrrr_patch(weather_full, center_row, center_col, patch_size=8):
     return patch
 
 
-def load_snotel_observations(snotel_dir, station_ids):
-    """Load all SNOTEL water year observations (WY2020-2024).
+def load_snotel_observations(snotel_dir, station_ids, exclude_wy2024=False):
+    """Load SNOTEL water year observations (WY2020-2024).
 
     Temperature: TOBS (degF) -> Kelvin
     Precipitation: accumulated inches -> daily rate in kg/m^2/s
+
+    Args:
+        snotel_dir: Path to SNOTEL data directory.
+        station_ids: List of station IDs to load.
+        exclude_wy2024: If True, exclude WY2024 dates (Oct 2023 - Sep 2024)
+            for temporal holdout training.
     """
     snotel_dir = Path(snotel_dir)
     wy_files = sorted(snotel_dir.glob("observations_wy*.csv"))
@@ -279,6 +289,15 @@ def load_snotel_observations(snotel_dir, station_ids):
 
     obs = pd.concat(all_obs, ignore_index=True)
     logger.info("Total SNOTEL observations: %d rows across %d WYs", len(obs), len(wy_files))
+
+    if exclude_wy2024:
+        pre_count = len(obs)
+        wy2024_mask = obs["date"].apply(is_wy2024_date)
+        obs = obs[~wy2024_mask]
+        logger.info(
+            "Excluded WY2024: %d -> %d rows (removed %d)",
+            pre_count, len(obs), pre_count - len(obs),
+        )
 
     records = {}
 
@@ -393,12 +412,24 @@ class CompactColoradoDataset(torch.utils.data.Dataset):
 
 
 def build_samples(station_obs, hrrr_tensors, hrrr_lat, hrrr_lon,
-                  terrain_tensors, stations_df, mapper):
-    """Build compact training samples matching SNOTEL daily obs to 12Z HRRR."""
+                  terrain_tensors, stations_df, mapper,
+                  use_month_day_matching=False):
+    """Build compact training samples matching SNOTEL daily obs to 12Z HRRR.
+
+    Args:
+        use_month_day_matching: If True, match SNOTEL dates to HRRR by
+            month-day (ignoring year). Used for WY2020-2023 training data
+            paired with WY2024 HRRR weather.
+
+    Returns:
+        terrain_list, weather_list, target_scalars, station_ids_list, months_list
+    """
     stn_meta = stations_df.set_index("station_id")
     terrain_list = []
     weather_list = []
     target_list = []
+    station_ids_list = []
+    months_list = []
     n_matched = 0
     n_skipped = 0
 
@@ -420,7 +451,11 @@ def build_samples(station_obs, hrrr_tensors, hrrr_lat, hrrr_lon,
 
         for i, date_val in enumerate(obs_df.index):
             date_ts = pd.Timestamp(date_val)
-            date_str = date_ts.strftime("%Y%m%d")
+
+            if use_month_day_matching:
+                date_str = snotel_date_to_hrrr_key(str(date_ts.date()))
+            else:
+                date_str = date_ts.strftime("%Y%m%d")
 
             if date_str not in hrrr_tensors:
                 n_skipped += 1
@@ -447,11 +482,13 @@ def build_samples(station_obs, hrrr_tensors, hrrr_lat, hrrr_lon,
             terrain_list.append(terrain)
             weather_list.append(weather_mapped)
             target_list.append(target_scalar)
+            station_ids_list.append(str(sid))
+            months_list.append(date_ts.month)
             n_matched += 1
 
     logger.info("Samples: %d matched, %d skipped", n_matched, n_skipped)
     target_scalars = torch.stack(target_list) if target_list else torch.zeros(0, C_OUT)
-    return terrain_list, weather_list, target_scalars
+    return terrain_list, weather_list, target_scalars, station_ids_list, months_list
 
 
 def main():
@@ -494,16 +531,21 @@ def main():
     logger.info("Calibrating quantile mapping (ERA5 Alpine -> HRRR Colorado)...")
     mapper = calibrate_quantile_mapping(ERA5_PATH, hrrr_tensors)
 
-    # 7. Load SNOTEL observations (all water years)
-    logger.info("Loading SNOTEL observations (WY2020-2024)...")
-    station_obs = load_snotel_observations(SNOTEL_DIR, list(patches.keys()))
-    logger.info("Observations loaded for %d stations", len(station_obs))
+    # 7. Load SNOTEL observations (WY2020-2023 only, exclude WY2024 holdout)
+    logger.info("Loading SNOTEL observations (WY2020-2023, excluding WY2024 holdout)...")
+    station_obs = load_snotel_observations(
+        SNOTEL_DIR, list(patches.keys()), exclude_wy2024=True
+    )
+    logger.info("Training observations loaded for %d stations", len(station_obs))
 
-    # 8. Build training samples (compact scalar targets)
-    logger.info("Building training samples...")
-    terrain_list, weather_list, target_scalars = build_samples(
-        station_obs, hrrr_tensors, hrrr_lat, hrrr_lon,
-        terrain_tensors, stations_df, mapper,
+    # 8. Build training samples (month-day HRRR matching for cross-year pairing)
+    logger.info("Building training samples (month-day HRRR matching)...")
+    terrain_list, weather_list, target_scalars, sample_sids, sample_months = (
+        build_samples(
+            station_obs, hrrr_tensors, hrrr_lat, hrrr_lon,
+            terrain_tensors, stations_df, mapper,
+            use_month_day_matching=True,
+        )
     )
     logger.info("Total training samples: %d", len(terrain_list))
 
@@ -518,19 +560,20 @@ def main():
         terrain_list = [terrain_list[i] for i in idx]
         weather_list = [weather_list[i] for i in idx]
         target_scalars = target_scalars[idx]
+        sample_sids = [sample_sids[i] for i in idx]
+        sample_months = [sample_months[i] for i in idx]
         logger.info("Subsampled to %d samples", len(terrain_list))
 
-    # 9. Fit target normalizer on scalar targets
-    all_targets_4d = target_scalars.unsqueeze(-1).unsqueeze(-1)
-    normalizer = TargetNormalizer()
-    normalizer.fit(all_targets_4d)
+    # 9. Fit anomaly normalizer on training targets
+    normalizer = AnomalyNormalizer()
+    normalizer.fit(target_scalars, sample_sids, sample_months)
     logger.info(
-        "Target normalizer: mean=%s, std=%s",
-        normalizer.mean.tolist(), normalizer.std.tolist(),
+        "Anomaly normalizer: %d climatology entries, residual_std=%s",
+        len(normalizer.climatology), normalizer.residual_std.tolist(),
     )
 
-    # Normalize scalar targets in-place
-    target_scalars = (target_scalars - normalizer.mean) / normalizer.std
+    # Normalize scalar targets
+    target_scalars = normalizer.normalize(target_scalars, sample_sids, sample_months)
 
     # 10. Create compact dataset and trainer
     h, w = terrain_list[0].shape[1], terrain_list[0].shape[2]
@@ -579,19 +622,21 @@ def main():
     # 12. Save normalizer state in checkpoint
     ckpt_data = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
     ckpt_data["extra_data"]["normalizer"] = normalizer.state_dict()
+    ckpt_data["extra_data"]["normalizer_type"] = "anomaly"
     torch.save(ckpt_data, checkpoint_path)
-    logger.info("Saved normalizer state to checkpoint")
+    logger.info("Saved AnomalyNormalizer state to checkpoint")
 
     # 13. Report
     print()
     print("=" * 60)
-    print("Phase 3 Colorado Adaptation Complete")
+    print("Phase 3 Colorado Adaptation Complete (AnomalyNormalizer)")
     print("=" * 60)
     print(f"Checkpoint: {checkpoint_path}")
     print(f"Time: {elapsed:.1f}s ({elapsed / EPOCHS:.1f}s/epoch)")
     print(f"Samples: {len(dataset)}")
     print(f"Stations: {len(terrain_tensors)}")
     print(f"HRRR timesteps: {len(hrrr_tensors)}")
+    print("Training data: WY2020-2023 (WY2024 held out)")
     print()
     print("Loss curve (first 10, then every 5th):")
     for i, loss in enumerate(trainer.epoch_losses):
@@ -615,8 +660,9 @@ def main():
         f"val_loss={ckpt.metadata.best_val_loss:.6f}"
     )
     print(f"Checkpoint hash: {ckpt.compute_hash()[:16]}")
-    print(f"Normalizer mean: {normalizer.mean.tolist()}")
-    print(f"Normalizer std:  {normalizer.std.tolist()}")
+    print("Normalizer: AnomalyNormalizer")
+    print(f"  Climatology entries: {len(normalizer.climatology)}")
+    print(f"  Residual std: {normalizer.residual_std.tolist()}")
 
     if ckpt.extra_data.get("quantile_params"):
         qp = ckpt.extra_data["quantile_params"]

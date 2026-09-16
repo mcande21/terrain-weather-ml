@@ -38,7 +38,7 @@ from terrain_weather_ml.terrain.svf import compute_svf
 from terrain_weather_ml.terrain.sx import compute_sx
 from terrain_weather_ml.terrain.tpi import compute_tpi
 from terrain_weather_ml.training.checkpoint import load_phase_checkpoint
-from terrain_weather_ml.training.normalizer import TargetNormalizer
+from terrain_weather_ml.training.normalizer import AnomalyNormalizer
 from terrain_weather_ml.training.phases import Phase2Trainer, PhaseConfig
 
 PROGRESS_FILE = Path(__file__).resolve().parent.parent / "phase2_progress.log"
@@ -322,10 +322,15 @@ def build_samples(station_obs, era5_times, weather_tensors, terrain_tensors):
 
     Stores scalar target values instead of full spatial tensors to avoid
     O(N * H * W) memory for point observations.
+
+    Returns:
+        terrain_list, weather_list, target_scalars, station_ids_list, months_list
     """
     terrain_list = []
     weather_list = []
     target_list = []
+    station_ids_list = []
+    months_list = []
     n_matched = 0
     n_skipped = 0
 
@@ -385,11 +390,13 @@ def build_samples(station_obs, era5_times, weather_tensors, terrain_tensors):
             terrain_list.append(terrain)
             weather_list.append(weather_tensors[t_idx])
             target_list.append(target_scalar)
+            station_ids_list.append(str(sid))
+            months_list.append(era5_ts.month)
             n_matched += 1
 
     logger.info("Samples: %d matched, %d skipped", n_matched, n_skipped)
     target_scalars = torch.stack(target_list) if target_list else torch.zeros(0, C_OUT)
-    return terrain_list, weather_list, target_scalars
+    return terrain_list, weather_list, target_scalars, station_ids_list, months_list
 
 
 def main():
@@ -440,8 +447,8 @@ def main():
 
     # 7. Build training samples (compact scalar targets)
     logger.info("Building training samples...")
-    terrain_list, weather_list, target_scalars = build_samples(
-        station_obs, era5_times, weather_tensors, terrain_tensors
+    terrain_list, weather_list, target_scalars, sample_sids, sample_months = (
+        build_samples(station_obs, era5_times, weather_tensors, terrain_tensors)
     )
     logger.info("Total training samples: %d", len(terrain_list))
 
@@ -456,19 +463,20 @@ def main():
         terrain_list = [terrain_list[i] for i in idx]
         weather_list = [weather_list[i] for i in idx]
         target_scalars = target_scalars[idx]
+        sample_sids = [sample_sids[i] for i in idx]
+        sample_months = [sample_months[i] for i in idx]
         logger.info("Subsampled to %d samples (from full year)", len(terrain_list))
 
-    # 8. Fit target normalizer on scalar targets
-    all_targets_4d = target_scalars.unsqueeze(-1).unsqueeze(-1)
-    normalizer = TargetNormalizer()
-    normalizer.fit(all_targets_4d)
+    # 8. Fit anomaly normalizer on scalar targets
+    normalizer = AnomalyNormalizer()
+    normalizer.fit(target_scalars, sample_sids, sample_months)
     logger.info(
-        "Target normalizer: mean=%s, std=%s",
-        normalizer.mean.tolist(), normalizer.std.tolist(),
+        "Anomaly normalizer: %d climatology entries, residual_std=%s",
+        len(normalizer.climatology), normalizer.residual_std.tolist(),
     )
 
-    # Normalize scalar targets in-place
-    target_scalars = (target_scalars - normalizer.mean) / normalizer.std
+    # Normalize scalar targets
+    target_scalars = normalizer.normalize(target_scalars, sample_sids, sample_months)
 
     # 9. Create compact dataset and trainer
     h, w = terrain_list[0].shape[1], terrain_list[0].shape[2]
@@ -552,13 +560,14 @@ def main():
     checkpoint_path = trainer._save_checkpoint(dataset)
     ckpt_data = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
     ckpt_data["extra_data"]["normalizer"] = normalizer.state_dict()
+    ckpt_data["extra_data"]["normalizer_type"] = "anomaly"
     torch.save(ckpt_data, checkpoint_path)
-    logger.info("Saved normalizer state to checkpoint")
+    logger.info("Saved AnomalyNormalizer state to checkpoint")
 
     # 12. Report
     print()
     print("=" * 60)
-    print("Phase 2 Alpine Fine-tuning Complete")
+    print("Phase 2 Alpine Fine-tuning Complete (AnomalyNormalizer)")
     print("=" * 60)
     print(f"Checkpoint: {checkpoint_path}")
     print(f"Time: {elapsed:.1f}s ({elapsed / EPOCHS:.1f}s/epoch)")
@@ -588,8 +597,9 @@ def main():
         f"val_loss={ckpt.metadata.best_val_loss:.6f}"
     )
     print(f"Checkpoint hash: {ckpt.compute_hash()[:16]}")
-    print(f"Normalizer mean: {normalizer.mean.tolist()}")
-    print(f"Normalizer std:  {normalizer.std.tolist()}")
+    print("Normalizer: AnomalyNormalizer")
+    print(f"  Climatology entries: {len(normalizer.climatology)}")
+    print(f"  Residual std: {normalizer.residual_std.tolist()}")
 
 
 if __name__ == "__main__":

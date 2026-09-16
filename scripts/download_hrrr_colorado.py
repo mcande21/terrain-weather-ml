@@ -1,7 +1,8 @@
 """Download HRRR analysis data for the Colorado subdomain.
 
-Downloads 6-hourly HRRR surface analyses for January 2024,
-crops to Colorado bounds, saves as daily NetCDF files.
+Downloads 6-hourly HRRR surface analyses for Water Year 2024
+(October 2023 through September 2024), crops to Colorado bounds,
+saves as daily NetCDF files. Skips days that already exist.
 
 Usage:
     .venv/bin/python scripts/download_hrrr_colorado.py
@@ -9,9 +10,11 @@ Usage:
 
 from __future__ import annotations
 
+import calendar
 import logging
 import sys
 import warnings
+from datetime import date, timedelta
 from pathlib import Path
 
 import numpy as np
@@ -115,24 +118,50 @@ def download_day(date_str: str, output_dir: Path) -> Path | None:
     return out_file
 
 
+def wy2024_dates() -> list[date]:
+    start = date(2023, 10, 1)
+    end = date(2024, 9, 30)
+    current = start
+    dates = []
+    while current <= end:
+        dates.append(current)
+        current += timedelta(days=1)
+    return dates
+
+
 def main():
     project_root = Path(__file__).resolve().parent.parent
     output_dir = project_root / "data" / "hrrr" / "colorado"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    year, month = 2024, 1
-    days = range(1, 32)
+    all_dates = wy2024_dates()
+    total_days = len(all_dates)
 
-    logger.info("Downloading HRRR Colorado subdomain: %d-%02d, 6-hourly", year, month)
+    logger.info("Downloading HRRR Colorado subdomain: WY2024 (Oct 2023 - Sep 2024)")
+    logger.info("Total days: %d", total_days)
     logger.info("Output: %s", output_dir)
 
     saved = []
-    for day in days:
-        date_str = f"{year}-{month:02d}-{day:02d}"
-        logger.info("Day %d/31: %s", day, date_str)
+    failed_dates = []
+    skipped = 0
+
+    for i, d in enumerate(all_dates, 1):
+        date_str = d.isoformat()
+        month_label = d.strftime("%b %Y")
+        logger.info("Day %d/%d [%s]: %s", i, total_days, month_label, date_str)
+
+        out_file = output_dir / f"hrrr_colorado_{date_str.replace('-', '')}.nc"
+        if out_file.exists():
+            logger.info("  Already exists: %s, skipping", out_file.name)
+            saved.append(out_file)
+            skipped += 1
+            continue
+
         result = download_day(date_str, output_dir)
         if result:
             saved.append(result)
+        else:
+            failed_dates.append(date_str)
 
     if not saved:
         logger.error("No files downloaded!")
@@ -141,19 +170,28 @@ def main():
     total_size = sum(f.stat().st_size for f in saved) / (1024 * 1024)
     sample = xr.open_dataset(saved[0])
     logger.info("=" * 60)
-    logger.info("Download complete.")
-    logger.info("  Files: %d", len(saved))
+    logger.info("Download complete — WY2024")
+    logger.info("  Files: %d / %d days", len(saved), total_days)
+    logger.info("  Skipped (pre-existing): %d", skipped)
+    logger.info("  New downloads: %d", len(saved) - skipped)
+    logger.info("  Failed/missing: %d", len(failed_dates))
     logger.info("  Total size: %.1f MB", total_size)
     logger.info("  Grid (Colorado): y=%d, x=%d",
                 sample.sizes.get("y", 0), sample.sizes.get("x", 0))
     logger.info("  Variables: %s", sorted(sample.data_vars))
     logger.info("  Timesteps per file: 4 (00Z, 06Z, 12Z, 18Z)")
-    logger.info("  Total timesteps: %d", len(saved) * 4)
+    logger.info("  Total timesteps: ~%d", len(saved) * 4)
     logger.info("  Lat range: %.2f - %.2f",
                 float(sample.latitude.min()), float(sample.latitude.max()))
     logger.info("  Lon range: %.2f - %.2f",
                 float(sample.longitude.min()), float(sample.longitude.max()))
     sample.close()
+
+    if failed_dates:
+        logger.warning("=" * 60)
+        logger.warning("GAPS — %d dates with no data:", len(failed_dates))
+        for fd in failed_dates:
+            logger.warning("  %s", fd)
 
 
 if __name__ == "__main__":
