@@ -7,6 +7,7 @@ data/hrrr/
 data/era5/
 data/dem/
 data/snotel/
+data/synoptic/
 *.parquet
 *.grib2
 *.nc
